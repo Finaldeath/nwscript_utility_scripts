@@ -1,13 +1,15 @@
 # NWscript Utility Scripts Style Guide
 Scripts in this repository should follow this simple style guide. We are following Bioware's coding style for simplicity and readability, and to match the default game files.
 
+There is an example header.nss available to use at the top of files.
+
+There is also a style_guide.nss file that copies some of this in so you can view it separately.
+
 # Filenames and contents
 
 Filenames are limited to 16 characters so brevity here is necessary.
 
-
-
-The order of files should follow the below ordering.
+The order of file contents should at least roughly follow the below ordering.
 
 # Clarity over brevity
 
