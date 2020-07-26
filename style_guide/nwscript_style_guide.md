@@ -99,8 +99,6 @@ Function names should be CamelCase usually utilising "Get", "Set", "Check", and 
 
 Functions should have descriptive variable names, which can be clarified in the comments as per below.
 
-You might want to prefix a collection of functions in one file with a lowercase prefix, as per the second example, but if used should be applied to all the functions in that file.
-
 ```c
 // Returns if the number provided is cool or not.
 // * nNumber - The number to check
@@ -110,7 +108,11 @@ int GetIsTheNumberCool(int nNumber)
 {
 	...
 }
+```
 
+You might want to prefix a collection of functions in one file with a lowercase prefix, as per this second example, but if used should be applied to all the functions in that file. You might optionally remove the underscore. This sort of creates a local "namespace" and helps categorise things if many includes are used.
+
+```c
 // Returns if the number provided is cool or not.
 // * nNumber - The number to check
 int numutil_GetIsTheNumberCool(int nNumber);
