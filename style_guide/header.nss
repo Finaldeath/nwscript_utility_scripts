@@ -6,7 +6,6 @@
 
 */
 //:://////////////////////////////////////////////
-//:: Created By:
-//:: Created On:
+//:: Part of the nwscript_utility_scripts project; see for dates/creator info
+//:: https://github.com/Finaldeath/nwscript_utility_scripts
 //:://////////////////////////////////////////////
-
