@@ -90,6 +90,7 @@ int bBoolean
 float fFloat
 string sString
 vector vVector
+struct strStruct
 location lLocation
 object oObject
 effect eEffect
@@ -97,6 +98,8 @@ talent tTalent
 itemproperty ipItemProperty
 sqlquery sqlSQLQuery
 ```
+NB: "command" and "action" cannot be declared as variables as they are essentially equivalent to "void"
+NB: const has no particular prefix, except for the above notion of using all upper case letters to define it
 
 # Function Declarations
 
