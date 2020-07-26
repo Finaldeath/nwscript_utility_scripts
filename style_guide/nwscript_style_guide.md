@@ -9,7 +9,14 @@ There is also a style_guide.nss file that copies some of this in so you can view
 
 Filenames are limited to 16 characters so brevity here is necessary.
 
-The order of file contents should at least roughly follow the below ordering.
+The order of file contents should at least roughly follow the below ordering:
+
+* Header
+* Include statements
+* Constants
+* Function defintions
+* Private functions
+* Functions
 
 # Clarity over brevity
 
@@ -134,6 +141,28 @@ int numutil_GetIsTheNumberCool(int nNumber);
 int numutil_GetIsTheNumberCool(int nNumber)
 {
 	...
+}
+```
+
+# Private Functions
+
+You can optionally prefix the entire function name with an underscore to mark it as "Private" and not to be used outside the utility script itself.
+
+These should not be declared at the very top of the file so the toolset doesn't automatically show them or autocomplete them.
+
+```c
+// Private function
+// Returns the main integer needed for this utility
+int _GetMainInteger()
+{
+
+}
+
+// Private function
+// Returns the main integer needed for this utility
+int _utilfnc_GetMainInteger()
+{
+
 }
 ```
 
