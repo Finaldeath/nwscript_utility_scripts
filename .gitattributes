@@ -1,0 +1,3 @@
+* text eol=lf
+*.dlg binary
+*.nss linguist-language=C
