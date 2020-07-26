@@ -82,8 +82,11 @@ const int NUMBER_UTILITY_MAGIC_INTEGER_1 = 42;
 
 # Variable Declarations
 
-Variables should use hungarian notation with camel case. Examples are:
+Variables should use hungarian notation with camel case. More than one can be defined in a line and defaults are optional. 
 
+There is no standard for "Global" variables in a script (those defined outside of a function) but it might be recommended to prefix them "g", eg: "gnInteger" or similar.
+
+Examples are:
 ```c
 int nInteger
 int bBoolean
@@ -97,6 +100,9 @@ effect eEffect
 talent tTalent
 itemproperty ipItemProperty
 sqlquery sqlSQLQuery
+
+// Example longer variable
+int nCaptainHawkPhoenotype = 10;
 ```
 NB: "command" and "action" cannot be declared as variables as they are essentially equivalent to "void"
 NB: const has no particular prefix, except for the above notion of using all upper case letters to define it
