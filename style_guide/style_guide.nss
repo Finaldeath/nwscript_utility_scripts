@@ -10,8 +10,8 @@
     This box may contain examples, notes, and a description of the file.
 */
 //:://////////////////////////////////////////////
-//:: Created By: Jasperre (Andrew Armstrong)
-//:: Created On: 2020-07-26
+//:: Part of the nwscript_utility_scripts project; see for dates/creator info
+//:: https://github.com/Finaldeath/nwscript_utility_scripts
 //:://////////////////////////////////////////////
 
 // Lowercase name for include files, comment above if necessary
