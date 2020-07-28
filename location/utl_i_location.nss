@@ -1,15 +1,29 @@
 //::///////////////////////////////////////////////
-//:: Location Utility Include
+//:: Utility Include: Location
 //:: utl_i_location.nss
 //:://////////////////////////////////////////////
 /*
-    This contains a number of location or position based utility functions.
+    This contains a number of location or position/vector based utility functions.
 */
 //:://////////////////////////////////////////////
 //:: Part of the nwscript_utility_scripts project; see for dates/creator info
 //:: https://github.com/Finaldeath/nwscript_utility_scripts
 //:://////////////////////////////////////////////
 
+// Get a local vector (variable prefixed VEC:)
+// * oObject - Object to check for vector
+// * sVarName - variable name
+vector GetLocalVector(object oObject, string sVarName);
+
+// Set a local vector (variable prefixed VEC:)
+// * oObject - Object to set the vector on
+// * sVarName - variable name
+void SetLocalVector(object oObject, string sVarName, vector vValue);
+
+// Set a local vector (variable prefixed VEC:)
+// * oObject - Object to set the vector on
+// * sVarName - variable name
+void SetLocalVector(object oObject, string sVarName, vector vValue);
 
 // Returns TRUE if the location is considered walkable.
 // This doesn't necessarily mean a creature can be created there (there may be placeables in the way)
@@ -33,6 +47,32 @@ string EncodeLocation(location lLocation);
 // Decodes a location from a string that was encoded with EncodeLocation
 // * sLocation - Location string to decode
 location DecodeLocation(string sLocation);
+
+
+
+// Get a local vector (variable prefixed VEC:)
+// * oObject - Object to check for vector
+// * sVarName - variable name
+vector GetLocalVector(object oObject, string sVarName)
+{
+    return GetPositionFromLocation(GetLocalLocation(oObject, "VEC:" + sVarName));
+}
+
+// Set a local vector (variable prefixed VEC:)
+// * oObject - Object to set the vector on
+// * sVarName - variable name
+void SetLocalVector(object oObject, string sVarName, vector vValue)
+{
+    SetLocalLocation(oObject, "VEC:" + sVarName, Location(OBJECT_INVALID, vValue, 0.0f));
+}
+
+// Deletes a local vector (variable prefixed VEC:)
+// * oObject - Object to set the vector on
+// * sVarName - variable name
+void DeleteLocalVector(object oObject, string sVarName)
+{
+    DeleteLocalLocation(oObject, "VEC:" + sVarName);
+}
 
 // Returns TRUE if the location is considered walkable.
 // This doesn't necessarily mean a creature can be created there (there may be placeables in the way)
@@ -97,7 +137,7 @@ location DecodeLocation(string sLocation)
     string tag = GetSubString(sLocation, nIdX, nCount);
 
     nIdX = FindSubString(sLocation, "#RESREF#") + 8;
-    nCount = FindSubString(GetSubString(sLocations, nIdX, nStrlen - nIdX), "#");
+    nCount = FindSubString(GetSubString(sLocation, nIdX, nStrlen - nIdX), "#");
     string resref = GetSubString(sLocation, nIdX, nCount);
 
     object area = GetFirstArea();
