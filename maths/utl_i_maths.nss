@@ -30,6 +30,11 @@ int round(float fFloat);
 // * sString - String to convert
 int HexStringToInt(string sString);
 
+// Converts a integer number to a 32-character binary string
+// Primarily useful for debugging bitwise flags
+// * nInteger - integer to transform
+string IntToBinaryString(int nInteger);
+
 // Returns the higher of a or b
 int max(int a, int b)
 {
@@ -76,4 +81,19 @@ int HexStringToInt(string sString)
         nResult |= n << ((nLength - i -1) * 4);
     }
     return nResult;
+}
+
+// Converts a integer number to a 32-character binary string
+// Primarily useful for debugging bitwise flags
+// * nInteger - integer to transform
+string IntToBinaryString(int nInteger)
+{
+    string sResult;
+    int i;
+    for(i = 1; i <= 32; i++)
+    {
+        sResult = IntToString(nInteger & 0x01) + sResult;
+        nInteger >>= 1;
+    }
+    return sResult;
 }
