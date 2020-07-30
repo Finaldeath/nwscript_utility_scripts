@@ -31,6 +31,10 @@ int GetXPByLevel(int nLevel);
 // * oCreature - Creature (usually PC) to check
 int GetTrueLevel(object oCreature);
 
+// Checks if this is a PC object. Works even if the object is logging out.
+// * oObject - Object to check
+int GetIsPCObject(object oObject);
+
 
 
 // Send a message to all PCs in the game
@@ -75,4 +79,20 @@ int GetTrueLevel(object oCreature)
     if(nXP == 0) return GetHitDice(oCreature);
 
     return GetLevelByXP(nXP);
+}
+
+// Checks if this is a PC object. Works even if the object is logging out.
+// * oObject - Object to check
+int GetIsPCObject(object oObject)
+{
+	// Object identifiers are 32bit numbers, if converted using ObjectToString().
+	// PCs count down from 7fffffff and all other objects count up from 00000000.
+	// PC objects will start with "7ff" and be 8 characters long.
+    string sCreature = ObjectToString(oObject);
+    if(GetStringLength(sCreature) == 8 &&
+       GetStringLeft(sCreature, 3) == "7ff")
+    {
+        return TRUE;
+    }
+    return FALSE;
 }
