@@ -20,6 +20,19 @@ const int ENCUMBERANCE_LEVEL_OVERLOADED = 2;
 // * oCreature - Creature to check encumerance of
 int GetEncumberanceLevel(object oCreature = OBJECT_SELF);
 
+// Sets the creature event scripts to the given values
+// * oCreature - A creature to set event scripts on
+// * Script - The different script names (in toolset order). If blank the script will not be changed.
+void SetCreatureEventScripts(object oCreature, string sBlock = "", string sDamage = "", string sDeath = "", string sConv = "", string sDisturb = "", string sCombat = "", string sHeart = "", string sAttack = "", string sNotice = "", string sRest = "", string sSpawn = "", string sSpell = "", string sUser = "" );
+
+// Creates a clone of oCreature (and returns it as an object for further usage, or OBJECT_INVALID if the copy didn't succeed.
+// It sets the default AI and makes every item they have undroppable and cursed (so corpse cannot be looted)
+// * oCreature - Creature to clone
+// * lSpawn - Location to create the clone
+// * nStandardFaction - A standard faction to change the creature to
+// * bMakeEvil - Will adjust the alignment of the copy to be Chaotic Evil
+object CreateDoppleganger(object oCreature, location lSpawn, int nStandardFaction = STANDARD_FACTION_HOSTILE, int bMakeEvil = TRUE);
+
 
 
 // Returns the ENCUMBERANCE_LEVEL_* value related to how many items are on the creature
@@ -36,4 +49,99 @@ int GetEncumberanceLevel(object oCreature = OBJECT_SELF)
     if(nWeight > nEnc) return ENCUMBERANCE_LEVEL_HEAVY;
 
     return ENCUMBERANCE_LEVEL_NORMAL;
+}
+
+// Sets the creature event scripts to the given values
+// * oCreature - A creature to set event scripts on
+// * Script - The different script names (in toolset order). If blank the script will not be changed. 
+void SetCreatureEventScripts(object oCreature, string sBlock = "", string sDamage = "", string sDeath = "", string sConv = "", string sDisturb = "", string sCombat = "", string sHeart = "", string sAttack = "", string sNotice = "", string sRest = "", string sSpawn = "", string sSpell = "", string sUser = "" )
+{
+    // Set the event scripts
+    if (sBlock != "" ) SetEventScript(oCreature, EVENT_SCRIPT_CREATURE_ON_BLOCKED_BY_DOOR, sBlock);
+    if (sDamage != "" ) SetEventScript(oCreature, EVENT_SCRIPT_CREATURE_ON_DAMAGED, sDamage);
+    if (sDeath != "" ) SetEventScript(oCreature, EVENT_SCRIPT_CREATURE_ON_DEATH, sDeath);
+    if (sConv != "" ) SetEventScript(oCreature, EVENT_SCRIPT_CREATURE_ON_DIALOGUE, sConv);
+    if (sDisturb != "" ) SetEventScript(oCreature, EVENT_SCRIPT_CREATURE_ON_DISTURBED, sDisturb);
+    if (sCombat != "" ) SetEventScript(oCreature, EVENT_SCRIPT_CREATURE_ON_END_COMBATROUND, sCombat);
+    if (sHeart != "" ) SetEventScript(oCreature, EVENT_SCRIPT_CREATURE_ON_HEARTBEAT, sHeart);
+    if (sAttack != "" ) SetEventScript(oCreature, EVENT_SCRIPT_CREATURE_ON_MELEE_ATTACKED, sAttack);
+    if (sNotice != "" ) SetEventScript(oCreature, EVENT_SCRIPT_CREATURE_ON_NOTICE, sNotice);
+    if (sRest != "" ) SetEventScript(oCreature, EVENT_SCRIPT_CREATURE_ON_RESTED, sRest);
+    if (sSpawn != "" ) SetEventScript(oCreature, EVENT_SCRIPT_CREATURE_ON_SPAWN_IN, sSpawn);
+    if (sSpell != "" ) SetEventScript(oCreature, EVENT_SCRIPT_CREATURE_ON_SPELLCASTAT, sSpell);
+    if (sUser != "" ) SetEventScript(oCreature, EVENT_SCRIPT_CREATURE_ON_USER_DEFINED_EVENT, sUser);
+}
+
+// Creates a clone of oCreature (and returns it as an object for further usage, or OBJECT_INVALID if the copy didn't succeed.
+// It sets the default AI and makes every item they have undroppable and cursed (so corpse cannot be looted)
+// * oCreature - Creature to clone
+// * lSpawn - Location to create the clone
+// * nStandardFaction - A standard faction to change the creature to
+// * bMakeEvil - Will adjust the alignment of the copy to be Chaotic Evil
+object CreateDoppleganger(object oCreature, location lSpawn, int nStandardFaction = STANDARD_FACTION_HOSTILE, int bMakeEvil = TRUE)
+{
+    object oClone = CopyObject(oCreature, lSpawn);
+
+    // Will be a invalid copy if, for instance, the spawn location is invalid
+    if(!GetIsObjectValid(oClone)) return OBJECT_INVALID;
+
+    // Change the faction
+    ChangeToStandardFaction(oClone, nStandardFaction);
+
+    // Make the clone chaotic evil if required
+    if(bMakeEvil)
+    {
+        AdjustAlignment(oClone, ALIGNMENT_EVIL, 100);
+        AdjustAlignment(oClone, ALIGNMENT_CHAOTIC, 100);
+    }
+
+    // Set all the clones items to be undroppable so cannot be retrieved on death
+    object oItem = GetFirstItemInInventory(oClone);
+    while(GetIsObjectValid(oItem))
+    {
+        // Boxes in inventories
+        if(GetHasInventory(oItem))
+        {
+            object oItem2 = GetFirstItemInInventory(oItem);
+            while(GetIsObjectValid(oItem))
+            {
+                SetItemCursedFlag(oItem2, TRUE);
+                SetDroppableFlag(oItem2, FALSE);
+                oItem2 = GetNextItemInInventory(oItem);
+            }
+        }
+        SetItemCursedFlag(oItem, TRUE);
+        SetDroppableFlag(oItem, FALSE);
+        oItem = GetNextItemInInventory(oClone);
+    }
+    // Sort inventory slots as well
+    int i;
+    for(i = 0; i < NUM_INVENTORY_SLOTS; i++)
+    {
+        oItem = GetItemInSlot(i, oClone);
+        SetItemCursedFlag(oItem, TRUE);
+        SetDroppableFlag(oItem, FALSE);
+    }
+
+    // Set the clone to use the XP2 AI
+    SetCreatureEventScripts(oClone, "x2_def_onblocked",
+                                    "x2_def_ondamage",
+                                    "x2_def_ondeath",
+                                    "x2_def_onconv",
+                                    "x2_def_ondisturb",
+                                    "x2_def_endcombat",
+                                    "x2_def_heartbeat",
+                                    "x2_def_attacked",
+                                    "x2_def_percept",
+                                    "x2_def_rested",
+                                    "x2_def_spawn",
+                                    "x2_def_spellcast",
+                                    "x2_def_userdef");
+
+    // We run the OnSpawn script on it - this won't do much if it has "doubled up" ie cloned an NPC
+    // but helps PCs
+    ExecuteScript("x2_def_spawn", oClone);
+
+    // Return the clone for further changes in the script running it
+    return oClone;
 }
