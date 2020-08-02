@@ -29,6 +29,7 @@ void DestroyAllItemsByResRef(object oObject, string sResRef);
 void DestroyAllItemsByTag(object oObject, string sTag);
 
 // Makes all items in the inventory/equipped items of oObject flagged as droppable (and cursed) or not
+// Will not affect creature items (which should never be droppable)
 // * oObject - a placeable, store, creature or container
 // * bDroppable - If TRUE it will set the droppable flag to TRUE and cursed to FALSE.
 //                If FALSE it does the opposite and sets droppable flag to FALSE and cursed flag to TRUE
@@ -144,16 +145,18 @@ void DestroyAllItemsByTag(object oObject, string sTag)
 }
 
 // Makes all items in the inventory/equipped items of oObject flagged as droppable (and cursed) or not
+// Will not affect creature items (which should never be droppable)
 // * oObject - a placeable, store, creature or container
 // * bDroppable - If TRUE it will set the droppable flag to TRUE and cursed to FALSE.
 //                If FALSE it does the opposite and sets droppable flag to FALSE and cursed flag to TRUE
 void SetInventoryDroppable(object oObject, int bDroppable = TRUE)
 {
+    // Cursed flag setup
     int bCursed = TRUE;
     if(bDroppable) bCursed = FALSE;
 
     // Set all the clones items to be undroppable so cannot be retrieved on death
-    object oItem = GetFirstItemInInventory(oClone);
+    object oItem = GetFirstItemInInventory(oObject);
     while(GetIsObjectValid(oItem))
     {
         // Boxes in inventories
@@ -169,14 +172,18 @@ void SetInventoryDroppable(object oObject, int bDroppable = TRUE)
         }
         SetItemCursedFlag(oItem, bCursed);
         SetDroppableFlag(oItem, bDroppable);
-        oItem = GetNextItemInInventory(oClone);
+        oItem = GetNextItemInInventory(oObject);
     }
-    // Sort inventory slots as well
-    int i;
-    for(i = 0; i < NUM_INVENTORY_SLOTS; i++)
+    // Check inventory slots as well for creatures
+    if(GetObjectType(oObject) == OBJECT_TYPE_CREATURE)
     {
-        oItem = GetItemInSlot(i, oClone);
-        SetItemCursedFlag(oItem, bCursed);
-        SetDroppableFlag(oItem, bDroppable);
+        int i;
+        // Bolts are the 13th slot, everything after are creature items
+        for(i = 0; i < INVENTORY_SLOT_BOLTS; i++)
+        {
+            oItem = GetItemInSlot(i, oObject);
+            SetItemCursedFlag(oItem, bCursed);
+            SetDroppableFlag(oItem, bDroppable);
+        }
     }
 }
