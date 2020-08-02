@@ -11,6 +11,10 @@
 //:: https://github.com/Finaldeath/nwscript_utility_scripts
 //:://////////////////////////////////////////////
 
+// Returns the base AC value of oArmor, based on the appearance of it
+// * oArmor - Armor piece to check
+int GetArmorBaseACValue(object oArmor);
+
 // Destroys all the items in the inventory of oObject
 // Creatures also have all equipped items destroyed
 // * oObject - a placeable, store, creature or container
@@ -35,6 +39,21 @@ void DestroyAllItemsByTag(object oObject, string sTag);
 //                If FALSE it does the opposite and sets droppable flag to FALSE and cursed flag to TRUE
 void SetInventoryDroppable(object oObject, int bDroppable = TRUE);
 
+
+
+// Returns the base AC value of oArmor, based on the appearance of it
+// * oArmor - Armor piece to check
+int GetArmorBaseACValue(object oArmor)
+{
+    // Get the appearance of the torso slot
+    int nAppearance = GetItemAppearance(oArmor, ITEM_APPR_TYPE_ARMOR_MODEL, ITEM_APPR_ARMOR_MODEL_TORSO);
+    // Look up in parts_chest.2da the relevant line, which links to the actual AC bonus of the armor
+    // We cast it to int, even though the column is technically a float.
+    int nAC = StringToInt(Get2DAString("parts_chest", "ACBONUS", nAppearance));
+ 
+    // Return the given AC value (0 to 8)
+    return nAC;
+}
 
 // Destroys all the items in the inventory of oObject
 // Creatures also have all equipped items destroyed
