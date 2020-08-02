@@ -28,6 +28,11 @@ void DestroyAllItemsByResRef(object oObject, string sResRef);
 // * sTag - item tag to check
 void DestroyAllItemsByTag(object oObject, string sTag);
 
+// Makes all items in the inventory/equipped items of oObject flagged as droppable (and cursed) or not
+// * oObject - a placeable, store, creature or container
+// * bDroppable - If TRUE it will set the droppable flag to TRUE and cursed to FALSE.
+//                If FALSE it does the opposite and sets droppable flag to FALSE and cursed flag to TRUE
+void SetInventoryDroppable(object oObject, int bDroppable = TRUE);
 
 
 // Destroys all the items in the inventory of oObject
@@ -135,5 +140,43 @@ void DestroyAllItemsByTag(object oObject, string sTag)
             if(FindSubString(sTag, GetTag(oItem)) >= 0)
                 DestroyObject(oItem);
         }
+    }
+}
+
+// Makes all items in the inventory/equipped items of oObject flagged as droppable (and cursed) or not
+// * oObject - a placeable, store, creature or container
+// * bDroppable - If TRUE it will set the droppable flag to TRUE and cursed to FALSE.
+//                If FALSE it does the opposite and sets droppable flag to FALSE and cursed flag to TRUE
+void SetInventoryDroppable(object oObject, int bDroppable = TRUE)
+{
+    int bCursed = TRUE;
+    if(bDroppable) bCursed = FALSE;
+
+    // Set all the clones items to be undroppable so cannot be retrieved on death
+    object oItem = GetFirstItemInInventory(oClone);
+    while(GetIsObjectValid(oItem))
+    {
+        // Boxes in inventories
+        if(GetHasInventory(oItem))
+        {
+            object oItem2 = GetFirstItemInInventory(oItem);
+            while(GetIsObjectValid(oItem))
+            {
+                SetItemCursedFlag(oItem2, bCursed);
+                SetDroppableFlag(oItem2, bDroppable);
+                oItem2 = GetNextItemInInventory(oItem);
+            }
+        }
+        SetItemCursedFlag(oItem, bCursed);
+        SetDroppableFlag(oItem, bDroppable);
+        oItem = GetNextItemInInventory(oClone);
+    }
+    // Sort inventory slots as well
+    int i;
+    for(i = 0; i < NUM_INVENTORY_SLOTS; i++)
+    {
+        oItem = GetItemInSlot(i, oClone);
+        SetItemCursedFlag(oItem, bCursed);
+        SetDroppableFlag(oItem, bDroppable);
     }
 }
