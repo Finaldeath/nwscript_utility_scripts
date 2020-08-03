@@ -15,6 +15,11 @@
 // * oArmor - Armor piece to check
 int GetArmorBaseACValue(object oArmor);
 
+// Returns amount of gold a player acquired
+// Only works in the Module's OnAcquireItem or OnUserDefined events
+// Note: it's not possible to do GetGoldUnacquired in a similar manner; this requires NWNX.
+int GetGoldAcquired();
+
 // Destroys all the items in the inventory of oObject
 // Creatures also have all equipped items destroyed
 // * oObject - a placeable, store, creature or container
@@ -53,6 +58,23 @@ int GetArmorBaseACValue(object oArmor)
  
     // Return the given AC value (0 to 8)
     return nAC;
+}
+
+// Returns amount of gold a player acquired
+// Only works in the Module's OnAcquireItem or OnUserDefined events
+// Note: it's not possible to do GetGoldUnacquired in a similar manner; this requires NWNX.
+int GetGoldAcquired()
+{
+    int nTotalGold = 0;
+    object oItem = GetModuleItemAcquired();
+
+    // The only item that is not valid after acquiring it is gold 
+    // therefore an invalid item is always gold
+    if(GetIsObjectValid(oItem) == FALSE)
+    {
+        nTotalGold = GetModuleItemAcquiredStackSize();
+    }
+    return nTotalGold;
 }
 
 // Destroys all the items in the inventory of oObject
