@@ -20,6 +20,11 @@ const int ENCUMBERANCE_LEVEL_OVERLOADED = 2;
 // * oCreature - Creature to check encumerance of
 int GetEncumberanceLevel(object oCreature = OBJECT_SELF);
 
+// Checks if a creature has a given domain.
+// * oCreature - Creature to check
+// * nDomain - DOMAIN_* constant or line from domains.2da
+int GetHasDomain(object oCreature, int nDomain);
+
 // Sets the creature event scripts to the given values
 // * oCreature - A creature to set event scripts on
 // * Script - The different script names (in toolset order). If blank the script will not be changed.
@@ -49,6 +54,28 @@ int GetEncumberanceLevel(object oCreature = OBJECT_SELF)
     if(nWeight > nEnc) return ENCUMBERANCE_LEVEL_HEAVY;
 
     return ENCUMBERANCE_LEVEL_NORMAL;
+}
+
+// Checks if a creature has a given domain.
+// * oCreature - Creature to check
+// * nDomain - DOMAIN_* constant or line from domains.2da
+int GetHasDomain(object oCreature, int nDomain)
+{
+    int nPosition, nClass;
+    for(nPosition = 1; nPosition <= 3; nPosition++)
+    {
+        nClass = GetClassByPosition(nPosition, oCreature);
+        if(nClass == CLASS_TYPE_INVALID)
+        {
+            return FALSE;
+        }
+        // There are 2 potential domain slots
+        if(GetDomain(oCreature, 1, nClass) == nDomain || GetDomain(oCreature, 2, nClass) == nDomain)
+        {
+            return TRUE;
+        }
+    }
+    return FALSE;
 }
 
 // Sets the creature event scripts to the given values
