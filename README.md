@@ -6,5 +6,12 @@ These scripts may well be more useful if you just take snippets of them. There m
 # Example and style guide
 This repository will be following the rough Bioware style guide, so it's Camel Case and commented for use in the toolset. Look in the "Style Guide" folder for more information.
 
+# Other Utilities
+
+These are other utilities or libraries that may be of interest:
+
+* [Squatting Monk's Utilties](https://github.com/squattingmonk/sm-utils) - Someo of these concepts may be adapted here, but are great standalone!
+* [Awsome NWNX](https://github.com/nwnxee/unified/blob/master/Awesome-NWNX.md) - A huge number of other NWN related resources
+
 # Licence
 I put an MIT licence so it's permissive for any use.
