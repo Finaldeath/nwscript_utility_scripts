@@ -78,12 +78,10 @@ void ApplyTaggedEffectToObject(int nDurationType, effect eEffect, object oTarget
     
     // log nSubType value problem if necessary
     if(nSubType != SUBTYPE_EXTRAORDINARY && nSubType != SUBTYPE_MAGICAL && nSubType != SUBTYPE_SUPERNATURAL)
-    {        
+    {
         string sInvalidSub = IntToString(nSubType);
         string sLog = "ApplyTaggedEffectToObject was given invalid subtype " + sInvalidSub + " as a parameter";
-        WriteTimestampedLogEntry(sLog);        
-        
-        eEffect = MagicalEffect(eEffect);    
+        WriteTimestampedLogEntry(sLog);  
     }
     
     // Assign Subtype otherwise defaults to Subtype Magic
@@ -94,7 +92,11 @@ void ApplyTaggedEffectToObject(int nDurationType, effect eEffect, object oTarget
     else if(nSubType == SUBTYPE_SUPERNATURAL)
     {
         eEffect = SupernaturalEffect(eEffect);    
-    }    
+    {
+    else
+    {
+        eEffect = MagicalEffect(eEffect);
+    }
     
     ApplyEffectToObject(nDurationType, eEffect, oTarget, fDuration); 
 }
