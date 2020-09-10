@@ -35,6 +35,9 @@ int GetTrueLevel(object oCreature);
 // * oObject - Object to check
 int GetIsPCObject(object oObject);
 
+// Checks if any player is in the given area.
+// * oArea - Area to check, default: OBJECT_SELF useful if run on an area event script
+int GetAnyPCInArea(object oArea = OBJECT_SELF);
 
 
 // Send a message to all PCs in the game
@@ -93,6 +96,22 @@ int GetIsPCObject(object oObject)
        GetStringLeft(sCreature, 3) == "7ff")
     {
         return TRUE;
+    }
+    return FALSE;
+}
+
+// Checks if any player is in the given area.
+// * oArea - Area to check, default: OBJECT_SELF useful if run on an area event script
+int GetAnyPCInArea(object oArea = OBJECT_SELF)
+{
+    object oPC = GetFirstPC();
+    while(GetIsObjectValid(oPC))
+    {
+        if(GetArea(oPC) == oArea)
+        {
+            return TRUE;
+        }
+        oPC = GetNextPC();
     }
     return FALSE;
 }
