@@ -39,6 +39,11 @@ int GetIsPCObject(object oObject);
 // * oArea - Area to check, default: OBJECT_SELF useful if run on an area event script
 int GetAnyPCInArea(object oArea = OBJECT_SELF);
 
+// This will identify the items in the PCs inventory using their own lore value.
+// * oPC - PC to identify items on
+void IdentifyPCInventoryUsingLore(object oPC = OBJECT_SELF);
+
+
 
 // Send a message to all PCs in the game
 // * sMessage - Message to send
@@ -114,4 +119,30 @@ int GetAnyPCInArea(object oArea = OBJECT_SELF)
         oPC = GetNextPC();
     }
     return FALSE;
+}
+
+// This will identify the items in the PCs inventory using their own lore value.
+// * oPC - PC to identify items on
+void IdentifyPCInventoryUsingLore(object oPC = OBJECT_SELF)
+{
+    int nGP;
+    string sMax = Get2DAString("SkillVsItemCost", "DeviceCostMax", GetSkillRank(SKILL_LORE, oPC));
+    int nMax = StringToInt(sMax);
+    if (sMax == "") nMax = 120000000;
+    object oItem = GetFirstItemInInventory(oPC);
+    while(GetIsObjectValid(oItem))
+    {
+        if(!GetIdentified(oItem))
+        {
+            // Check for the value of the item first.
+            SetIdentified(oItem, TRUE);
+            nGP = GetGoldPieceValue(oItem);
+            // If oPC has enough Lore skill to ID the item, then do so.
+            if(nMax >= nGP)
+                SendMessageToPC(oPC, GetStringByStrRef(16826224) + " " + GetName(oItem) + " " + GetStringByStrRef(16826225));
+            else
+                SetIdentified(oItem, FALSE);
+        }
+        oItem = GetNextItemInInventory(oPC);
+    }
 }

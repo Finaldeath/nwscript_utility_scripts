@@ -48,6 +48,19 @@ string EncodeLocation(location lLocation);
 // * sLocation - Location string to decode
 location DecodeLocation(string sLocation);
 
+// Determines the angle between two given locations. Angle returned
+// is relative to the first location.
+float GetRelativeAngleBetweenLocations(location lFrom, location lTo);
+
+// Gets a random location within a circular area around a base location.
+// * lBase - Location to focus on
+// * fDistance - The distance from the location randomise within
+location GetRandomCircleLocation(location lBase, float fDistance = 1.0);
+
+// Gets a location relative to the first location
+// Includes rotating additional location based on facing of the first
+location AddLocationToLocation(location lMaster, location lAdd);
+
 
 
 // Get a local vector (variable prefixed VEC:)
@@ -165,4 +178,73 @@ location DecodeLocation(string sLocation)
     fFacing = StringToFloat(GetSubString(sLocation, nIdX, nCount));
 
     return Location(area, Vector(x, y, z), fFacing);
+}
+
+// Determines the angle between two given locations. Angle returned
+// is relative to the first location.
+float GetRelativeAngleBetweenLocations(location lFrom, location lTo)
+{
+    vector vPos1 = GetPositionFromLocation(lFrom);
+    vector vPos2 = GetPositionFromLocation(lTo);
+    // Sanity check, no difference in angle
+    if(GetDistanceBetweenLocations(lFrom, lTo) == 0.0)
+        return 0.0;
+
+    float fAngle = acos((vPos2.x - vPos1.x) / GetDistanceBetweenLocations(lFrom, lTo));
+    // The above formula only returns values [0, 180], so test for negative y movement
+    if((vPos2.y - vPos1.y) < 0.0f)
+        fAngle = 360.0f - fAngle;
+
+    return fAngle;
+}
+
+// Gets a random location within a circular area around a base location.
+// * lBase - Location to focus on
+// * fDistance - The distance from the location randomise within
+location GetRandomCircleLocation(location lBase, float fDistance = 1.0)
+{
+    // Pick a random angle for the location.
+    float fAngle = IntToFloat(Random(3600)) / 10.0;
+
+    // Pick a random facing for the location.
+    float fFacing = IntToFloat(Random(3600)) / 10.0;
+
+    // Pick a random distance from the base location.
+    float fHowFar = IntToFloat(Random(FloatToInt(fDistance * 10.0))) / 10.0;
+
+    // Retreive the position vector from the location.
+    vector vPosition = GetPositionFromLocation(lBase);
+
+    // Modify the base x/y position by the distance and angle.
+    vPosition.y += (sin(fAngle) * fHowFar);
+    vPosition.x += (cos(fAngle) * fHowFar);
+
+    // Return the new random location.
+    return Location(GetAreaFromLocation(lBase), vPosition, fFacing);
+}
+
+// Gets a location relative to the first location
+// Includes rotating additional location based on facing of the first
+location AddLocationToLocation(location lMaster, location lAdd)
+{
+    // Firstly rotate lAdd according to lMaster
+    vector vAdd = GetPositionFromLocation(lAdd);
+    // Zero is +y in NWN convert zero to +x
+    float fAngle = GetFacingFromLocation(lMaster);
+    // Convert angle to radians
+    fAngle = ((fAngle-90)/360.0)*2.0*PI;
+    vector vNew;
+    vNew.x = (vAdd.x*cos(fAngle))-(vAdd.y*sin(fAngle));
+    vNew.y = (vAdd.x*sin(fAngle))+(vAdd.y*cos(fAngle));
+    vNew.z = vAdd.z;
+
+    // Now just add them on
+    vector vMaster = GetPositionFromLocation(lMaster);
+    vNew.x += vMaster.x;
+    vNew.y += vMaster.y;
+    vNew.z += vMaster.z;
+    float fNew = GetFacingFromLocation(lAdd)+GetFacingFromLocation(lMaster);
+
+    // Return the final location
+    return Location(GetAreaFromLocation(lMaster), vNew, fNew);
 }

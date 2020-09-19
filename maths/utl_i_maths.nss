@@ -16,6 +16,12 @@ int max(int a, int b);
 // Returns the lower of a or b
 int min(int a, int b);
 
+// Returns the higher of a or b
+int fmax(float a, float b);
+
+// Returns the lower of a or b
+int fmin(float a, float b);
+
 // Floors the given float, eg: 2.9999 = 2
 int floor(float fFloat);
 
@@ -43,6 +49,18 @@ int max(int a, int b)
 
 // Returns the lower of a or b
 int min(int a, int b)
+{
+    return (a < b) ? a : b;
+}
+
+// Returns the higher of a or b
+int fmax(float a, float b)
+{
+    return (a > b) ? a : b;
+}
+
+// Returns the lower of a or b
+int fmin(float a, float b)
 {
     return (a < b) ? a : b;
 }

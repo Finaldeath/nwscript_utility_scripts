@@ -27,6 +27,12 @@ int GetItemSpellChargesAreUsable(itemproperty ip, object oItem);
 // * oItem - the item being tested
 int GetItemScrollUsable(itemproperty ip, object oItem);
 
+// Returns the same string you would get if you examined the item in-game
+// Uses 2da & tlk lookups and should work for custom itemproperties too
+string ItemPropertyToString(itemproperty ipItemProperty);
+
+
+
 // This checks if a item is usable by ourselves based on any item restrictions on it (class/race/alignment).
 // If any restriction item properties are on there it checks we have at least 1 level in that class. Must have at least one match if any exist
 // This is not optimal to run often without caching
@@ -250,4 +256,38 @@ itemproperty GetFirstItemPropertyOnItemWithSpell(int nSpellID, object oItem)
         ip = GetNextItemProperty(oItem);
     }
     return ipInvalid;
+}
+
+
+// Returns the same string you would get if you examined the item in-game
+// Uses 2da & tlk lookups and should work for custom itemproperties too
+string ItemPropertyToString(itemproperty ipItemProperty)
+{
+    int nIPType = GetItemPropertyType(ipItemProperty);
+    string sName = GetStringByStrRef(StringToInt(Get2DAString("itempropdef", "GameStrRef", nIPType)));
+    if(GetItemPropertySubType(ipItemProperty) != -1)//nosubtypes
+    {
+        string sSubTypeResRef = Get2DAString("itempropdef", "SubTypeResRef", nIPType);
+        int nTlk = StringToInt(Get2DAString(sSubTypeResRef, "Name", GetItemPropertySubType(ipItemProperty)));
+        if(nTlk > 0)
+            sName += " " + GetStringByStrRef(nTlk);
+    }
+    if(GetItemPropertyParam1(ipItemProperty) != -1)
+    {
+        string sParamResRef = Get2DAString("iprp_paramtable", "TableResRef", GetItemPropertyParam1(ipItemProperty));
+        if(Get2DAString("itempropdef", "SubTypeResRef", nIPType) != "" && 
+           Get2DAString(Get2DAString("itempropdef", "SubTypeResRef", nIPType), "TableResRef", GetItemPropertyParam1(ipItemProperty)) != "")
+            sParamResRef = Get2DAString(Get2DAString("itempropdef", "SubTypeResRef", nIPType), "TableResRef", GetItemPropertyParam1(ipItemProperty));
+        int nTlk = StringToInt(Get2DAString(sParamResRef, "Name", GetItemPropertyParam1Value(ipItemProperty)));
+        if(nTlk > 0)
+            sName += " " + GetStringByStrRef(nTlk);
+    }
+    if(GetItemPropertyCostTable(ipItemProperty) != -1)
+    {
+        string sCostResRef = Get2DAString("iprp_costtable", "Name", GetItemPropertyCostTable(ipItemProperty));
+        int nTlk = StringToInt(Get2DAString(sCostResRef, "Name", GetItemPropertyCostTableValue(ipItemProperty)));
+        if(nTlk > 0)
+            sName += " " + GetStringByStrRef(nTlk);
+    }
+    return sName;
 }

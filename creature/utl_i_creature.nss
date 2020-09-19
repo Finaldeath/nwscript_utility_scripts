@@ -17,7 +17,11 @@ const int ENCUMBERANCE_LEVEL_HEAVY      = 1;
 const int ENCUMBERANCE_LEVEL_OVERLOADED = 2;
 
 // Returns the ENCUMBERANCE_LEVEL_* value related to how many items are on the creature
-// * oCreature - Creature to check encumerance of
+// * oCreature - Creature to check encumbrance of
+// Return values:
+//   ENCUMBERANCE_LEVEL_NORMAL - Can run normally
+//   ENCUMBERANCE_LEVEL_HEAVY - Cannot run, only walk
+//   ENCUMBERANCE_LEVEL_OVERLOADED - Can only walk at 50% speed
 int GetEncumberanceLevel(object oCreature = OBJECT_SELF);
 
 // Checks if a creature has a given domain.
@@ -38,14 +42,25 @@ void SetCreatureEventScripts(object oCreature, string sBlock = "", string sDamag
 // * bMakeEvil - Will adjust the alignment of the copy to be Chaotic Evil
 object CreateDoppleganger(object oCreature, location lSpawn, int nStandardFaction = STANDARD_FACTION_HOSTILE, int bMakeEvil = TRUE);
 
+// Calculates the number of steps along both moral and ethical axes that
+// the two target's alignments' differ.
+int CompareAlignment(object oSource, object oTarget);
+
 
 
 // Returns the ENCUMBERANCE_LEVEL_* value related to how many items are on the creature
-// * oCreature - Creature to check encumerance of
+// * oCreature - Creature to check encumbrance of
+// Return values:
+//   ENCUMBERANCE_LEVEL_NORMAL - Can run normally
+//   ENCUMBERANCE_LEVEL_HEAVY - Cannot run, only walk
+//   ENCUMBERANCE_LEVEL_OVERLOADED - Can only walk at 50% speed
 int GetEncumberanceLevel(object oCreature = OBJECT_SELF)
 {
     int nWeight = GetWeight(oCreature);
     int nStr = GetAbilityScore(oCreature, ABILITY_STRENGTH);
+
+    // 2da limit is 100
+    if(nStr > 100) return ENCUMBERANCE_LEVEL_NORMAL;
 
     int nEnc = StringToInt(Get2DAString("encumbrance", "Heavy", nStr));
     if(nWeight > nEnc) return ENCUMBERANCE_LEVEL_OVERLOADED;
@@ -171,4 +186,99 @@ object CreateDoppleganger(object oCreature, location lSpawn, int nStandardFactio
 
     // Return the clone for further changes in the script running it
     return oClone;
+}
+
+
+int CompareAlignment(object oSource, object oTarget)
+{
+    int iStepDif;
+    int iGE1 = GetAlignmentGoodEvil(oSource);
+    int iLC1 = GetAlignmentLawChaos(oSource);
+    int iGE2 = GetAlignmentGoodEvil(oTarget);
+    int iLC2 = GetAlignmentLawChaos(oTarget);
+
+    if(iGE1 == ALIGNMENT_GOOD){
+        if(iGE2 == ALIGNMENT_NEUTRAL)
+            iStepDif += 1;
+        else if(iGE2 == ALIGNMENT_EVIL)
+            iStepDif += 2;
+    }
+    else if(iGE1 == ALIGNMENT_NEUTRAL){
+        if(iGE2 != ALIGNMENT_NEUTRAL)
+            iStepDif += 1;
+    }
+    else if(iGE1 == ALIGNMENT_EVIL){
+        if(iLC2 == ALIGNMENT_NEUTRAL)
+            iStepDif += 1;
+        else if(iLC2 == ALIGNMENT_GOOD)
+            iStepDif += 2;
+    }
+    if(iLC1 == ALIGNMENT_LAWFUL){
+        if(iLC2 == ALIGNMENT_NEUTRAL)
+            iStepDif += 1;
+        else if(iLC2 == ALIGNMENT_CHAOTIC)
+            iStepDif += 2;
+    }
+    else if(iLC1 == ALIGNMENT_NEUTRAL){
+        if(iLC2 != ALIGNMENT_NEUTRAL)
+            iStepDif += 1;
+    }
+    else if(iLC1 == ALIGNMENT_CHAOTIC){
+        if(iLC2 == ALIGNMENT_NEUTRAL)
+            iStepDif += 1;
+        else if(iLC2 == ALIGNMENT_LAWFUL)
+            iStepDif += 2;
+    }
+    return iStepDif;
+}
+
+// Calculates the number of steps along both moral and ethical axes that
+// the two target's alignments' differ.
+int CompareAlignment(object oSource, object oTarget)
+{
+    int nStepDif;
+    int nGE1 = GetAlignmentGoodEvil(oSource);
+    int nLC1 = GetAlignmentLawChaos(oSource);
+    int nGE2 = GetAlignmentGoodEvil(oTarget);
+    int nLC2 = GetAlignmentLawChaos(oTarget);
+
+    if(nGE1 == ALIGNMENT_GOOD)
+    {
+        if(nGE2 == ALIGNMENT_NEUTRAL)
+            nStepDif += 1;
+        else if(iGE2 == ALIGNMENT_EVIL)
+            nStepDif += 2;
+    }
+    else if(nGE1 == ALIGNMENT_NEUTRAL)
+    {
+        if(nGE2 != ALIGNMENT_NEUTRAL)
+            nStepDif += 1;
+    }
+    else if(nGE1 == ALIGNMENT_EVIL)
+    {
+        if(nLC2 == ALIGNMENT_NEUTRAL)
+            nStepDif += 1;
+        else if(iLC2 == ALIGNMENT_GOOD)
+            nStepDif += 2;
+    }
+    if(nLC1 == ALIGNMENT_LAWFUL)
+    {
+        if(nLC2 == ALIGNMENT_NEUTRAL)
+            nStepDif += 1;
+        else if(iLC2 == ALIGNMENT_CHAOTIC)
+            nStepDif += 2;
+    }
+    else if(nLC1 == ALIGNMENT_NEUTRAL)
+    {
+        if(nLC2 != ALIGNMENT_NEUTRAL)
+            nStepDif += 1;
+    }
+    else if(nLC1 == ALIGNMENT_CHAOTIC)
+    {
+        if(nLC2 == ALIGNMENT_NEUTRAL)
+            nStepDif += 1;
+        else if(nLC2 == ALIGNMENT_LAWFUL)
+            niStepDif += 2;
+    }
+    return nStepDif;
 }
