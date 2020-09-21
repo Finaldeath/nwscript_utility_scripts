@@ -37,7 +37,11 @@
 //:: https://github.com/Finaldeath/nwscript_utility_scripts
 //:://////////////////////////////////////////////
 
-const string SQLOCALS_TABLE_NAME     = "sqlocals_table";
+// Constant name changed to DB since it will be a primary differentiator for the end-user and
+//  is extremely easy to use/spell/include, allowing the user to immediately know if they're
+//  saving their data to the sqlite database or not.
+const string DB                      = "sqlocals_table";
+//const string SQLOCALS_TABLE_NAME     = "sqlocals_table";
 
 const int SQLOCALS_TYPE_ALL          = 0;
 const int SQLOCALS_TYPE_INT          = 1;
@@ -163,10 +167,10 @@ string SQLocals_GetLastUpdated_UTC(object oObject, string sVarName, int nType);
 
 
 /* INTERNAL */
-void SQLocals_CreateTable()
+void SQLocals_CreateTable(string sTable = DB)
 {
     sqlquery sql = SqlPrepareQueryObject(GetModule(),
-        "CREATE TABLE IF NOT EXISTS " + SQLOCALS_TABLE_NAME + " (" +
+        "CREATE TABLE IF NOT EXISTS " + sTable + " (" +
         "object TEXT, " +
         "type INTEGER, " +
         "varname TEXT, " +
@@ -176,12 +180,12 @@ void SQLocals_CreateTable()
     SqlStep(sql);
 }
 
-sqlquery SQLocals_PrepareSelect(object oObject, int nType, string sVarName)
+sqlquery SQLocals_PrepareSelect(object oObject, int nType, string sVarName, string sTable = DB)
 {
     SQLocals_CreateTable();
 
     sqlquery sql = SqlPrepareQueryObject(GetModule(),
-        "SELECT value FROM " + SQLOCALS_TABLE_NAME + " " +
+        "SELECT value FROM " + sTable + " " +
         "WHERE object = @object AND type = @type AND varname = @varname;");
 
     SqlBindString(sql, "@object", ObjectToString(oObject));
@@ -191,12 +195,12 @@ sqlquery SQLocals_PrepareSelect(object oObject, int nType, string sVarName)
     return sql;
 }
 
-sqlquery SQLocals_PrepareInsert(object oObject, int nType, string sVarName)
+sqlquery SQLocals_PrepareInsert(object oObject, int nType, string sVarName, sTable = DB)
 {
     SQLocals_CreateTable();
 
     sqlquery sql = SqlPrepareQueryObject(GetModule(),
-        "INSERT INTO " + SQLOCALS_TABLE_NAME + " " +
+        "INSERT INTO " + sTable + " " +
         "(object, type, varname, value, timestamp) VALUES (@object, @type, @varname, @value, strftime('%s','now')) " +
         "ON CONFLICT (object, type, varname) DO UPDATE SET value = @value, timestamp = strftime('%s','now');");
 
@@ -207,12 +211,12 @@ sqlquery SQLocals_PrepareInsert(object oObject, int nType, string sVarName)
     return sql;
 }
 
-sqlquery SQLocals_PrepareDelete(object oObject, int nType, string sVarName)
+sqlquery SQLocals_PrepareDelete(object oObject, int nType, string sVarName, sTable = DB)
 {
     SQLocals_CreateTable();
 
     sqlquery sql = SqlPrepareQueryObject(GetModule(),
-        "DELETE FROM " + SQLOCALS_TABLE_NAME + " " +
+        "DELETE FROM " + sTable + " " +
         "WHERE object = @object AND type = @type AND varname = @varname;");
 
     SqlBindString(sql, "@object", ObjectToString(oObject));
@@ -277,14 +281,85 @@ location SQLocals_StringToLocation(string sLocation)
 }
 /* **** */
 
-/* INT */
+// New function to ensure we're putting variables in the correctly place based on the user's desires.
+object GetTarget(object oObject, string sTable)
+{
+    object module = GetModule();
 
+    // OBJECT_INVALID or asking for the module, just send it back.
+    if (oObject == OBJECT_INVALID || oObject == module)
+        return module;
+
+    // For PC objects
+    if (GetIsPC(oObject))
+    {
+        if (sTable == "")
+        {
+            // sTable == "" means we want to save on the PC object or their datapoint, not the DB
+            object oData = GetItemPossessedBy(oObject, PLAYER_DATAPOINT);
+            if (GetIsObjectValid(oData))
+                // We're using a player datapoint system, return the datapoint
+                return oData;
+            else
+                // We're not using a player datapoint system, so just return the PC object
+                return oObject;
+        }
+        else
+            // sTable != "" means we want to save on the PC database, so we need the PC object
+            return oObject;
+    }
+    else if (sTable == "")
+    {
+        // Not a PC and sTable == "" means we want to save a variable on an object, so send back the object
+        return oObject;
+    }
+    else
+        // Not a PC and sTable != "" means we want to save to the central database, which is on the module
+        return module;
+
+    // Failsafe
+    return oObject;
+}
+
+// Change name to _GetLocalInt to make it more obvious what it was for and make it more accessible
+// sTable is a new optional parameter.  If not passed, this function works exactly like bioware's
+// GetLocalInt function and gets the variable directly from the passed object.  If the standard tablename
+// (DB) is passed, it saves to the default table.  If a custom table name is passed, it uses that table
+//  on the passed object.  This makes the calls simple for the user to know what's going on:
+
+// _GetLocalInt(oTarget, sVarName) gets sVarName directly off oTarget
+// _GetLocalInt(oTarget, sVarName, DB) gets sVarName from the sqlite database assigned to the PC (if
+//          oTarget is a PC) or the Module's sqlite database, from table "sqlocals_table".
+// _GetLocalInt(oTarget, sVarName, "myTable") gets sVarName from the sqlite database assigned to the PC
+//          (if oTarget is a PC) or the Module's sqlite database, from the table "myTable".
+int _GetLocalInt(object oTarget, string sVarName, string sTable = "")
+{
+    // Since we're combining, we have to make sure we're sending data to the right place.
+    //  FindTarget is a new addition, see above.
+    oTarget = FindTarget(oTarget);
+
+    if (sTable == "")
+        // We're just saving a variable to whatever was returned ... this is the way.
+        return GetLocalInt(oTarget, sVarName);
+
+    // sTable != "", so we want to save to the default or a specific table
+    sqlquery sql = SQLocals_PrepareSelect(oObject, SQLOCALS_TYPE_INT, sVarName, sTable);
+
+    // No changes from here down
+    if (SqlStep(sql))
+        return SqlGetInt(sql, 0);
+    else
+        return 0;
+}
+
+/* INT */
 // Returns an integer stored on oObject, or 0 on error
 // * oObject - a Player or the Module
 // * sVarName - name of the variable to retrieve
 int SQLocals_GetInt(object oObject, string sVarName)
 {
-    if (oObject == OBJECT_INVALID || sVarName == "") return 0;
+    if (oObject == OBJECT_INVALID || sVarName == "")
+        return 0;
 
     sqlquery sql = SQLocals_PrepareSelect(oObject, SQLOCALS_TYPE_INT, sVarName);
 
@@ -293,6 +368,7 @@ int SQLocals_GetInt(object oObject, string sVarName)
     else
         return 0;
 }
+
 
 // Sets an integer stored on oObject to the given value
 // * oObject - a Player or the Module
