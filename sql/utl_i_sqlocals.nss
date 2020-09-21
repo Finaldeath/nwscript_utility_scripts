@@ -281,12 +281,14 @@ location SQLocals_StringToLocation(string sLocation)
 }
 /* **** */
 
-// New function to ensure we're putting variables in the correctly place based on the user's desires.
+// New function to ensure we're putting variables in the correct place based on the user's desires.
 object GetTarget(object oObject, string sTable)
 {
     object module = GetModule();
 
-    // OBJECT_INVALID or asking for the module, just send it back.
+    // OBJECT_INVALID or asking for the module, just send it back.  This also allows the user to
+    //  pass OBJECT_INVALID for a direct module put instead of calling GetModule() and then calling
+    //  it again here.  Not much efficiency, but something.
     if (oObject == OBJECT_INVALID || oObject == module)
         return module;
 
