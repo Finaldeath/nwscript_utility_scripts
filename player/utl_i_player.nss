@@ -139,7 +139,7 @@ void IdentifyPCInventoryUsingLore(object oPC = OBJECT_SELF)
             nGP = GetGoldPieceValue(oItem);
             // If oPC has enough Lore skill to ID the item, then do so.
             if(nMax >= nGP)
-                SendMessageToPC(oPC, GetStringByStrRef(16826224) + " " + GetName(oItem) + " " + GetStringByStrRef(16826225));
+                SendMessageToPC(oPC, "Item identified: " + GetName(oItem));
             else
                 SetIdentified(oItem, FALSE);
         }
