@@ -72,6 +72,6 @@ void AllowMultipleSummonedCreatures(object oSummoner = OBJECT_SELF, int nLimit =
         AssignCommand(oSummon, SetIsDestroyable(FALSE, FALSE, FALSE));
         AssignCommand(oSummon, DelayCommand(0.3, SetIsDestroyable(TRUE, FALSE, FALSE)));
         nNth++;
-        oSummon = GetAssociate(ASSOCIATE_TYPE_SUMMONED, oSummoner, i);
+        oSummon = GetAssociate(ASSOCIATE_TYPE_SUMMONED, oSummoner, nNth);
     }
 }
