@@ -10,27 +10,16 @@
     * GetLocalString / SetLocalString / DeleteLocalString
     * GetLocalObject / SetLocalObject / DeleteLocalObject (NB: remember these are references NOT serialised objects)
     * GetLocalLocation / SetLocalLocation / DeleteLocalLocation
-    
-    Plus a new function for saving just a vector by itself.
+    * Plus a new function for saving just a vector by itself.
 
-    The object used to store these can be either the Module or a player. They have two different use cases:
 
-    Module
-    ------
     Since sometimes iterating over many locals is slow, this might be an excellent way to
-    speed up large amounts of access, or for debugging, while retaining.
+    speed up large amounts of access, or for debugging, or using regex or whatever else.
 
-    It is saved to the save game so is persistent within a singleplayer (or co-op) module runthrough.
+    The oObject field is used as a reference - all of these are set on the modules sqlite DB. 
 
-    Player
-    ------
-    Player locals are persistant on the players character, and good for setting module-to-module
-    settings, such as frameworks around new spells, races, feats, abilities or even things like
-    tools and preferences. On a persistent world with a server vault it can replace more complex
-    saving of variables (such as completed quests) to a central database based on player name and
-    character name.
-
-    However this should store a very minimal amount of data.
+    The module sqlite DB is saved to the save game so is persistent within a singleplayer (or co-op) module
+    runthrough but not retained on restarting a PW server.
 */
 //:://////////////////////////////////////////////
 //:: Part of the nwscript_utility_scripts project; see for dates/creator info
@@ -48,115 +37,115 @@ const int SQLOCALS_TYPE_VECTOR       = 16;
 const int SQLOCALS_TYPE_LOCATION     = 32;
 
 // Returns an integer stored on oObject, or 0 on error
-// * oObject - a Player or the Module
+// * oObject - an object to reference against
 // * sVarName - name of the variable to retrieve
 int SQLocals_GetInt(object oObject, string sVarName);
 // Sets an integer stored on oObject to the given value
-// * oObject - a Player or the Module
+// * oObject - an object to reference against
 // * sVarName - name of the variable to retrieve
 // * nValue - Value to store
 void SQLocals_SetInt(object oObject, string sVarName, int nValue);
 // Deletes an integer stored on oObject
-// * oObject - a Player or the Module
+// * oObject - an object to reference against
 // * sVarName - name of the variable to delete
 void SQLocals_DeleteInt(object oObject, string sVarName);
 
 // Returns a float stored on oObject, or 0.0 on error
-// * oObject - a Player or the Module
+// * oObject - an object to reference against
 // * sVarName - name of the variable to retrieve
 float SQLocals_GetFloat(object oObject, string sVarName);
 // Sets a float stored on oObject to the given value
-// * oObject - a Player or the Module
+// * oObject - an object to reference against
 // * sVarName - name of the variable to retrieve
 // * fValue - Value to store
 void SQLocals_SetFloat(object oObject, string sVarName, float fValue);
 // Deletes a float stored on oObject
-// * oObject - a Player or the Module
+// * oObject - an object to reference against
 // * sVarName - name of the variable to delete
 void SQLocals_DeleteFloat(object oObject, string sVarName);
 
 // Returns an string stored on oObject, or "" on error
-// * oObject - a Player or the Module
+// * oObject - an object to reference against
 // * sVarName - name of the variable to retrieve
 string SQLocals_GetString(object oObject, string sVarName);
 // Sets a string stored on oObject to the given value
-// * oObject - a Player or the Module
+// * oObject - an object to reference against
 // * sVarName - name of the variable to retrieve
 // * sValue - Value to store
 void SQLocals_SetString(object oObject, string sVarName, string sValue);
 // Deletes a string stored on oObject
-// * oObject - a Player or the Module
+// * oObject - an object to reference against
 // * sVarName - name of the variable to delete
 void SQLocals_DeleteString(object oObject, string sVarName);
 
 // Returns an object identifier stored on oObject
 // If this is used on a player it might return a "once valid" OID, so check
 // with GetIsObjectValid, do not compare to OBJECT_INVALID.
-// * oObject - a Player or the Module
+// * oObject - an object to reference against
 // * sVarName - name of the variable to retrieve
 object SQLocals_GetObject(object oObject, string sVarName);
 // Sets an object identifier stored on oObject to the given value
-// * oObject - a Player or the Module
+// * oObject - an object to reference against
 // * sVarName - name of the variable to retrieve
 // * oValue - Value to store
 void SQLocals_SetObject(object oObject, string sVarName, object oValue);
 // Deletes an object identifier stored on oObject
-// * oObject - a Player or the Module
+// * oObject - an object to reference against
 // * sVarName - name of the variable to delete
 void SQLocals_DeleteObject(object oObject, string sVarName);
 
 // Returns a vector stored on oObject, or [0.0, 0.0, 0.0] on error
-// * oObject - a Player or the Module
+// * oObject - an object to reference against
 // * sVarName - name of the variable to retrieve
 vector SQLocals_GetVector(object oObject, string sVarName);
 // Sets a vector stored on oObject to the given value
-// * oObject - a Player or the Module
+// * oObject - an object to reference against
 // * sVarName - name of the variable to retrieve
 // * vValue - Value to store
 void SQLocals_SetVector(object oObject, string sVarName, vector vValue);
 // Deletes a vector stored on oObject
-// * oObject - a Player or the Module
+// * oObject - an object to reference against
 // * sVarName - name of the variable to delete
 void SQLocals_DeleteVector(object oObject, string sVarName);
 
 // Returns a location stored on oObject, or the starting location of the module on error
-// * oObject - a Player or the Module
+// * oObject - an object to reference against
 // * sVarName - name of the variable to retrieve
 location SQLocals_GetLocation(object oObject, string sVarName);
 // Sets a location stored on oObject to the given value
-// * oObject - a Player or the Module
+// * oObject - an object to reference against
 // * sVarName - name of the variable to retrieve
 // * lValue - Value to store
 void SQLocals_SetLocation(object oObject, string sVarName, location lValue);
 // Deletes a location stored on oObject
-// * oObject - a Player or the Module
+// * oObject - an object to reference against
 // * sVarName - name of the variable to delete
 void SQLocals_DeleteLocation(object oObject, string sVarName);
 
 // Deletes a set of locals stored on oObject matching the given criteria
-// * oObject - a Player or the Module
+// * oObject - an object to reference against
 // * nType - The SQL_LOCALS_TYPE_* you wish to remove (default: SQL_LOCALS_TYPE_ALL)
 // * sLike - The string to compare with the SQL "like" comparison
 // * sEscape - The escape character to use with the SQL "escape" keyword
 void SQLocals_Delete(object oObject, int nType = SQLOCALS_TYPE_ALL, string sLike = "", string sEscape = "");
 // Counts a set of locals stored on oObject matching the given criteria
-// * oObject - a Player or the Module
+// * oObject - an object to reference against
 // * nType - The SQL_LOCALS_TYPE_* you wish to remove (default: SQL_LOCALS_TYPE_ALL)
 // * sLike - The string to compare with the SQL "like" comparison
 // * sEscape - The escape character to use with the SQL "escape" keyword
 int SQLocals_Count(object oObject, int nType = SQLOCALS_TYPE_ALL, string sLike = "", string sEscape = "");
 // Checks a locals stored on oObject is set
-// * oObject - a Player or the Module
+// * oObject - an object to reference against
 // * sVarName - name of the variable to retrieve
 // * nType - The SQL_LOCALS_TYPE_* you wish to remove (default: SQL_LOCALS_TYPE_ALL)
 int SQLocals_IsSet(object oObject, string sVarName, int nType);
 // Returns the last Unix time the given variable was updated
-// * oObject - a Player or the Module
+// * oObject - an object to reference against
 // * sVarName - name of the variable to retrieve
 // * nType - The SQL_LOCALS_TYPE_* you wish to remove (default: SQL_LOCALS_TYPE_ALL)
 int SQLocals_GetLastUpdated_UnixEpoch(object oObject, string sVarName, int nType);
 // Returns the last UTC time the given variable was updated
-// * oObject - a Player or the Module
+// * oObject - an object to reference against
 // * sVarName - name of the variable to retrieve
 // * nType - The SQL_LOCALS_TYPE_* you wish to remove (default: SQL_LOCALS_TYPE_ALL)
 string SQLocals_GetLastUpdated_UTC(object oObject, string sVarName, int nType);
@@ -280,7 +269,7 @@ location SQLocals_StringToLocation(string sLocation)
 /* INT */
 
 // Returns an integer stored on oObject, or 0 on error
-// * oObject - a Player or the Module
+// * oObject - an object to reference against
 // * sVarName - name of the variable to retrieve
 int SQLocals_GetInt(object oObject, string sVarName)
 {
@@ -295,7 +284,7 @@ int SQLocals_GetInt(object oObject, string sVarName)
 }
 
 // Sets an integer stored on oObject to the given value
-// * oObject - a Player or the Module
+// * oObject - an object to reference against
 // * sVarName - name of the variable to retrieve
 // * nValue - Value to store
 void SQLocals_SetInt(object oObject, string sVarName, int nValue)
@@ -308,7 +297,7 @@ void SQLocals_SetInt(object oObject, string sVarName, int nValue)
 }
 
 // Deletes an integer stored on oObject
-// * oObject - a Player or the Module
+// * oObject - an object to reference against
 // * sVarName - name of the variable to delete
 void SQLocals_DeleteInt(object oObject, string sVarName)
 {
@@ -322,7 +311,7 @@ void SQLocals_DeleteInt(object oObject, string sVarName)
 /* FLOAT */
 
 // Returns a float stored on oObject, or 0.0 on error
-// * oObject - a Player or the Module
+// * oObject - an object to reference against
 // * sVarName - name of the variable to retrieve
 float SQLocals_GetFloat(object oObject, string sVarName)
 {
@@ -337,7 +326,7 @@ float SQLocals_GetFloat(object oObject, string sVarName)
 }
 
 // Sets a float stored on oObject to the given value
-// * oObject - a Player or the Module
+// * oObject - an object to reference against
 // * sVarName - name of the variable to retrieve
 // * fValue - Value to store
 void SQLocals_SetFloat(object oObject, string sVarName, float fValue)
@@ -350,7 +339,7 @@ void SQLocals_SetFloat(object oObject, string sVarName, float fValue)
 }
 
 // Deletes a float stored on oObject
-// * oObject - a Player or the Module
+// * oObject - an object to reference against
 // * sVarName - name of the variable to delete
 void SQLocals_DeleteFloat(object oObject, string sVarName)
 {
@@ -364,7 +353,7 @@ void SQLocals_DeleteFloat(object oObject, string sVarName)
 /* STRING */
 
 // Returns an string stored on oObject, or "" on error
-// * oObject - a Player or the Module
+// * oObject - an object to reference against
 // * sVarName - name of the variable to retrieve
 string SQLocals_GetString(object oObject, string sVarName)
 {
@@ -379,7 +368,7 @@ string SQLocals_GetString(object oObject, string sVarName)
 }
 
 // Sets a string stored on oObject to the given value
-// * oObject - a Player or the Module
+// * oObject - an object to reference against
 // * sVarName - name of the variable to retrieve
 // * sValue - Value to store
 void SQLocals_SetString(object oObject, string sVarName, string sValue)
@@ -392,7 +381,7 @@ void SQLocals_SetString(object oObject, string sVarName, string sValue)
 }
 
 // Deletes a string stored on oObject
-// * oObject - a Player or the Module
+// * oObject - an object to reference against
 // * sVarName - name of the variable to delete
 void SQLocals_DeleteString(object oObject, string sVarName)
 {
@@ -409,7 +398,7 @@ void SQLocals_DeleteString(object oObject, string sVarName)
 // Returns an object identifier stored on oObject
 // If this is used on a player it might return a "once valid" OID, so check
 // with GetIsObjectValid, do not compare to OBJECT_INVALID.
-// * oObject - a Player or the Module
+// * oObject - an object to reference against
 // * sVarName - name of the variable to retrieve
 object SQLocals_GetObject(object oObject, string sVarName)
 {
@@ -424,7 +413,7 @@ object SQLocals_GetObject(object oObject, string sVarName)
 }
 
 // Sets an object identifier stored on oObject to the given value
-// * oObject - a Player or the Module
+// * oObject - an object to reference against
 // * sVarName - name of the variable to retrieve
 // * oValue - Value to store
 void SQLocals_SetObject(object oObject, string sVarName, object oValue)
@@ -437,7 +426,7 @@ void SQLocals_SetObject(object oObject, string sVarName, object oValue)
 }
 
 // Deletes an object identifier stored on oObject
-// * oObject - a Player or the Module
+// * oObject - an object to reference against
 // * sVarName - name of the variable to delete
 void SQLocals_DeleteObject(object oObject, string sVarName)
 {
@@ -451,7 +440,7 @@ void SQLocals_DeleteObject(object oObject, string sVarName)
 /* VECTOR */
 
 // Returns a vector stored on oObject, or [0.0, 0.0, 0.0] on error
-// * oObject - a Player or the Module
+// * oObject - an object to reference against
 // * sVarName - name of the variable to retrieve
 vector SQLocals_GetVector(object oObject, string sVarName)
 {
@@ -466,7 +455,7 @@ vector SQLocals_GetVector(object oObject, string sVarName)
 }
 
 // Sets a vector stored on oObject to the given value
-// * oObject - a Player or the Module
+// * oObject - an object to reference against
 // * sVarName - name of the variable to retrieve
 // * vValue - Value to store
 void SQLocals_SetVector(object oObject, string sVarName, vector vValue)
@@ -479,7 +468,7 @@ void SQLocals_SetVector(object oObject, string sVarName, vector vValue)
 }
 
 // Deletes a vector stored on oObject
-// * oObject - a Player or the Module
+// * oObject - an object to reference against
 // * sVarName - name of the variable to delete
 void SQLocals_DeleteVector(object oObject, string sVarName)
 {
@@ -493,7 +482,7 @@ void SQLocals_DeleteVector(object oObject, string sVarName)
 /* LOCATION */
 
 // Returns a location stored on oObject, or the starting location of the module on error
-// * oObject - a Player or the Module
+// * oObject - an object to reference against
 // * sVarName - name of the variable to retrieve
 location SQLocals_GetLocation(object oObject, string sVarName)
 {
@@ -508,7 +497,7 @@ location SQLocals_GetLocation(object oObject, string sVarName)
 }
 
 // Sets a location stored on oObject to the given value
-// * oObject - a Player or the Module
+// * oObject - an object to reference against
 // * sVarName - name of the variable to retrieve
 // * lValue - Value to store
 void SQLocals_SetLocation(object oObject, string sVarName, location lValue)
@@ -521,7 +510,7 @@ void SQLocals_SetLocation(object oObject, string sVarName, location lValue)
 }
 
 // Deletes a location stored on oObject
-// * oObject - a Player or the Module
+// * oObject - an object to reference against
 // * sVarName - name of the variable to delete
 void SQLocals_DeleteLocation(object oObject, string sVarName)
 {
@@ -535,7 +524,7 @@ void SQLocals_DeleteLocation(object oObject, string sVarName)
 /* UTILITY */
 
 // Deletes a set of locals stored on oObject matching the given criteria
-// * oObject - a Player or the Module
+// * oObject - an object to reference against
 // * nType - The SQL_LOCALS_TYPE_* you wish to remove (default: SQL_LOCALS_TYPE_ALL)
 // * sLike - The string to compare with the SQL "like" comparison
 // * sEscape - The escape character to use with the SQL "escape" keyword
@@ -568,7 +557,7 @@ void SQLocals_Delete(object oObject, int nType = SQLOCALS_TYPE_ALL, string sLike
 }
 
 // Counts a set of locals stored on oObject matching the given criteria
-// * oObject - a Player or the Module
+// * oObject - an object to reference against
 // * nType - The SQL_LOCALS_TYPE_* you wish to remove (default: SQL_LOCALS_TYPE_ALL)
 // * sLike - The string to compare with the SQL "like" comparison
 // * sEscape - The escape character to use with the SQL "escape" keyword
@@ -604,7 +593,7 @@ int SQLocals_Count(object oObject, int nType = SQLOCALS_TYPE_ALL, string sLike =
 }
 
 // Checks a locals stored on oObject is set
-// * oObject - a Player or the Module
+// * oObject - an object to reference against
 // * sVarName - name of the variable to retrieve
 // * nType - The SQL_LOCALS_TYPE_* you wish to remove (default: SQL_LOCALS_TYPE_ALL)
 int SQLocals_IsSet(object oObject, string sVarName, int nType)
@@ -628,7 +617,7 @@ int SQLocals_IsSet(object oObject, string sVarName, int nType)
 }
 
 // Returns the last Unix time the given variable was updated
-// * oObject - a Player or the Module
+// * oObject - an object to reference against
 // * sVarName - name of the variable to retrieve
 // * nType - The SQL_LOCALS_TYPE_* you wish to remove (default: SQL_LOCALS_TYPE_ALL)
 int SQLocals_GetLastUpdated_UnixEpoch(object oObject, string sVarName, int nType)
@@ -654,7 +643,7 @@ int SQLocals_GetLastUpdated_UnixEpoch(object oObject, string sVarName, int nType
 }
 
 // Returns the last UTC time the given variable was updated
-// * oObject - a Player or the Module
+// * oObject - an object to reference against
 // * sVarName - name of the variable to retrieve
 // * nType - The SQL_LOCALS_TYPE_* you wish to remove (default: SQL_LOCALS_TYPE_ALL)
 string SQLocals_GetLastUpdated_UTC(object oObject, string sVarName, int nType)
