@@ -16,6 +16,9 @@ int max(int a, int b);
 // Returns the lower of a or b
 int min(int a, int b);
 
+// Returns nValue bounded by nMin and nMax
+int clamp(int nValue, int nMin, int nMax);
+
 // Returns the higher of a or b
 int fmax(float a, float b);
 
@@ -51,6 +54,12 @@ int max(int a, int b)
 int min(int a, int b)
 {
     return (a < b) ? a : b;
+}
+
+// Returns nValue bounded by nMin and nMax
+int clamp(int nValue, int nMin, int nMax)
+{
+    return (nValue < nMin) ? nMin : ((nValue > nMax) ? nMax : nValue);
 }
 
 // Returns the higher of a or b
