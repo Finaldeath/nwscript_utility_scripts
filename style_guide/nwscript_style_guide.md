@@ -226,10 +226,9 @@ These should be made as readable as possible with only one value per line. Brack
         case COOL_NUMBER_5: bReturn = TRUE;     break; // Special number 5
         default:
         {
-			// We don't think it's cool
+            // We don't think it's cool
             bReturn = FALSE;
         }
         break;
     }
 ```
-
