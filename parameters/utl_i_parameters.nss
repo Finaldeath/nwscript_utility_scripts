@@ -81,7 +81,7 @@ int ConstantStringToInt(string sConstantName, int nErrorValue = 0)
 // Example: "RADIUS_SIZE_SMALL" will get converted to the float 1.67
 // Use this to convert script params into usable values.
 // * sConstantName - The name of a constant to convert 
-// * nErrorValue - The value to return if the constant isn't found. Default: 0.0
+// * fErrorValue - The value to return if the constant isn't found. Default: 0.0
 float ConstantStringToFloat(string sConstantName, float fErrorValue = 0.0)
 {
     // This is the error return value being set in case ExecuteScriptChunk fails.
