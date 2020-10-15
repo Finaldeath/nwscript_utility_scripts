@@ -20,6 +20,8 @@
 
     The module sqlite DB is saved to the save game so is persistent within a singleplayer (or co-op) module
     runthrough but not retained on restarting a PW server.
+    
+    See utl_i_sqlplayer.nss for the player persistent version (which does travel between modules).
 */
 //:://////////////////////////////////////////////
 //:: Part of the nwscript_utility_scripts project; see for dates/creator info
