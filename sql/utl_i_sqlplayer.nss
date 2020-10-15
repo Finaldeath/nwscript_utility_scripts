@@ -23,7 +23,7 @@
 //:: https://github.com/Finaldeath/nwscript_utility_scripts
 //:://////////////////////////////////////////////
 
-const string SQLOCALS_TABLE_NAME     = "sqlocals_table";
+const string SQLOCALS_TABLE_NAME     = "sqlocalsplayer_table";
 
 const int SQLOCALS_TYPE_ALL          = 0;
 const int SQLOCALS_TYPE_INT          = 1;
@@ -149,7 +149,7 @@ string SQLocalsPlayer_GetLastUpdated_UTC(object oPlayer, string sVarName, int nT
 
 
 /* INTERNAL */
-void SQLocals_CreateTable(object oPlayer)
+void SQLocalsPlayer_CreateTable(object oPlayer)
 {
     sqlquery sql = SqlPrepareQueryObject(oPlayer,
         "CREATE TABLE IF NOT EXISTS " + SQLOCALS_TABLE_NAME + " (" +
@@ -161,9 +161,9 @@ void SQLocals_CreateTable(object oPlayer)
     SqlStep(sql);
 }
 
-sqlquery SQLocals_PrepareSelect(object oPlayer, int nType, string sVarName)
+sqlquery SQLocalsPlayer_PrepareSelect(object oPlayer, int nType, string sVarName)
 {
-    SQLocals_CreateTable(oPlayer);
+    SQLocalsPlayer_CreateTable(oPlayer);
 
     sqlquery sql = SqlPrepareQueryObject(oPlayer,
         "SELECT value FROM " + SQLOCALS_TABLE_NAME + " " +
@@ -175,9 +175,9 @@ sqlquery SQLocals_PrepareSelect(object oPlayer, int nType, string sVarName)
     return sql;
 }
 
-sqlquery SQLocals_PrepareInsert(object oPlayer, int nType, string sVarName)
+sqlquery SQLocalsPlayer_PrepareInsert(object oPlayer, int nType, string sVarName)
 {
-    SQLocals_CreateTable(oPlayer);
+    SQLocalsPlayer_CreateTable(oPlayer);
 
     sqlquery sql = SqlPrepareQueryObject(oPlayer,
         "INSERT INTO " + SQLOCALS_TABLE_NAME + " " +
@@ -190,9 +190,9 @@ sqlquery SQLocals_PrepareInsert(object oPlayer, int nType, string sVarName)
     return sql;
 }
 
-sqlquery SQLocals_PrepareDelete(object oPlayer, int nType, string sVarName)
+sqlquery SQLocalsPlayer_PrepareDelete(object oPlayer, int nType, string sVarName)
 {
-    SQLocals_CreateTable(oPlayer);
+    SQLocalsPlayer_CreateTable(oPlayer);
 
     sqlquery sql = SqlPrepareQueryObject(oPlayer,
         "DELETE FROM " + SQLOCALS_TABLE_NAME + " " +
@@ -204,7 +204,7 @@ sqlquery SQLocals_PrepareDelete(object oPlayer, int nType, string sVarName)
     return sql;
 }
 
-string SQLocals_LocationToString(location locLocation)
+string SQLocalsPlayer_LocationToString(location locLocation)
 {
     string sAreaId = ObjectToString(GetAreaFromLocation(locLocation));
     vector vPosition = GetPositionFromLocation(locLocation);
@@ -217,7 +217,7 @@ string SQLocals_LocationToString(location locLocation)
            "#F#" + FloatToString(fFacing, 0, 5) + "#";
 }
 
-location SQLocals_StringToLocation(string sLocation)
+location SQLocalsPlayer_StringToLocation(string sLocation)
 {
     location locLocation;
 
@@ -268,7 +268,7 @@ int SQLocalsPlayer_GetInt(object oPlayer, string sVarName)
 {
     if (!GetIsPC(oPlayer) || sVarName == "") return 0;
 
-    sqlquery sql = SQLocals_PrepareSelect(oPlayer, SQLOCALS_TYPE_INT, sVarName);
+    sqlquery sql = SQLocalsPlayer_PrepareSelect(oPlayer, SQLOCALS_TYPE_INT, sVarName);
 
     if (SqlStep(sql))
         return SqlGetInt(sql, 0);
@@ -284,7 +284,7 @@ void SQLocalsPlayer_SetInt(object oPlayer, string sVarName, int nValue)
 {
     if (!GetIsPC(oPlayer) || sVarName == "") return;
 
-    sqlquery sql = SQLocals_PrepareInsert(oPlayer, SQLOCALS_TYPE_INT, sVarName);
+    sqlquery sql = SQLocalsPlayer_PrepareInsert(oPlayer, SQLOCALS_TYPE_INT, sVarName);
     SqlBindInt(sql, "@value", nValue);
     SqlStep(sql);
 }
@@ -296,7 +296,7 @@ void SQLocalsPlayer_DeleteInt(object oPlayer, string sVarName)
 {
     if (!GetIsPC(oPlayer) || sVarName == "") return;
 
-    sqlquery sql = SQLocals_PrepareDelete(oPlayer, SQLOCALS_TYPE_INT, sVarName);
+    sqlquery sql = SQLocalsPlayer_PrepareDelete(oPlayer, SQLOCALS_TYPE_INT, sVarName);
     SqlStep(sql);
 }
 /* **** */
@@ -310,7 +310,7 @@ float SQLocalsPlayer_GetFloat(object oPlayer, string sVarName)
 {
     if (!GetIsPC(oPlayer) || sVarName == "") return 0.0f;
 
-    sqlquery sql = SQLocals_PrepareSelect(oPlayer, SQLOCALS_TYPE_FLOAT, sVarName);
+    sqlquery sql = SQLocalsPlayer_PrepareSelect(oPlayer, SQLOCALS_TYPE_FLOAT, sVarName);
 
     if (SqlStep(sql))
         return SqlGetFloat(sql, 0);
@@ -326,7 +326,7 @@ void SQLocalsPlayer_SetFloat(object oPlayer, string sVarName, float fValue)
 {
     if (!GetIsPC(oPlayer) || sVarName == "") return;
 
-    sqlquery sql = SQLocals_PrepareInsert(oPlayer, SQLOCALS_TYPE_FLOAT, sVarName);
+    sqlquery sql = SQLocalsPlayer_PrepareInsert(oPlayer, SQLOCALS_TYPE_FLOAT, sVarName);
     SqlBindFloat(sql, "@value", fValue);
     SqlStep(sql);
 }
@@ -338,7 +338,7 @@ void SQLocalsPlayer_DeleteFloat(object oPlayer, string sVarName)
 {
     if (!GetIsPC(oPlayer) || sVarName == "") return;
 
-    sqlquery sql = SQLocals_PrepareDelete(oPlayer, SQLOCALS_TYPE_FLOAT, sVarName);
+    sqlquery sql = SQLocalsPlayer_PrepareDelete(oPlayer, SQLOCALS_TYPE_FLOAT, sVarName);
     SqlStep(sql);
 }
 /* **** */
@@ -352,7 +352,7 @@ string SQLocalsPlayer_GetString(object oPlayer, string sVarName)
 {
     if (!GetIsPC(oPlayer) || sVarName == "") return "";
 
-    sqlquery sql = SQLocals_PrepareSelect(oPlayer, SQLOCALS_TYPE_STRING, sVarName);
+    sqlquery sql = SQLocalsPlayer_PrepareSelect(oPlayer, SQLOCALS_TYPE_STRING, sVarName);
 
     if (SqlStep(sql))
         return SqlGetString(sql, 0);
@@ -368,7 +368,7 @@ void SQLocalsPlayer_SetString(object oPlayer, string sVarName, string sValue)
 {
     if (!GetIsPC(oPlayer) || sVarName == "") return;
 
-    sqlquery sql = SQLocals_PrepareInsert(oPlayer, SQLOCALS_TYPE_STRING, sVarName);
+    sqlquery sql = SQLocalsPlayer_PrepareInsert(oPlayer, SQLOCALS_TYPE_STRING, sVarName);
     SqlBindString(sql, "@value", sValue);
     SqlStep(sql);
 }
@@ -380,7 +380,7 @@ void SQLocalsPlayer_DeleteString(object oPlayer, string sVarName)
 {
     if (!GetIsPC(oPlayer) || sVarName == "") return;
 
-    sqlquery sql = SQLocals_PrepareDelete(oPlayer, SQLOCALS_TYPE_STRING, sVarName);
+    sqlquery sql = SQLocalsPlayer_PrepareDelete(oPlayer, SQLOCALS_TYPE_STRING, sVarName);
     SqlStep(sql);
 }
 /* **** */
@@ -397,7 +397,7 @@ object SQLocalsPlayer_GetObject(object oPlayer, string sVarName)
 {
     if (!GetIsPC(oPlayer) || sVarName == "") return OBJECT_INVALID;
 
-    sqlquery sql = SQLocals_PrepareSelect(oPlayer, SQLOCALS_TYPE_OBJECT, sVarName);
+    sqlquery sql = SQLocalsPlayer_PrepareSelect(oPlayer, SQLOCALS_TYPE_OBJECT, sVarName);
 
     if (SqlStep(sql))
         return StringToObject(SqlGetString(sql, 0));
@@ -413,7 +413,7 @@ void SQLocalsPlayer_SetObject(object oPlayer, string sVarName, object oValue)
 {
     if (!GetIsPC(oPlayer) || sVarName == "") return;
 
-    sqlquery sql = SQLocals_PrepareInsert(oPlayer, SQLOCALS_TYPE_OBJECT, sVarName);
+    sqlquery sql = SQLocalsPlayer_PrepareInsert(oPlayer, SQLOCALS_TYPE_OBJECT, sVarName);
     SqlBindString(sql, "@value", ObjectToString(oValue));
     SqlStep(sql);
 }
@@ -425,7 +425,7 @@ void SQLocalsPlayer_DeleteObject(object oPlayer, string sVarName)
 {
     if (!GetIsPC(oPlayer) || sVarName == "") return;
 
-    sqlquery sql = SQLocals_PrepareDelete(oPlayer, SQLOCALS_TYPE_OBJECT, sVarName);
+    sqlquery sql = SQLocalsPlayer_PrepareDelete(oPlayer, SQLOCALS_TYPE_OBJECT, sVarName);
     SqlStep(sql);
 }
 /* **** */
@@ -439,7 +439,7 @@ vector SQLocalsPlayer_GetVector(object oPlayer, string sVarName)
 {
     if (!GetIsPC(oPlayer) || sVarName == "") return [0.0f, 0.0f, 0.0f];
 
-    sqlquery sql = SQLocals_PrepareSelect(oPlayer, SQLOCALS_TYPE_VECTOR, sVarName);
+    sqlquery sql = SQLocalsPlayer_PrepareSelect(oPlayer, SQLOCALS_TYPE_VECTOR, sVarName);
 
     if (SqlStep(sql))
         return SqlGetVector(sql, 0);
@@ -455,7 +455,7 @@ void SQLocalsPlayer_SetVector(object oPlayer, string sVarName, vector vValue)
 {
     if (!GetIsPC(oPlayer) || sVarName == "") return;
 
-    sqlquery sql = SQLocals_PrepareInsert(oPlayer, SQLOCALS_TYPE_VECTOR, sVarName);
+    sqlquery sql = SQLocalsPlayer_PrepareInsert(oPlayer, SQLOCALS_TYPE_VECTOR, sVarName);
     SqlBindVector(sql, "@value", vValue);
     SqlStep(sql);
 }
@@ -467,7 +467,7 @@ void SQLocalsPlayer_DeleteVector(object oPlayer, string sVarName)
 {
     if (!GetIsPC(oPlayer) || sVarName == "") return;
 
-    sqlquery sql = SQLocals_PrepareDelete(oPlayer, SQLOCALS_TYPE_VECTOR, sVarName);
+    sqlquery sql = SQLocalsPlayer_PrepareDelete(oPlayer, SQLOCALS_TYPE_VECTOR, sVarName);
     SqlStep(sql);
 }
 /* **** */
@@ -481,10 +481,10 @@ location SQLocalsPlayer_GetLocation(object oPlayer, string sVarName)
 {
     if (!GetIsPC(oPlayer) || sVarName == "") return GetStartingLocation();
 
-    sqlquery sql = SQLocals_PrepareSelect(oPlayer, SQLOCALS_TYPE_LOCATION, sVarName);
+    sqlquery sql = SQLocalsPlayer_PrepareSelect(oPlayer, SQLOCALS_TYPE_LOCATION, sVarName);
 
     if (SqlStep(sql))
-        return SQLocals_StringToLocation(SqlGetString(sql, 0));
+        return SQLocalsPlayer_StringToLocation(SqlGetString(sql, 0));
     else
         return GetStartingLocation();
 }
@@ -497,8 +497,8 @@ void SQLocalsPlayer_SetLocation(object oPlayer, string sVarName, location lValue
 {
     if (!GetIsPC(oPlayer) || sVarName == "") return;
 
-    sqlquery sql = SQLocals_PrepareInsert(oPlayer, SQLOCALS_TYPE_LOCATION, sVarName);
-    SqlBindString(sql, "@value", SQLocals_LocationToString(lValue));
+    sqlquery sql = SQLocalsPlayer_PrepareInsert(oPlayer, SQLOCALS_TYPE_LOCATION, sVarName);
+    SqlBindString(sql, "@value", SQLocalsPlayer_LocationToString(lValue));
     SqlStep(sql);
 }
 
@@ -509,7 +509,7 @@ void SQLocalsPlayer_DeleteLocation(object oPlayer, string sVarName)
 {
     if (!GetIsPC(oPlayer) || sVarName == "") return;
 
-    sqlquery sql = SQLocals_PrepareDelete(oPlayer, SQLOCALS_TYPE_LOCATION, sVarName);
+    sqlquery sql = SQLocalsPlayer_PrepareDelete(oPlayer, SQLOCALS_TYPE_LOCATION, sVarName);
     SqlStep(sql);
 }
 /* **** */
@@ -525,7 +525,7 @@ void SQLocalsPlayer_Delete(object oPlayer, int nType = SQLOCALS_TYPE_ALL, string
 {
     if (!GetIsPC(oPlayer) || nType < 0) return;
 
-    SQLocals_CreateTable(oPlayer);
+    SQLocalsPlayer_CreateTable(oPlayer);
 
     sqlquery sql = SqlPrepareQueryObject(oPlayer,
         "DELETE FROM " + SQLOCALS_TABLE_NAME + " " +
@@ -556,7 +556,7 @@ int SQLocalsPlayer_Count(object oPlayer, int nType = SQLOCALS_TYPE_ALL, string s
 {
     if (!GetIsPC(oPlayer) || nType < 0) return 0;
 
-    SQLocals_CreateTable(oPlayer);
+    SQLocalsPlayer_CreateTable(oPlayer);
 
     sqlquery sql = SqlPrepareQueryObject(oPlayer,
         "SELECT COUNT(*) FROM " + SQLOCALS_TABLE_NAME + " " +
@@ -589,7 +589,7 @@ int SQLocalsPlayer_IsSet(object oPlayer, string sVarName, int nType)
 {
     if (!GetIsPC(oPlayer) || nType < 0) return 0;
 
-    SQLocals_CreateTable(oPlayer);
+    SQLocalsPlayer_CreateTable(oPlayer);
 
     sqlquery sql = SqlPrepareQueryObject(oPlayer,
         "SELECT * FROM " + SQLOCALS_TABLE_NAME + " " +
@@ -612,7 +612,7 @@ int SQLocalsPlayer_GetLastUpdated_UnixEpoch(object oPlayer, string sVarName, int
 {
     if (!GetIsPC(oPlayer) || nType <= 0) return 0;
 
-    SQLocals_CreateTable(oPlayer);
+    SQLocalsPlayer_CreateTable(oPlayer);
 
     sqlquery sql = SqlPrepareQueryObject(oPlayer,
         "SELECT timestamp FROM " + SQLOCALS_TABLE_NAME + " " +
@@ -636,7 +636,7 @@ string SQLocalsPlayer_GetLastUpdated_UTC(object oPlayer, string sVarName, int nT
 {
     if (!GetIsPC(oPlayer) || nType <= 0) return "";
 
-    SQLocals_CreateTable(oPlayer);
+    SQLocalsPlayer_CreateTable(oPlayer);
 
     sqlquery sql = SqlPrepareQueryObject(oPlayer,
         "SELECT datetime(timestamp, 'unixepoch') FROM " + SQLOCALS_TABLE_NAME + " " +
