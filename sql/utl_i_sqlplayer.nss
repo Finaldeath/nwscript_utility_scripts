@@ -127,24 +127,24 @@ void SQLocalsPlayer_DeleteLocation(object oPlayer, string sVarName);
 void SQLocalsPlayer_Delete(object oPlayer, int nType = SQLOCALS_TYPE_ALL, string sLike = "", string sEscape = "");
 // Counts a set of locals stored on oPlayer matching the given criteria
 // * oPlayer - a player object to save the variable on
-// * nType - The SQL_LOCALS_TYPE_* you wish to remove (default: SQL_LOCALS_TYPE_ALL)
+// * nType - The SQL_LOCALS_TYPE_* you wish to count (default: SQL_LOCALS_TYPE_ALL)
 // * sLike - The string to compare with the SQL "like" comparison
 // * sEscape - The escape character to use with the SQL "escape" keyword
 int SQLocalsPlayer_Count(object oPlayer, int nType = SQLOCALS_TYPE_ALL, string sLike = "", string sEscape = "");
 // Checks a locals stored on oPlayer is set
 // * oPlayer - a player object to save the variable on
 // * sVarName - name of the variable to retrieve
-// * nType - The SQL_LOCALS_TYPE_* you wish to remove (default: SQL_LOCALS_TYPE_ALL)
+// * nType - The SQL_LOCALS_TYPE_* you wish to check (default: SQL_LOCALS_TYPE_ALL)
 int SQLocalsPlayer_IsSet(object oPlayer, string sVarName, int nType);
 // Returns the last Unix time the given variable was updated
 // * oPlayer - a player object to save the variable on
 // * sVarName - name of the variable to retrieve
-// * nType - The SQL_LOCALS_TYPE_* you wish to remove (default: SQL_LOCALS_TYPE_ALL)
+// * nType - The SQL_LOCALS_TYPE_* you wish to check (default: SQL_LOCALS_TYPE_ALL)
 int SQLocalsPlayer_GetLastUpdated_UnixEpoch(object oPlayer, string sVarName, int nType);
 // Returns the last UTC time the given variable was updated
 // * oPlayer - a player object to save the variable on
 // * sVarName - name of the variable to retrieve
-// * nType - The SQL_LOCALS_TYPE_* you wish to remove (default: SQL_LOCALS_TYPE_ALL)
+// * nType - The SQL_LOCALS_TYPE_* you wish to check (default: SQL_LOCALS_TYPE_ALL)
 string SQLocalsPlayer_GetLastUpdated_UTC(object oPlayer, string sVarName, int nType);
 
 
@@ -549,7 +549,7 @@ void SQLocalsPlayer_Delete(object oPlayer, int nType = SQLOCALS_TYPE_ALL, string
 
 // Counts a set of locals stored on oPlayer matching the given criteria
 // * oPlayer - a player object to save the variable on
-// * nType - The SQL_LOCALS_TYPE_* you wish to remove (default: SQL_LOCALS_TYPE_ALL)
+// * nType - The SQL_LOCALS_TYPE_* you wish to count (default: SQL_LOCALS_TYPE_ALL)
 // * sLike - The string to compare with the SQL "like" comparison
 // * sEscape - The escape character to use with the SQL "escape" keyword
 int SQLocalsPlayer_Count(object oPlayer, int nType = SQLOCALS_TYPE_ALL, string sLike = "", string sEscape = "")
@@ -584,7 +584,7 @@ int SQLocalsPlayer_Count(object oPlayer, int nType = SQLOCALS_TYPE_ALL, string s
 // Checks a locals stored on oPlayer is set
 // * oPlayer - a player object to save the variable on
 // * sVarName - name of the variable to retrieve
-// * nType - The SQL_LOCALS_TYPE_* you wish to remove (default: SQL_LOCALS_TYPE_ALL)
+// * nType - The SQL_LOCALS_TYPE_* you wish to check (default: SQL_LOCALS_TYPE_ALL)
 int SQLocalsPlayer_IsSet(object oPlayer, string sVarName, int nType)
 {
     if (!GetIsPC(oPlayer) || nType < 0) return 0;
@@ -607,7 +607,7 @@ int SQLocalsPlayer_IsSet(object oPlayer, string sVarName, int nType)
 // Returns the last Unix time the given variable was updated
 // * oPlayer - a player object to save the variable on
 // * sVarName - name of the variable to retrieve
-// * nType - The SQL_LOCALS_TYPE_* you wish to remove (default: SQL_LOCALS_TYPE_ALL)
+// * nType - The SQL_LOCALS_TYPE_* you wish to check (default: SQL_LOCALS_TYPE_ALL)
 int SQLocalsPlayer_GetLastUpdated_UnixEpoch(object oPlayer, string sVarName, int nType)
 {
     if (!GetIsPC(oPlayer) || nType <= 0) return 0;
@@ -631,7 +631,7 @@ int SQLocalsPlayer_GetLastUpdated_UnixEpoch(object oPlayer, string sVarName, int
 // Returns the last UTC time the given variable was updated
 // * oPlayer - a player object to save the variable on
 // * sVarName - name of the variable to retrieve
-// * nType - The SQL_LOCALS_TYPE_* you wish to remove (default: SQL_LOCALS_TYPE_ALL)
+// * nType - The SQL_LOCALS_TYPE_* you wish to check (default: SQL_LOCALS_TYPE_ALL)
 string SQLocalsPlayer_GetLastUpdated_UTC(object oPlayer, string sVarName, int nType)
 {
     if (!GetIsPC(oPlayer) || nType <= 0) return "";
