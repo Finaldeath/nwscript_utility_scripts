@@ -25,19 +25,34 @@ int GetGoldAcquired();
 // * oObject - a placeable, store, creature or container
 void ClearInventory(object oObject);
 
+// Destroys all the items in the inventory of oObject that matches the given resref
+// Creatures also have all equipped items checked
+// * oObject - a placeable, store, creature or container
+// * sResRef - item resref to check
+void DestroyAllItemsByResRef(object oObject, string sResRef);
+
 // Destroys all the items in the inventory of oObject that matches the resref
 // list given.
 // Creatures also have all equipped items checked
 // * oObject - a placeable, store, creature or container
 // * sResRefList - item resref to check, or multiple resrefs divided by an 
 //                 resref-invalid character, eg; abc12;xyz34
-void DestroyAllItemsByResRef(object oObject, string sResRefList);
+void DestroyAllItemsByResRefList(object oObject, string sResRefList);
 
 // Destroys all the items in the inventory of oObject that matches the tag
 // Creatures also have all equipped items checked
 // * oObject - a placeable, store, creature or container
 // * sTag - item tag to check
 void DestroyAllItemsByTag(object oObject, string sTag);
+
+// Destroys all the items in the inventory of oObject that matches the tag list
+// Creatures also have all equipped items checked
+// * oObject - a placeable, store, creature or container
+// * sTagList - item tag list. Divide it with a tag-invalid character, eg; abc12;xyz34
+// - Note: This function assumes tags are unqiue! Do not use if you 
+//         have both mybadasssword and mybadasssword2 and search for tag "mybadasssword"
+//         since this finds both.
+void DestroyAllItemsByTagList(object oObject, string sTagList);
 
 // Makes all items in the inventory/equipped items of oObject flagged as droppable (and cursed) or not
 // Will not affect creature items (which should never be droppable)
@@ -113,13 +128,52 @@ void ClearInventory(object oObject)
 }
 
 
+// Destroys all the items in the inventory of oObject that matches the given resref
+// Creatures also have all equipped items checked
+// * oObject - a placeable, store, creature or container
+// * sResRef - item resref to check
+void DestroyAllItemsByResRef(object oObject, string sResRef)
+{
+    object oItem = GetFirstItemInInventory(oObject);
+    while(GetIsObjectValid(oItem))
+    {
+        if(GetHasInventory(oItem))
+        {
+            object oItem2 = GetFirstItemInInventory(oItem);
+            while(oItem2 != OBJECT_INVALID)
+            {
+                if(GetResRef(oItem2) == sResRef)
+                    DestroyObject(oItem2);
+                oItem2 = GetNextItemInInventory(oItem);
+            }
+        }
+
+        if(GetResRef(oItem) == sResRef)
+            DestroyObject(oItem);
+        oItem = GetNextItemInInventory(oObject);
+    }
+    // Check inventory slots as well for creatures
+    if(GetObjectType(oObject) == OBJECT_TYPE_CREATURE)
+    {
+        int i;
+        for(i = 0; i < NUM_INVENTORY_SLOTS; i++)
+        {
+            oItem = GetItemInSlot(i, oObject);
+            if(GetResRef(oItem) == sResRef)
+                DestroyObject(oItem);
+        }
+    }
+}
+
 // Destroys all the items in the inventory of oObject that matches the resref
 // list given.
 // Creatures also have all equipped items checked
 // * oObject - a placeable, store, creature or container
-// * sResRefList - item resref to check, or multiple resrefs divided by an 
-//                 resref-invalid character, eg; abc12;xyz34
-void DestroyAllItemsByResRef(object oObject, string sResRefList)
+// * sResRefList - item resref list. Divide it with a resref-invalid character, eg; abc12;xyz34
+// - Note: This function assumes resrefs are unqiue! Do not use if you 
+//         have both mybadasssword and mybadasssword2 and search for resref "mybadasssword"
+//         since this finds both.
+void DestroyAllItemsByResRefList(object oObject, string sResRefList)
 {
     object oItem = GetFirstItemInInventory(oObject);
     while(GetIsObjectValid(oItem))
@@ -166,13 +220,13 @@ void DestroyAllItemsByTag(object oObject, string sTag)
             object oItem2 = GetFirstItemInInventory(oItem);
             while(oItem2 != OBJECT_INVALID)
             {
-                if(FindSubString(sTag, GetTag(oItem2)) >= 0)
+                if(GetTag(oItem2) == sTag)
                     DestroyObject(oItem2);
                 oItem2 = GetNextItemInInventory(oItem);
             }
         }
 
-        if (FindSubString(sTag, GetTag(oItem)) >= 0)
+        if(GetTag(oItem) == sTag)
             DestroyObject(oItem);
         oItem = GetNextItemInInventory(oObject);
     }
@@ -183,7 +237,47 @@ void DestroyAllItemsByTag(object oObject, string sTag)
         for(i = 0; i < NUM_INVENTORY_SLOTS; i++)
         {
             oItem = GetItemInSlot(i, oObject);
-            if(FindSubString(sTag, GetTag(oItem)) >= 0)
+            if(GetTag(oItem) == sTag)
+                DestroyObject(oItem);
+        }
+    }
+}
+
+// Destroys all the items in the inventory of oObject that matches the tag list
+// Creatures also have all equipped items checked
+// * oObject - a placeable, store, creature or container
+// * sTagList - item tag list. Divide it with a tag-invalid character, eg; abc12;xyz34
+// - Note: This function assumes tags are unqiue! Do not use if you 
+//         have both mybadasssword and mybadasssword2 and search for tag "mybadasssword"
+//         since this finds both.
+void DestroyAllItemsByTagList(object oObject, string sTagList)
+{
+    object oItem = GetFirstItemInInventory(oObject);
+    while(GetIsObjectValid(oItem))
+    {
+        if(GetHasInventory(oItem))
+        {
+            object oItem2 = GetFirstItemInInventory(oItem);
+            while(oItem2 != OBJECT_INVALID)
+            {
+                if(FindSubString(sTagList, GetTag(oItem2)) >= 0)
+                    DestroyObject(oItem2);
+                oItem2 = GetNextItemInInventory(oItem);
+            }
+        }
+
+        if (FindSubString(sTagList, GetTag(oItem)) >= 0)
+            DestroyObject(oItem);
+        oItem = GetNextItemInInventory(oObject);
+    }
+    // Check inventory slots as well for creatures
+    if(GetObjectType(oObject) == OBJECT_TYPE_CREATURE)
+    {
+        int i;
+        for(i = 0; i < NUM_INVENTORY_SLOTS; i++)
+        {
+            oItem = GetItemInSlot(i, oObject);
+            if(FindSubString(sTagList, GetTag(oItem)) >= 0)
                 DestroyObject(oItem);
         }
     }
