@@ -26,10 +26,12 @@ int GetGoldAcquired();
 void ClearInventory(object oObject);
 
 // Destroys all the items in the inventory of oObject that matches the resref
+// list given.
 // Creatures also have all equipped items checked
 // * oObject - a placeable, store, creature or container
-// * sResRef - item resref to check
-void DestroyAllItemsByResRef(object oObject, string sResRef);
+// * sResRefList - item resref to check, or multiple resrefs divided by an 
+//                 resref-invalid character, eg; abc12;xyz34
+void DestroyAllItemsByResRef(object oObject, string sResRefList);
 
 // Destroys all the items in the inventory of oObject that matches the tag
 // Creatures also have all equipped items checked
@@ -112,10 +114,12 @@ void ClearInventory(object oObject)
 
 
 // Destroys all the items in the inventory of oObject that matches the resref
+// list given.
 // Creatures also have all equipped items checked
 // * oObject - a placeable, store, creature or container
-// * sResRef - item resref to check
-void DestroyAllItemsByResRef(object oObject, string sResRef)
+// * sResRefList - item resref to check, or multiple resrefs divided by an 
+//                 resref-invalid character, eg; abc12;xyz34
+void DestroyAllItemsByResRef(object oObject, string sResRefList)
 {
     object oItem = GetFirstItemInInventory(oObject);
     while(GetIsObjectValid(oItem))
@@ -125,13 +129,13 @@ void DestroyAllItemsByResRef(object oObject, string sResRef)
             object oItem2 = GetFirstItemInInventory(oItem);
             while(oItem2 != OBJECT_INVALID)
             {
-                if(FindSubString(sResRef, GetResRef(oItem2)) >= 0)
+                if(FindSubString(sResRefList, GetResRef(oItem2)) >= 0)
                     DestroyObject(oItem2);
                 oItem2 = GetNextItemInInventory(oItem);
             }
         }
 
-        if (FindSubString(sResRef, GetResRef(oItem)) >= 0)
+        if (FindSubString(sResRefList, GetResRef(oItem)) >= 0)
             DestroyObject(oItem);
         oItem = GetNextItemInInventory(oObject);
     }
@@ -142,7 +146,7 @@ void DestroyAllItemsByResRef(object oObject, string sResRef)
         for(i = 0; i < NUM_INVENTORY_SLOTS; i++)
         {
             oItem = GetItemInSlot(i, oObject);
-            if(FindSubString(sResRef, GetResRef(oItem)) >= 0)
+            if(FindSubString(sResRefList, GetResRef(oItem)) >= 0)
                 DestroyObject(oItem);
         }
     }

@@ -126,30 +126,30 @@ void SQLocals_DeleteLocation(object oObject, string sVarName);
 
 // Deletes a set of locals stored on oObject matching the given criteria
 // * oObject - an object to reference against
-// * nType - The SQL_LOCALS_TYPE_* you wish to remove (default: SQL_LOCALS_TYPE_ALL)
+// * nType - The SQLOCALS_TYPE_* you wish to remove (default: SQLOCALS_TYPE_ALL)
 // * sLike - The string to compare with the SQL "like" comparison
 // * sEscape - The escape character to use with the SQL "escape" keyword
 void SQLocals_Delete(object oObject, int nType = SQLOCALS_TYPE_ALL, string sLike = "", string sEscape = "");
 // Counts a set of locals stored on oObject matching the given criteria
 // * oObject - an object to reference against
-// * nType - The SQL_LOCALS_TYPE_* you wish to count (default: SQL_LOCALS_TYPE_ALL)
+// * nType - The SQLOCALS_TYPE_* you wish to count (default: SQLOCALS_TYPE_ALL)
 // * sLike - The string to compare with the SQL "like" comparison
 // * sEscape - The escape character to use with the SQL "escape" keyword
 int SQLocals_Count(object oObject, int nType = SQLOCALS_TYPE_ALL, string sLike = "", string sEscape = "");
 // Checks a locals stored on oObject is set
 // * oObject - an object to reference against
 // * sVarName - name of the variable to retrieve
-// * nType - The SQL_LOCALS_TYPE_* you wish to check (default: SQL_LOCALS_TYPE_ALL)
+// * nType - The SQLOCALS_TYPE_* you wish to check
 int SQLocals_IsSet(object oObject, string sVarName, int nType);
 // Returns the last Unix time the given variable was updated
 // * oObject - an object to reference against
 // * sVarName - name of the variable to retrieve
-// * nType - The SQL_LOCALS_TYPE_* you wish to check (default: SQL_LOCALS_TYPE_ALL)
+// * nType - The SQLOCALS_TYPE_* you wish to check
 int SQLocals_GetLastUpdated_UnixEpoch(object oObject, string sVarName, int nType);
 // Returns the last UTC time the given variable was updated
 // * oObject - an object to reference against
 // * sVarName - name of the variable to retrieve
-// * nType - The SQL_LOCALS_TYPE_* you wish to check (default: SQL_LOCALS_TYPE_ALL)
+// * nType - The SQLOCALS_TYPE_* you wish to check
 string SQLocals_GetLastUpdated_UTC(object oObject, string sVarName, int nType);
 
 
@@ -560,7 +560,7 @@ void SQLocals_Delete(object oObject, int nType = SQLOCALS_TYPE_ALL, string sLike
 
 // Counts a set of locals stored on oObject matching the given criteria
 // * oObject - an object to reference against
-// * nType - The SQL_LOCALS_TYPE_* you wish to count (default: SQL_LOCALS_TYPE_ALL)
+// * nType - The SQLOCALS_TYPE_* you wish to count (default: SQLOCALS_TYPE_ALL)
 // * sLike - The string to compare with the SQL "like" comparison
 // * sEscape - The escape character to use with the SQL "escape" keyword
 int SQLocals_Count(object oObject, int nType = SQLOCALS_TYPE_ALL, string sLike = "", string sEscape = "")
@@ -597,7 +597,7 @@ int SQLocals_Count(object oObject, int nType = SQLOCALS_TYPE_ALL, string sLike =
 // Checks a locals stored on oObject is set
 // * oObject - an object to reference against
 // * sVarName - name of the variable to retrieve
-// * nType - The SQL_LOCALS_TYPE_* you wish to check (default: SQL_LOCALS_TYPE_ALL)
+// * nType - The SQLOCALS_TYPE_* you wish to check
 int SQLocals_IsSet(object oObject, string sVarName, int nType)
 {
     if (oObject == OBJECT_INVALID || nType < 0) return 0;
@@ -621,7 +621,7 @@ int SQLocals_IsSet(object oObject, string sVarName, int nType)
 // Returns the last Unix time the given variable was updated
 // * oObject - an object to reference against
 // * sVarName - name of the variable to retrieve
-// * nType - The SQL_LOCALS_TYPE_* you wish to check (default: SQL_LOCALS_TYPE_ALL)
+// * nType - The SQLOCALS_TYPE_* you wish to check (default: SQLOCALS_TYPE_ALL)
 int SQLocals_GetLastUpdated_UnixEpoch(object oObject, string sVarName, int nType)
 {
     if (oObject == OBJECT_INVALID || nType <= 0) return 0;
@@ -647,7 +647,7 @@ int SQLocals_GetLastUpdated_UnixEpoch(object oObject, string sVarName, int nType
 // Returns the last UTC time the given variable was updated
 // * oObject - an object to reference against
 // * sVarName - name of the variable to retrieve
-// * nType - The SQL_LOCALS_TYPE_* you wish to check (default: SQL_LOCALS_TYPE_ALL)
+// * nType - The SQLOCALS_TYPE_* you wish to check (default: SQLOCALS_TYPE_ALL)
 string SQLocals_GetLastUpdated_UTC(object oObject, string sVarName, int nType)
 {
     if (oObject == OBJECT_INVALID || nType <= 0) return "";

@@ -23,15 +23,15 @@
 //:: https://github.com/Finaldeath/nwscript_utility_scripts
 //:://////////////////////////////////////////////
 
-const string SQLOCALS_TABLE_NAME     = "sqlocalsplayer_table";
+const string SQLOCALSPLAYER_TABLE_NAME     = "sqlocalsplayer_table";
 
-const int SQLOCALS_TYPE_ALL          = 0;
-const int SQLOCALS_TYPE_INT          = 1;
-const int SQLOCALS_TYPE_FLOAT        = 2;
-const int SQLOCALS_TYPE_STRING       = 4;
-const int SQLOCALS_TYPE_OBJECT       = 8;
-const int SQLOCALS_TYPE_VECTOR       = 16;
-const int SQLOCALS_TYPE_LOCATION     = 32;
+const int SQLOCALSPLAYER_TYPE_ALL          = 0;
+const int SQLOCALSPLAYER_TYPE_INT          = 1;
+const int SQLOCALSPLAYER_TYPE_FLOAT        = 2;
+const int SQLOCALSPLAYER_TYPE_STRING       = 4;
+const int SQLOCALSPLAYER_TYPE_OBJECT       = 8;
+const int SQLOCALSPLAYER_TYPE_VECTOR       = 16;
+const int SQLOCALSPLAYER_TYPE_LOCATION     = 32;
 
 // Returns an integer stored on oPlayer, or 0 on error
 // * oPlayer - a player object to save the variable on
@@ -121,30 +121,30 @@ void SQLocalsPlayer_DeleteLocation(object oPlayer, string sVarName);
 
 // Deletes a set of locals stored on oPlayer matching the given criteria
 // * oPlayer - a player object to save the variable on
-// * nType - The SQL_LOCALS_TYPE_* you wish to remove (default: SQL_LOCALS_TYPE_ALL)
+// * nType - The SQLOCALSPLAYER_TYPE_* you wish to remove (default: SQLOCALSPLAYER_TYPE_ALL)
 // * sLike - The string to compare with the SQL "like" comparison
 // * sEscape - The escape character to use with the SQL "escape" keyword
-void SQLocalsPlayer_Delete(object oPlayer, int nType = SQLOCALS_TYPE_ALL, string sLike = "", string sEscape = "");
+void SQLocalsPlayer_Delete(object oPlayer, int nType = SQLOCALSPLAYER_TYPE_ALL, string sLike = "", string sEscape = "");
 // Counts a set of locals stored on oPlayer matching the given criteria
 // * oPlayer - a player object to save the variable on
-// * nType - The SQL_LOCALS_TYPE_* you wish to count (default: SQL_LOCALS_TYPE_ALL)
+// * nType - The SQLOCALSPLAYER_TYPE_* you wish to count (default: SQLOCALSPLAYER_TYPE_ALL)
 // * sLike - The string to compare with the SQL "like" comparison
 // * sEscape - The escape character to use with the SQL "escape" keyword
-int SQLocalsPlayer_Count(object oPlayer, int nType = SQLOCALS_TYPE_ALL, string sLike = "", string sEscape = "");
+int SQLocalsPlayer_Count(object oPlayer, int nType = SQLOCALSPLAYER_TYPE_ALL, string sLike = "", string sEscape = "");
 // Checks a locals stored on oPlayer is set
 // * oPlayer - a player object to save the variable on
 // * sVarName - name of the variable to retrieve
-// * nType - The SQL_LOCALS_TYPE_* you wish to check (default: SQL_LOCALS_TYPE_ALL)
+// * nType - The SQLOCALSPLAYER_TYPE_* you wish to check
 int SQLocalsPlayer_IsSet(object oPlayer, string sVarName, int nType);
 // Returns the last Unix time the given variable was updated
 // * oPlayer - a player object to save the variable on
 // * sVarName - name of the variable to retrieve
-// * nType - The SQL_LOCALS_TYPE_* you wish to check (default: SQL_LOCALS_TYPE_ALL)
+// * nType - The SQLOCALSPLAYER_TYPE_* you wish to check
 int SQLocalsPlayer_GetLastUpdated_UnixEpoch(object oPlayer, string sVarName, int nType);
 // Returns the last UTC time the given variable was updated
 // * oPlayer - a player object to save the variable on
 // * sVarName - name of the variable to retrieve
-// * nType - The SQL_LOCALS_TYPE_* you wish to check (default: SQL_LOCALS_TYPE_ALL)
+// * nType - The SQLOCALSPLAYER_TYPE_* you wish to check
 string SQLocalsPlayer_GetLastUpdated_UTC(object oPlayer, string sVarName, int nType);
 
 
@@ -152,7 +152,7 @@ string SQLocalsPlayer_GetLastUpdated_UTC(object oPlayer, string sVarName, int nT
 void SQLocalsPlayer_CreateTable(object oPlayer)
 {
     sqlquery sql = SqlPrepareQueryObject(oPlayer,
-        "CREATE TABLE IF NOT EXISTS " + SQLOCALS_TABLE_NAME + " (" +
+        "CREATE TABLE IF NOT EXISTS " + SQLOCALSPLAYER_TABLE_NAME + " (" +
         "type INTEGER, " +
         "varname TEXT, " +
         "value TEXT, " +
@@ -166,7 +166,7 @@ sqlquery SQLocalsPlayer_PrepareSelect(object oPlayer, int nType, string sVarName
     SQLocalsPlayer_CreateTable(oPlayer);
 
     sqlquery sql = SqlPrepareQueryObject(oPlayer,
-        "SELECT value FROM " + SQLOCALS_TABLE_NAME + " " +
+        "SELECT value FROM " + SQLOCALSPLAYER_TABLE_NAME + " " +
         "WHERE type = @type AND varname = @varname;");
 
     SqlBindInt(sql, "@type", nType);
@@ -180,7 +180,7 @@ sqlquery SQLocalsPlayer_PrepareInsert(object oPlayer, int nType, string sVarName
     SQLocalsPlayer_CreateTable(oPlayer);
 
     sqlquery sql = SqlPrepareQueryObject(oPlayer,
-        "INSERT INTO " + SQLOCALS_TABLE_NAME + " " +
+        "INSERT INTO " + SQLOCALSPLAYER_TABLE_NAME + " " +
         "(type, varname, value, timestamp) VALUES (@type, @varname, @value, strftime('%s','now')) " +
         "ON CONFLICT (type, varname) DO UPDATE SET value = @value, timestamp = strftime('%s','now');");
 
@@ -195,7 +195,7 @@ sqlquery SQLocalsPlayer_PrepareDelete(object oPlayer, int nType, string sVarName
     SQLocalsPlayer_CreateTable(oPlayer);
 
     sqlquery sql = SqlPrepareQueryObject(oPlayer,
-        "DELETE FROM " + SQLOCALS_TABLE_NAME + " " +
+        "DELETE FROM " + SQLOCALSPLAYER_TABLE_NAME + " " +
         "WHERE type = @type AND varname = @varname;");
 
     SqlBindInt(sql, "@type", nType);
@@ -268,7 +268,7 @@ int SQLocalsPlayer_GetInt(object oPlayer, string sVarName)
 {
     if (!GetIsPC(oPlayer) || sVarName == "") return 0;
 
-    sqlquery sql = SQLocalsPlayer_PrepareSelect(oPlayer, SQLOCALS_TYPE_INT, sVarName);
+    sqlquery sql = SQLocalsPlayer_PrepareSelect(oPlayer, SQLOCALSPLAYER_TYPE_INT, sVarName);
 
     if (SqlStep(sql))
         return SqlGetInt(sql, 0);
@@ -284,7 +284,7 @@ void SQLocalsPlayer_SetInt(object oPlayer, string sVarName, int nValue)
 {
     if (!GetIsPC(oPlayer) || sVarName == "") return;
 
-    sqlquery sql = SQLocalsPlayer_PrepareInsert(oPlayer, SQLOCALS_TYPE_INT, sVarName);
+    sqlquery sql = SQLocalsPlayer_PrepareInsert(oPlayer, SQLOCALSPLAYER_TYPE_INT, sVarName);
     SqlBindInt(sql, "@value", nValue);
     SqlStep(sql);
 }
@@ -296,7 +296,7 @@ void SQLocalsPlayer_DeleteInt(object oPlayer, string sVarName)
 {
     if (!GetIsPC(oPlayer) || sVarName == "") return;
 
-    sqlquery sql = SQLocalsPlayer_PrepareDelete(oPlayer, SQLOCALS_TYPE_INT, sVarName);
+    sqlquery sql = SQLocalsPlayer_PrepareDelete(oPlayer, SQLOCALSPLAYER_TYPE_INT, sVarName);
     SqlStep(sql);
 }
 /* **** */
@@ -310,7 +310,7 @@ float SQLocalsPlayer_GetFloat(object oPlayer, string sVarName)
 {
     if (!GetIsPC(oPlayer) || sVarName == "") return 0.0f;
 
-    sqlquery sql = SQLocalsPlayer_PrepareSelect(oPlayer, SQLOCALS_TYPE_FLOAT, sVarName);
+    sqlquery sql = SQLocalsPlayer_PrepareSelect(oPlayer, SQLOCALSPLAYER_TYPE_FLOAT, sVarName);
 
     if (SqlStep(sql))
         return SqlGetFloat(sql, 0);
@@ -326,7 +326,7 @@ void SQLocalsPlayer_SetFloat(object oPlayer, string sVarName, float fValue)
 {
     if (!GetIsPC(oPlayer) || sVarName == "") return;
 
-    sqlquery sql = SQLocalsPlayer_PrepareInsert(oPlayer, SQLOCALS_TYPE_FLOAT, sVarName);
+    sqlquery sql = SQLocalsPlayer_PrepareInsert(oPlayer, SQLOCALSPLAYER_TYPE_FLOAT, sVarName);
     SqlBindFloat(sql, "@value", fValue);
     SqlStep(sql);
 }
@@ -338,7 +338,7 @@ void SQLocalsPlayer_DeleteFloat(object oPlayer, string sVarName)
 {
     if (!GetIsPC(oPlayer) || sVarName == "") return;
 
-    sqlquery sql = SQLocalsPlayer_PrepareDelete(oPlayer, SQLOCALS_TYPE_FLOAT, sVarName);
+    sqlquery sql = SQLocalsPlayer_PrepareDelete(oPlayer, SQLOCALSPLAYER_TYPE_FLOAT, sVarName);
     SqlStep(sql);
 }
 /* **** */
@@ -352,7 +352,7 @@ string SQLocalsPlayer_GetString(object oPlayer, string sVarName)
 {
     if (!GetIsPC(oPlayer) || sVarName == "") return "";
 
-    sqlquery sql = SQLocalsPlayer_PrepareSelect(oPlayer, SQLOCALS_TYPE_STRING, sVarName);
+    sqlquery sql = SQLocalsPlayer_PrepareSelect(oPlayer, SQLOCALSPLAYER_TYPE_STRING, sVarName);
 
     if (SqlStep(sql))
         return SqlGetString(sql, 0);
@@ -368,7 +368,7 @@ void SQLocalsPlayer_SetString(object oPlayer, string sVarName, string sValue)
 {
     if (!GetIsPC(oPlayer) || sVarName == "") return;
 
-    sqlquery sql = SQLocalsPlayer_PrepareInsert(oPlayer, SQLOCALS_TYPE_STRING, sVarName);
+    sqlquery sql = SQLocalsPlayer_PrepareInsert(oPlayer, SQLOCALSPLAYER_TYPE_STRING, sVarName);
     SqlBindString(sql, "@value", sValue);
     SqlStep(sql);
 }
@@ -380,7 +380,7 @@ void SQLocalsPlayer_DeleteString(object oPlayer, string sVarName)
 {
     if (!GetIsPC(oPlayer) || sVarName == "") return;
 
-    sqlquery sql = SQLocalsPlayer_PrepareDelete(oPlayer, SQLOCALS_TYPE_STRING, sVarName);
+    sqlquery sql = SQLocalsPlayer_PrepareDelete(oPlayer, SQLOCALSPLAYER_TYPE_STRING, sVarName);
     SqlStep(sql);
 }
 /* **** */
@@ -397,7 +397,7 @@ object SQLocalsPlayer_GetObject(object oPlayer, string sVarName)
 {
     if (!GetIsPC(oPlayer) || sVarName == "") return OBJECT_INVALID;
 
-    sqlquery sql = SQLocalsPlayer_PrepareSelect(oPlayer, SQLOCALS_TYPE_OBJECT, sVarName);
+    sqlquery sql = SQLocalsPlayer_PrepareSelect(oPlayer, SQLOCALSPLAYER_TYPE_OBJECT, sVarName);
 
     if (SqlStep(sql))
         return StringToObject(SqlGetString(sql, 0));
@@ -413,7 +413,7 @@ void SQLocalsPlayer_SetObject(object oPlayer, string sVarName, object oValue)
 {
     if (!GetIsPC(oPlayer) || sVarName == "") return;
 
-    sqlquery sql = SQLocalsPlayer_PrepareInsert(oPlayer, SQLOCALS_TYPE_OBJECT, sVarName);
+    sqlquery sql = SQLocalsPlayer_PrepareInsert(oPlayer, SQLOCALSPLAYER_TYPE_OBJECT, sVarName);
     SqlBindString(sql, "@value", ObjectToString(oValue));
     SqlStep(sql);
 }
@@ -425,7 +425,7 @@ void SQLocalsPlayer_DeleteObject(object oPlayer, string sVarName)
 {
     if (!GetIsPC(oPlayer) || sVarName == "") return;
 
-    sqlquery sql = SQLocalsPlayer_PrepareDelete(oPlayer, SQLOCALS_TYPE_OBJECT, sVarName);
+    sqlquery sql = SQLocalsPlayer_PrepareDelete(oPlayer, SQLOCALSPLAYER_TYPE_OBJECT, sVarName);
     SqlStep(sql);
 }
 /* **** */
@@ -439,7 +439,7 @@ vector SQLocalsPlayer_GetVector(object oPlayer, string sVarName)
 {
     if (!GetIsPC(oPlayer) || sVarName == "") return [0.0f, 0.0f, 0.0f];
 
-    sqlquery sql = SQLocalsPlayer_PrepareSelect(oPlayer, SQLOCALS_TYPE_VECTOR, sVarName);
+    sqlquery sql = SQLocalsPlayer_PrepareSelect(oPlayer, SQLOCALSPLAYER_TYPE_VECTOR, sVarName);
 
     if (SqlStep(sql))
         return SqlGetVector(sql, 0);
@@ -455,7 +455,7 @@ void SQLocalsPlayer_SetVector(object oPlayer, string sVarName, vector vValue)
 {
     if (!GetIsPC(oPlayer) || sVarName == "") return;
 
-    sqlquery sql = SQLocalsPlayer_PrepareInsert(oPlayer, SQLOCALS_TYPE_VECTOR, sVarName);
+    sqlquery sql = SQLocalsPlayer_PrepareInsert(oPlayer, SQLOCALSPLAYER_TYPE_VECTOR, sVarName);
     SqlBindVector(sql, "@value", vValue);
     SqlStep(sql);
 }
@@ -467,7 +467,7 @@ void SQLocalsPlayer_DeleteVector(object oPlayer, string sVarName)
 {
     if (!GetIsPC(oPlayer) || sVarName == "") return;
 
-    sqlquery sql = SQLocalsPlayer_PrepareDelete(oPlayer, SQLOCALS_TYPE_VECTOR, sVarName);
+    sqlquery sql = SQLocalsPlayer_PrepareDelete(oPlayer, SQLOCALSPLAYER_TYPE_VECTOR, sVarName);
     SqlStep(sql);
 }
 /* **** */
@@ -481,7 +481,7 @@ location SQLocalsPlayer_GetLocation(object oPlayer, string sVarName)
 {
     if (!GetIsPC(oPlayer) || sVarName == "") return GetStartingLocation();
 
-    sqlquery sql = SQLocalsPlayer_PrepareSelect(oPlayer, SQLOCALS_TYPE_LOCATION, sVarName);
+    sqlquery sql = SQLocalsPlayer_PrepareSelect(oPlayer, SQLOCALSPLAYER_TYPE_LOCATION, sVarName);
 
     if (SqlStep(sql))
         return SQLocalsPlayer_StringToLocation(SqlGetString(sql, 0));
@@ -497,7 +497,7 @@ void SQLocalsPlayer_SetLocation(object oPlayer, string sVarName, location lValue
 {
     if (!GetIsPC(oPlayer) || sVarName == "") return;
 
-    sqlquery sql = SQLocalsPlayer_PrepareInsert(oPlayer, SQLOCALS_TYPE_LOCATION, sVarName);
+    sqlquery sql = SQLocalsPlayer_PrepareInsert(oPlayer, SQLOCALSPLAYER_TYPE_LOCATION, sVarName);
     SqlBindString(sql, "@value", SQLocalsPlayer_LocationToString(lValue));
     SqlStep(sql);
 }
@@ -509,7 +509,7 @@ void SQLocalsPlayer_DeleteLocation(object oPlayer, string sVarName)
 {
     if (!GetIsPC(oPlayer) || sVarName == "") return;
 
-    sqlquery sql = SQLocalsPlayer_PrepareDelete(oPlayer, SQLOCALS_TYPE_LOCATION, sVarName);
+    sqlquery sql = SQLocalsPlayer_PrepareDelete(oPlayer, SQLOCALSPLAYER_TYPE_LOCATION, sVarName);
     SqlStep(sql);
 }
 /* **** */
@@ -518,23 +518,23 @@ void SQLocalsPlayer_DeleteLocation(object oPlayer, string sVarName)
 
 // Deletes a set of locals stored on oPlayer matching the given criteria
 // * oPlayer - a player object to save the variable on
-// * nType - The SQL_LOCALS_TYPE_* you wish to remove (default: SQL_LOCALS_TYPE_ALL)
+// * nType - The SQLOCALSPLAYER_TYPE_* you wish to remove (default: SQLOCALSPLAYER_TYPE_ALL)
 // * sLike - The string to compare with the SQL "like" comparison
 // * sEscape - The escape character to use with the SQL "escape" keyword
-void SQLocalsPlayer_Delete(object oPlayer, int nType = SQLOCALS_TYPE_ALL, string sLike = "", string sEscape = "")
+void SQLocalsPlayer_Delete(object oPlayer, int nType = SQLOCALSPLAYER_TYPE_ALL, string sLike = "", string sEscape = "")
 {
     if (!GetIsPC(oPlayer) || nType < 0) return;
 
     SQLocalsPlayer_CreateTable(oPlayer);
 
     sqlquery sql = SqlPrepareQueryObject(oPlayer,
-        "DELETE FROM " + SQLOCALS_TABLE_NAME + " " +
+        "DELETE FROM " + SQLOCALSPLAYER_TABLE_NAME + " " +
         "WHERE " +
-        (nType != SQLOCALS_TYPE_ALL ? "AND type & @type " : " ") +
+        (nType != SQLOCALSPLAYER_TYPE_ALL ? "AND type & @type " : " ") +
         (sLike != "" ? "AND varname LIKE @like " + (sEscape != "" ? "ESCAPE @escape" : "") : "") +
         ";");
 
-    if (nType != SQLOCALS_TYPE_ALL)
+    if (nType != SQLOCALSPLAYER_TYPE_ALL)
         SqlBindInt(sql, "@type", nType);
     if (sLike != "")
     {
@@ -549,23 +549,23 @@ void SQLocalsPlayer_Delete(object oPlayer, int nType = SQLOCALS_TYPE_ALL, string
 
 // Counts a set of locals stored on oPlayer matching the given criteria
 // * oPlayer - a player object to save the variable on
-// * nType - The SQL_LOCALS_TYPE_* you wish to count (default: SQL_LOCALS_TYPE_ALL)
+// * nType - The SQLOCALSPLAYER_TYPE_* you wish to count (default: SQLOCALSPLAYER_TYPE_ALL)
 // * sLike - The string to compare with the SQL "like" comparison
 // * sEscape - The escape character to use with the SQL "escape" keyword
-int SQLocalsPlayer_Count(object oPlayer, int nType = SQLOCALS_TYPE_ALL, string sLike = "", string sEscape = "")
+int SQLocalsPlayer_Count(object oPlayer, int nType = SQLOCALSPLAYER_TYPE_ALL, string sLike = "", string sEscape = "")
 {
     if (!GetIsPC(oPlayer) || nType < 0) return 0;
 
     SQLocalsPlayer_CreateTable(oPlayer);
 
     sqlquery sql = SqlPrepareQueryObject(oPlayer,
-        "SELECT COUNT(*) FROM " + SQLOCALS_TABLE_NAME + " " +
+        "SELECT COUNT(*) FROM " + SQLOCALSPLAYER_TABLE_NAME + " " +
         "WHERE " +
-        (nType != SQLOCALS_TYPE_ALL ? "AND type & @type " : " ") +
+        (nType != SQLOCALSPLAYER_TYPE_ALL ? "AND type & @type " : " ") +
         (sLike != "" ? "AND varname LIKE @like " + (sEscape != "" ? "ESCAPE @escape" : "") : "") +
         ";");
 
-    if (nType != SQLOCALS_TYPE_ALL)
+    if (nType != SQLOCALSPLAYER_TYPE_ALL)
         SqlBindInt(sql, "@type", nType);
     if (sLike != "")
     {
@@ -584,7 +584,7 @@ int SQLocalsPlayer_Count(object oPlayer, int nType = SQLOCALS_TYPE_ALL, string s
 // Checks a locals stored on oPlayer is set
 // * oPlayer - a player object to save the variable on
 // * sVarName - name of the variable to retrieve
-// * nType - The SQL_LOCALS_TYPE_* you wish to check (default: SQL_LOCALS_TYPE_ALL)
+// * nType - The SQLOCALSPLAYER_TYPE_* you wish to check (default: SQLOCALSPLAYER_TYPE_ALL)
 int SQLocalsPlayer_IsSet(object oPlayer, string sVarName, int nType)
 {
     if (!GetIsPC(oPlayer) || nType < 0) return 0;
@@ -592,12 +592,12 @@ int SQLocalsPlayer_IsSet(object oPlayer, string sVarName, int nType)
     SQLocalsPlayer_CreateTable(oPlayer);
 
     sqlquery sql = SqlPrepareQueryObject(oPlayer,
-        "SELECT * FROM " + SQLOCALS_TABLE_NAME + " " +
+        "SELECT * FROM " + SQLOCALSPLAYER_TABLE_NAME + " " +
         "WHERE " +
-        (nType != SQLOCALS_TYPE_ALL ? "AND type & @type " : " ") +
+        (nType != SQLOCALSPLAYER_TYPE_ALL ? "AND type & @type " : " ") +
         "AND varname = @varname;");
 
-    if (nType != SQLOCALS_TYPE_ALL)
+    if (nType != SQLOCALSPLAYER_TYPE_ALL)
         SqlBindInt(sql, "@type", nType);
     SqlBindString(sql, "@varname", sVarName);
 
@@ -607,7 +607,7 @@ int SQLocalsPlayer_IsSet(object oPlayer, string sVarName, int nType)
 // Returns the last Unix time the given variable was updated
 // * oPlayer - a player object to save the variable on
 // * sVarName - name of the variable to retrieve
-// * nType - The SQL_LOCALS_TYPE_* you wish to check (default: SQL_LOCALS_TYPE_ALL)
+// * nType - The SQLOCALSPLAYER_TYPE_* you wish to check (default: SQLOCALSPLAYER_TYPE_ALL)
 int SQLocalsPlayer_GetLastUpdated_UnixEpoch(object oPlayer, string sVarName, int nType)
 {
     if (!GetIsPC(oPlayer) || nType <= 0) return 0;
@@ -615,7 +615,7 @@ int SQLocalsPlayer_GetLastUpdated_UnixEpoch(object oPlayer, string sVarName, int
     SQLocalsPlayer_CreateTable(oPlayer);
 
     sqlquery sql = SqlPrepareQueryObject(oPlayer,
-        "SELECT timestamp FROM " + SQLOCALS_TABLE_NAME + " " +
+        "SELECT timestamp FROM " + SQLOCALSPLAYER_TABLE_NAME + " " +
         "WHERE type = @type " +
         "AND varname = @varname;");
 
@@ -631,7 +631,7 @@ int SQLocalsPlayer_GetLastUpdated_UnixEpoch(object oPlayer, string sVarName, int
 // Returns the last UTC time the given variable was updated
 // * oPlayer - a player object to save the variable on
 // * sVarName - name of the variable to retrieve
-// * nType - The SQL_LOCALS_TYPE_* you wish to check (default: SQL_LOCALS_TYPE_ALL)
+// * nType - The SQLOCALSPLAYER_TYPE_* you wish to check (default: SQLOCALSPLAYER_TYPE_ALL)
 string SQLocalsPlayer_GetLastUpdated_UTC(object oPlayer, string sVarName, int nType)
 {
     if (!GetIsPC(oPlayer) || nType <= 0) return "";
@@ -639,7 +639,7 @@ string SQLocalsPlayer_GetLastUpdated_UTC(object oPlayer, string sVarName, int nT
     SQLocalsPlayer_CreateTable(oPlayer);
 
     sqlquery sql = SqlPrepareQueryObject(oPlayer,
-        "SELECT datetime(timestamp, 'unixepoch') FROM " + SQLOCALS_TABLE_NAME + " " +
+        "SELECT datetime(timestamp, 'unixepoch') FROM " + SQLOCALSPLAYER_TABLE_NAME + " " +
         "WHERE type = @type " +
         "AND varname = @varname;");
 
