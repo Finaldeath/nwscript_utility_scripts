@@ -141,17 +141,6 @@ object CreateDoppleganger(object oCreature, location lSpawn, int nStandardFactio
     object oItem = GetFirstItemInInventory(oClone);
     while(GetIsObjectValid(oItem))
     {
-        // Boxes in inventories
-        if(GetHasInventory(oItem))
-        {
-            object oItem2 = GetFirstItemInInventory(oItem);
-            while(GetIsObjectValid(oItem))
-            {
-                SetItemCursedFlag(oItem2, TRUE);
-                SetDroppableFlag(oItem2, FALSE);
-                oItem2 = GetNextItemInInventory(oItem);
-            }
-        }
         SetItemCursedFlag(oItem, TRUE);
         SetDroppableFlag(oItem, FALSE);
         oItem = GetNextItemInInventory(oClone);

@@ -16,15 +16,19 @@
 // * sMessage - Message to send
 void SendMessageToAllPCs(string sMessage);
 
-// Returns the level that can be obtained if at a particular experience level
-// EG: 45,000 returns 10, since you can be level 10 with 45,000 XP
-// * nXP - The XP to check
-int GetLevelByXP(int nXP);
+// Returns the level that can be obtained if at a particular experience level using exptable.
+// EG: by default 45,000 returns 10, since you can be level 10 with 45,000 XP
+// * nXP - The amount of XP to check
+int GetLevelObtainableAtExperience(int nXP);
 
 // Returns the XP required for a particular level to be obtained
 // EG: Level 10 requires 45,000 XP
 // * nLevel - Level to check
-int GetXPByLevel(int nLevel);
+int GetExperienceRequiredForLevel(int nLevel);
+
+// Returns the experience required to gain on nCurrentLevel to level-up
+// * nCurrentLevel - Level to check
+int GetExperienceToNextLevel(int nCurrentLevel);
 
 // This returns a PCs true level, since they may not be levelled up fully.
 // If used on an NPC returns their hit dice.
@@ -57,24 +61,42 @@ void SendMessageToAllPCs(string sMessage)
     }
 }
 
-// Returns the level that can be obtained if at a particular experience level
-// EG: 45,000 returns 10, since you can be level 10 with 45,000 XP
-// * nXP - The XP to check
-int GetLevelByXP(int nXP)
+// Returns the level that can be obtained if at a particular experience level using exptable.
+// EG: by default 45,000 returns 10, since you can be level 10 with 45,000 XP
+// * nXP - The amount of XP to check
+int GetLevelObtainableAtExperience(int nXP)
 {
-    float fXP    = IntToFloat(nXP) / 1000;
-    float fLevel = (sqrt(8 * fXP + 1) + 1) / 2;
-    int   nLevel = FloatToInt(fLevel);
-    return nLevel;
+    int i, nXPAtLevel;
+    string sEntry;
+    for (i = 0; i < 40; i++)
+    {
+        sEntry = Get2DAString("exptable", "XP", i);
+        nXPAtLevel = StringToInt(sEntry);
+        if(nXPAtLevel > nXP)
+            return StringToInt(Get2DAString("exptable", "Level", i-1));
+    }
+    return 0;
 }
 
 // Returns the XP required for a particular level to be obtained
 // EG: Level 10 requires 45,000 XP
 // * nLevel - Level to check
-int GetXPByLevel(int nLevel)
+int GetExperienceRequiredForLevel(int nLevel)
 {
-    int nXP = (((nLevel - 1)*nLevel)/2)*1000;
-    return nXP;
+    if(nLevel <= 1) return 0;
+    if(nLevel > 40) nLevel = 40;
+    int row = nLevel - 1;
+    string entry = Get2DAString("exptable", "XP", row);
+    return StringToInt(entry);
+}
+
+// Returns the experience required to gain on nCurrentLevel to level-up
+// * nCurrentLevel - Level to check
+int GetExperienceToNextLevel(int nCurrentLevel)
+{
+    int nCurrent = GetExperienceRequiredForLevel(nCurrentLevel);
+    int nNext = GetExperienceRequiredForLevel(nCurrentLevel+1);
+    return (nNext - nCurrent);
 }
 
 // This returns a PCs true level, since they may not be levelled up fully.
@@ -86,7 +108,7 @@ int GetTrueLevel(object oCreature)
 
     if(nXP == 0) return GetHitDice(oCreature);
 
-    return GetLevelByXP(nXP);
+    return GetLevelObtainableAtExperience(nXP);
 }
 
 // Checks if this is a PC object. Works even if the object is logging out.
