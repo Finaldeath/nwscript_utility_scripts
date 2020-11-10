@@ -33,7 +33,7 @@ object GetObjectInAreaByTag(string sTag, object oArea, int nNth = 1)
     {
         if(GetArea(oObject) == oArea)
         {
-            if(++j == n)
+            if(++j == nNth)
             {
                 return oObject;
             }
