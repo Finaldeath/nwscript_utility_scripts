@@ -12,6 +12,7 @@ These are other utilities or libraries that may be of interest:
 
 * [Squatting Monk's Utilties](https://github.com/squattingmonk/sm-utils) - Someo of these concepts may be adapted here, but are great standalone!
 * [Awsome NWNX](https://github.com/nwnxee/unified/blob/master/Awesome-NWNX.md) - A huge number of other NWN related resources
+* [Auxiliary Math Library](https://neverwintervault.org/project/nwn1/script/auxiliary-math-library) - A large number of more complicated maths functions by NWShacker 
 
 # Licence
 I put an MIT licence so it's permissive for any use.
