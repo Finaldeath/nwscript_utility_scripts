@@ -44,6 +44,12 @@ int HexStringToInt(string sString);
 // * nInteger - integer to transform
 string IntToBinaryString(int nInteger);
 
+// Returns TRUE if the given string is really a zero "0" string, and not something like
+// a empty string, or "00" or similar that StringToInt doesn't inherantly capture.
+int IsStringReallyZero(string s);
+
+
+
 // Returns the higher of a or b
 int max(int a, int b)
 {
@@ -123,4 +129,11 @@ string IntToBinaryString(int nInteger)
         nInteger >>= 1;
     }
     return sResult;
+}
+
+// Returns TRUE if the given string is really a zero "0" string, and not something like
+// a empty string, or "00" or similar that StringToInt doesn't inherantly capture.
+int IsStringReallyZero(string s)
+{
+    return s != "" && StringToInt(s) == 0 && StringToInt(s + "1") == 1;
 }
