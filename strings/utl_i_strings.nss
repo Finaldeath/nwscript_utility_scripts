@@ -44,6 +44,12 @@ string IntToPaddedString(int nX, int nLength = 4, int nSigned = FALSE);
 //          if FALSE it will always return "True" or "False".
 string BooleanToString(int bBoolean, int bTLK = FALSE);
 
+// Returns a randomised string of the first nCharCount characters in sOriginalString.
+// * sOriginalString - string to randomise
+// * nCharCount - this amount of characters to randomise. If 0 or less, will do all characters. Default 0.
+// Example: RandomiseString("abcde", 2) could return "ab" or "ba"
+// Return value on error: ""
+string RandomiseString(string sOriginalString, int nCharCount = 0);
 
 
 // Removes all spaces from the left side of a given string
@@ -123,4 +129,28 @@ string BooleanToString(int bBoolean, int bTLK = FALSE)
     return bTLK ?
             (bBoolean ? GetStringByStrRef(8141) : GetStringByStrRef(8142)):
             (bBoolean ? "True" : "False");
+}
+
+// Returns a randomised string of the first nCharCount characters in sOriginalString.
+// * sOriginalString - string to randomise
+// * nCharCount - this amount of characters to randomise. If 0 or less, will do all characters. Default 0.
+// Example: RandomiseString("abcde", 2) could return "ab" or "ba"
+// Return value on error: ""
+string RandomiseString(string sOriginalString, int nCharCount = 0)
+{
+    // Error handling
+    if(sOriginalString == "") return "";
+    // Check for if we want to use the entire string.
+    if(nCharCount < 1 || nCharCount > GetStringLength(sOriginalString))
+    {
+        nCharCount = GetStringLength(sOriginalString);
+    }
+    string sReturnValue = "";
+    int nCount, nPlace;
+    for(nCount = 0; nCount < nCharCount; nCount++)
+    {
+        nPlace = Random(nCount + 1);
+        sReturnValue = GetSubString(sReturnValue, 0, nPlace) + GetSubString(sOriginalString, nCount, 1) + GetSubString(sReturnValue, nPlace, GetStringLength(sReturnValue));
+    }
+    return sReturnValue;
 }
