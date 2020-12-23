@@ -12,17 +12,17 @@
 //:: https://github.com/Finaldeath/nwscript_utility_scripts
 //:://////////////////////////////////////////////
 
-const int ENCUMBERANCE_LEVEL_NORMAL     = 0;
-const int ENCUMBERANCE_LEVEL_HEAVY      = 1;
-const int ENCUMBERANCE_LEVEL_OVERLOADED = 2;
+const int ENCUMBRANCE_LEVEL_NORMAL     = 0;
+const int ENCUMBRANCE_LEVEL_HEAVY      = 1;
+const int ENCUMBRANCE_LEVEL_OVERLOADED = 2;
 
-// Returns the ENCUMBERANCE_LEVEL_* value related to how many items are on the creature
+// Returns the ENCUMBRANCE_LEVEL_* value related to how many items are on the creature
 // * oCreature - Creature to check encumbrance of
 // Return values:
-//   ENCUMBERANCE_LEVEL_NORMAL - Can run normally
-//   ENCUMBERANCE_LEVEL_HEAVY - Cannot run, only walk
-//   ENCUMBERANCE_LEVEL_OVERLOADED - Can only walk at 50% speed
-int GetEncumberanceLevel(object oCreature = OBJECT_SELF);
+//   ENCUMBRANCE_LEVEL_NORMAL - Can run normally
+//   ENCUMBRANCE_LEVEL_HEAVY - Cannot run, only walk
+//   ENCUMBRANCE_LEVEL_OVERLOADED - Can only walk at 50% speed
+int GetEncumbranceLevel(object oCreature = OBJECT_SELF);
 
 // Checks if a creature has a given domain.
 // * oCreature - Creature to check
@@ -32,7 +32,7 @@ int GetHasDomain(object oCreature, int nDomain);
 // Sets the creature event scripts to the given values
 // * oCreature - A creature to set event scripts on
 // * Script - The different script names (in toolset order). If blank the script will not be changed.
-void SetCreatureEventScripts(object oCreature, string sBlock = "", string sDamage = "", string sDeath = "", string sConv = "", string sDisturb = "", string sCombat = "", string sHeart = "", string sAttack = "", string sNotice = "", string sRest = "", string sSpawn = "", string sSpell = "", string sUser = "" );
+void SetCreatureEventScripts(object oCreature, string sBlock = "", string sDamage = "", string sDeath = "", string sConversation = "", string sDisturb = "", string sCombat = "", string sHeart = "", string sAttack = "", string sNotice = "", string sRest = "", string sSpawn = "", string sSpell = "", string sUser = "" );
 
 // Creates a clone of oCreature (and returns it as an object for further usage, or OBJECT_INVALID if the copy didn't succeed.
 // It sets the default AI and makes every item they have undroppable and cursed (so corpse cannot be looted)
@@ -48,27 +48,27 @@ int CompareAlignment(object oSource, object oTarget);
 
 
 
-// Returns the ENCUMBERANCE_LEVEL_* value related to how many items are on the creature
+// Returns the ENCUMBRANCE_LEVEL_* value related to how many items are on the creature
 // * oCreature - Creature to check encumbrance of
 // Return values:
-//   ENCUMBERANCE_LEVEL_NORMAL - Can run normally
-//   ENCUMBERANCE_LEVEL_HEAVY - Cannot run, only walk
-//   ENCUMBERANCE_LEVEL_OVERLOADED - Can only walk at 50% speed
-int GetEncumberanceLevel(object oCreature = OBJECT_SELF)
+//   ENCUMBRANCE_LEVEL_NORMAL - Can run normally
+//   ENCUMBRANCE_LEVEL_HEAVY - Cannot run, only walk
+//   ENCUMBRANCE_LEVEL_OVERLOADED - Can only walk at 50% speed
+int GetEncumbranceLevel(object oCreature = OBJECT_SELF)
 {
     int nWeight = GetWeight(oCreature);
     int nStr = GetAbilityScore(oCreature, ABILITY_STRENGTH);
 
     // 2da limit is 100
-    if(nStr > 100) return ENCUMBERANCE_LEVEL_NORMAL;
+    if(nStr > 100) return ENCUMBRANCE_LEVEL_NORMAL;
 
     int nEnc = StringToInt(Get2DAString("encumbrance", "Heavy", nStr));
-    if(nWeight > nEnc) return ENCUMBERANCE_LEVEL_OVERLOADED;
+    if(nWeight > nEnc) return ENCUMBRANCE_LEVEL_OVERLOADED;
 
     nEnc = StringToInt(Get2DAString("encumbrance", "Normal", nStr));
-    if(nWeight > nEnc) return ENCUMBERANCE_LEVEL_HEAVY;
+    if(nWeight > nEnc) return ENCUMBRANCE_LEVEL_HEAVY;
 
-    return ENCUMBERANCE_LEVEL_NORMAL;
+    return ENCUMBRANCE_LEVEL_NORMAL;
 }
 
 // Checks if a creature has a given domain.
@@ -96,13 +96,13 @@ int GetHasDomain(object oCreature, int nDomain)
 // Sets the creature event scripts to the given values
 // * oCreature - A creature to set event scripts on
 // * Script - The different script names (in toolset order). If blank the script will not be changed. 
-void SetCreatureEventScripts(object oCreature, string sBlock = "", string sDamage = "", string sDeath = "", string sConv = "", string sDisturb = "", string sCombat = "", string sHeart = "", string sAttack = "", string sNotice = "", string sRest = "", string sSpawn = "", string sSpell = "", string sUser = "" )
+void SetCreatureEventScripts(object oCreature, string sBlock = "", string sDamage = "", string sDeath = "", string sConversation = "", string sDisturb = "", string sCombat = "", string sHeart = "", string sAttack = "", string sNotice = "", string sRest = "", string sSpawn = "", string sSpell = "", string sUser = "" )
 {
     // Set the event scripts
     if (sBlock != "" ) SetEventScript(oCreature, EVENT_SCRIPT_CREATURE_ON_BLOCKED_BY_DOOR, sBlock);
     if (sDamage != "" ) SetEventScript(oCreature, EVENT_SCRIPT_CREATURE_ON_DAMAGED, sDamage);
     if (sDeath != "" ) SetEventScript(oCreature, EVENT_SCRIPT_CREATURE_ON_DEATH, sDeath);
-    if (sConv != "" ) SetEventScript(oCreature, EVENT_SCRIPT_CREATURE_ON_DIALOGUE, sConv);
+    if (sConversation != "" ) SetEventScript(oCreature, EVENT_SCRIPT_CREATURE_ON_DIALOGUE, sConv);
     if (sDisturb != "" ) SetEventScript(oCreature, EVENT_SCRIPT_CREATURE_ON_DISTURBED, sDisturb);
     if (sCombat != "" ) SetEventScript(oCreature, EVENT_SCRIPT_CREATURE_ON_END_COMBATROUND, sCombat);
     if (sHeart != "" ) SetEventScript(oCreature, EVENT_SCRIPT_CREATURE_ON_HEARTBEAT, sHeart);
