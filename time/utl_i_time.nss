@@ -15,12 +15,12 @@ const int PERIOD_NIGHT = 2;
 const int PERIOD_DAWN  = 3;
 const int PERIOD_DUSK  = 4;
 
-// Returns the PEROID_* the game considers the time to be based on the moduels dawn/dusk/night/day settings
+// Returns the PERIOD_* the game considers the time to be based on the modules dawn/dusk/night/day settings
 int GetDayPeriod();
 
 
 
-// Returns the PEROID_* the game considers the time to be based on the moduels dawn/dusk/night/day settings
+// Returns the PERIOD_* the game considers the time to be based on the modules dawn/dusk/night/day settings
 int GetDayPeriod()
 {
     if (GetIsNight())

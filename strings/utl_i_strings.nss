@@ -32,7 +32,7 @@ string ReplaceChars(string sString, string sToReplace, string sReplacement);
 // Converts the given integer to string as IntToString and then pads the left side until
 // it's nLength characters long. If sign is specified, the first character is reserved 
 // for it, and it is always present.
-// Strings longer than the given length are trunctated to their nLength right characters.
+// Strings longer than the given length are truncated to their nLength right characters.
 // Examples:
 //  IntToPaddedString(-15, 4, FALSE) = "0015"
 //  IntToPaddedString(-15, 4, TRUE)  = "-015"
@@ -93,7 +93,7 @@ string ReplaceChars(string sString, string sToReplace, string sReplacement)
 // Converts the given integer to string as IntToString and then pads the left side until
 // it's nLength characters long. If sign is specified, the first character is reserved 
 // for it, and it is always present.
-// Strings longer than the given length are trunctated to their nLength right characters.
+// Strings longer than the given length are truncated to their nLength right characters.
 // Examples:
 //  IntToPaddedString(-15, 4, FALSE) = "0015"
 //  IntToPaddedString(-15, 4, TRUE)  = "-015"

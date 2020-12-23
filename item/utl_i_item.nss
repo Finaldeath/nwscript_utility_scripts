@@ -49,7 +49,7 @@ void DestroyAllItemsByTag(object oObject, string sTag);
 // Creatures also have all equipped items checked
 // * oObject - a placeable, store, creature or container
 // * sTagList - item tag list. Divide it with a tag-invalid character, eg; abc12;xyz34
-// - Note: This function assumes tags are unqiue! Do not use if you 
+// - Note: This function assumes tags are unique! Do not use if you 
 //         have both mybadasssword and mybadasssword2 and search for tag "mybadasssword"
 //         since this finds both.
 void DestroyAllItemsByTagList(object oObject, string sTagList);
@@ -170,7 +170,7 @@ void DestroyAllItemsByResRef(object oObject, string sResRef)
 // Creatures also have all equipped items checked
 // * oObject - a placeable, store, creature or container
 // * sResRefList - item resref list. Divide it with a resref-invalid character, eg; abc12;xyz34
-// - Note: This function assumes resrefs are unqiue! Do not use if you 
+// - Note: This function assumes resrefs are unique! Do not use if you 
 //         have both mybadasssword and mybadasssword2 and search for resref "mybadasssword"
 //         since this finds both.
 void DestroyAllItemsByResRefList(object oObject, string sResRefList)

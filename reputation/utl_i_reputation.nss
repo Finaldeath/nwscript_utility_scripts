@@ -32,14 +32,14 @@ void SetAllCreaturesFriendly(object oSource, int bRemoveHostileSpells = TRUE, in
 
 // For every PC and every member of the PCs party it will set oCreature to be friendly.
 // * oCreature - Creature to be friends with
-// Uses SetIsTemporaryFriend and ClearPoersonalReputation
+// Uses SetIsTemporaryFriend and ClearPersonalReputation
 void SetAllPlayerPartiesFriendlyTo(object oCreature);
 
 // For each member in oPC's party it will set them to be friendly to oCreature, including
 // henchmen etc.
 // * oPC - a member of the party (usually best being the party leader)
 // * oCreature - Creature to be friends with
-// Uses SetIsTemporaryFriend and ClearPoersonalReputation
+// Uses SetIsTemporaryFriend and ClearPersonalReputation
 void SetPlayerPartyFriendlyTo(object oPC, object oCreature);
 
 
@@ -124,7 +124,7 @@ void SetAllCreaturesFriendly(object oSource, int bRemoveHostileSpells = TRUE, in
 
 // For every PC and every member of the PCs party it will set oCreature to be friendly.
 // * oCreature - Creature to be friends with
-// Uses SetIsTemporaryFriend and ClearPoersonalReputation
+// Uses SetIsTemporaryFriend and ClearPersonalReputation
 void SetAllPlayerPartiesFriendlyTo(object oCreature)
 {
     object oPC = GetFirstPC();
@@ -148,7 +148,7 @@ void SetAllPlayerPartiesFriendlyTo(object oCreature)
 // henchmen etc.
 // * oPC - a member of the party (usually best being the party leader)
 // * oCreature - Creature to be friends with
-// Uses SetIsTemporaryFriend and ClearPoersonalReputation
+// Uses SetIsTemporaryFriend and ClearPersonalReputation
 void SetPlayerPartyFriendlyTo(object oPC, object oCreature)
 {
     // For each member of the faction
