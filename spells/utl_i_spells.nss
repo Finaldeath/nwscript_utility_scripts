@@ -32,5 +32,5 @@ int SpellSchoolIDFromString(string sSchool);
 // Returns -1 on error.
 int SpellSchoolIDFromString(string sSchool)
 {
-    return FindSubString("GACDEVINT", school);
+    return FindSubString("GACDEVINT", sSchool);
 }
