@@ -92,7 +92,7 @@ void ApplyTaggedEffectToObject(int nDurationType, effect eEffect, object oTarget
     else if(nSubType == SUBTYPE_SUPERNATURAL)
     {
         eEffect = SupernaturalEffect(eEffect);    
-    {
+    }
     else
     {
         eEffect = MagicalEffect(eEffect);
