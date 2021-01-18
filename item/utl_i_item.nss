@@ -61,6 +61,10 @@ void DestroyAllItemsByTagList(object oObject, string sTagList);
 //                If FALSE it does the opposite and sets droppable flag to FALSE and cursed flag to TRUE
 void SetInventoryDroppable(object oObject, int bDroppable = TRUE);
 
+// Clever function (thanks clippy) to have a random item be picked from oOwner's inventory.
+// Loops all inventory items at least once.
+// * oOwner - a placeable, creature, or container to look through the inventory of
+object GetRandomItemInInventory(object oOwner);
 
 
 // Returns the base AC value of oArmor, based on the appearance of it
@@ -325,4 +329,19 @@ void SetInventoryDroppable(object oObject, int bDroppable = TRUE)
             SetDroppableFlag(oItem, bDroppable);
         }
     }
+}
+
+// Clever function (thanks clippy) to have a random item be picked from oOwner's inventory.
+// Loops all inventory items at least once.
+// * oOwner - a placeable, creature, or container to look through the inventory of
+object GetRandomItemInInventory(object oOwner)
+{
+    object oItem, oReturnItem = OBJECT_INVALID;
+    int index = 0;
+    for(oItem = GetFirstItemInInventory(oOwner); GetIsObjectValid(oItem); oItem = GetNextItemInInventory(owner))
+    {
+        if(Random(++index) == 0)
+            oReturnItem = oItem;
+    }
+    return oReturnItem;
 }
