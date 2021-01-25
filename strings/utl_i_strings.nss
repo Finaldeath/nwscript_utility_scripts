@@ -14,6 +14,9 @@
 //:: https://github.com/Finaldeath/nwscript_utility_scripts
 //:://////////////////////////////////////////////
 
+// COLOR_TOKEN by rdjparadis. Used to generate colors from RGB values. NEVER modify this string.
+const string COLOR_TOKEN = "                  ##################$%&'()*+,-./0123456789:;;==?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[[]^_`abcdefghijklmnopqrstuvwxyz{|}~~Ã¢â€šÂ¬Ã‚ÂÃ¢â‚¬Å¡Ã†â€™Ã¢â‚¬Å¾Ã¢â‚¬Â¦Ã¢â‚¬Â Ã¢â‚¬Â¡Ã‹â€ Ã¢â‚¬Â°Ã…Â Ã¢â‚¬Â¹Ã…â€™Ã‚ÂÃ…Â½Ã‚ÂÃ‚ÂÃ¢â‚¬ËœÃ¢â‚¬â„¢Ã¢â‚¬Å“Ã¢â‚¬ÂÃ¢â‚¬Â¢Ã¢â‚¬â€œÃ¢â‚¬â€Ã‹Å“Ã¢â€žÂ¢Ã…Â¡Ã¢â‚¬ÂºÃ…â€œÃ‚ÂÃ…Â¾Ã…Â¸Ã‚Â¡Ã‚Â¡Ã‚Â¢Ã‚Â£Ã‚Â¤Ã‚Â¥Ã‚Â¦Ã‚Â§Ã‚Â¨Ã‚Â©Ã‚ÂªÃ‚Â«Ã‚Â¬Ã‚Â¬Ã‚Â®Ã‚Â¯Ã‚Â°Ã‚Â±Ã‚Â²Ã‚Â³Ã‚Â´Ã‚ÂµÃ‚Â¶Ã‚Â·Ã‚Â¸Ã‚Â¹Ã‚ÂºÃ‚Â»Ã‚Â¼Ã‚Â½Ã‚Â¾Ã‚Â¿Ãƒâ‚¬ÃƒÂÃƒâ€šÃƒÆ’Ãƒâ€žÃƒâ€¦Ãƒâ€ Ãƒâ€¡ÃƒË†Ãƒâ€°ÃƒÅ Ãƒâ€¹ÃƒÅ’ÃƒÂÃƒÅ½ÃƒÂÃƒÂÃƒâ€˜Ãƒâ€™Ãƒâ€œÃƒâ€Ãƒâ€¢Ãƒâ€“Ãƒâ€”ÃƒËœÃƒâ„¢ÃƒÅ¡Ãƒâ€ºÃƒÅ“ÃƒÂÃƒÅ¾ÃƒÅ¸ÃƒÂ ÃƒÂ¡ÃƒÂ¢ÃƒÂ£ÃƒÂ¤ÃƒÂ¥ÃƒÂ¦ÃƒÂ§ÃƒÂ¨ÃƒÂ©ÃƒÂªÃƒÂ«ÃƒÂ¬ÃƒÂ­ÃƒÂ®ÃƒÂ¯ÃƒÂ°ÃƒÂ±ÃƒÂ²ÃƒÂ³ÃƒÂ´ÃƒÂµÃƒÂ¶ÃƒÂ·ÃƒÂ¸ÃƒÂ¹ÃƒÂºÃƒÂ»ÃƒÂ¼ÃƒÂ½ÃƒÂ¾ÃƒÂ¾";
+
 // Removes all spaces from the left side of a given string
 string ltrim(string sString);
 
@@ -50,6 +53,19 @@ string BooleanToString(int bBoolean, int bTLK = FALSE);
 // Example: RandomiseString("abcde", 2) could return "ab" or "ba"
 // Return value on error: ""
 string RandomiseString(string sOriginalString, int nCharCount = 0);
+
+// Gets a suitable <cXXX> token to use at the start of a block of colored text. Must be terminated by </c>
+// - nRed - Red amount (0-255)
+// - nGreen - Green amount (0-255)
+// - nBlue - Blue amount (0-255)
+string GetColorCode(int nRed=255, int nGreen=255, int nBlue=255);
+
+// Converts sString into a colored string, <cXXX>sString</c>.
+// - nRed - Red amount (0-255)
+// - nGreen - Green amount (0-255)
+// - nBlue - Blue amount (0-255)
+string GetStringColoredRGB(string sString, int nRed=255, int nGreen=255, int nBlue=255);
+
 
 
 // Removes all spaces from the left side of a given string
@@ -153,4 +169,22 @@ string RandomiseString(string sOriginalString, int nCharCount = 0)
         sReturnValue = GetSubString(sReturnValue, 0, nPlace) + GetSubString(sOriginalString, nCount, 1) + GetSubString(sReturnValue, nPlace, GetStringLength(sReturnValue));
     }
     return sReturnValue;
+}
+
+// Gets a suitable <cXXX> token to use at the start of a block of colored text. Must be terminated by </c>
+// - nRed - Red amount (0-255)
+// - nGreen - Green amount (0-255)
+// - nBlue - Blue amount (0-255)
+string GetColorCode(int nRed=255, int nGreen=255, int nBlue=255)
+{
+    return "<c" + GetSubString(COLOR_TOKEN, nRed, 1) + GetSubString(COLOR_TOKEN, nGreen, 1) + GetSubString(COLOR_TOKEN, nBlue, 1) + ">";
+}
+
+// Converts sString into a colored string, <cXXX>sString</c>.
+// - nRed - Red amount (0-255)
+// - nGreen - Green amount (0-255)
+// - nBlue - Blue amount (0-255)
+string GetStringColoredRGB(string sString, int nRed=255, int nGreen=255, int nBlue=255)
+{
+    return GetColorCode(nRed, nGreen, nBlue) + sString + "</c>";
 }
