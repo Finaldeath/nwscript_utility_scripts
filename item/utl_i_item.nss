@@ -336,12 +336,13 @@ void SetInventoryDroppable(object oObject, int bDroppable = TRUE)
 // * oOwner - a placeable, creature, or container to look through the inventory of
 object GetRandomItemInInventory(object oOwner)
 {
-    object oItem, oReturnItem = OBJECT_INVALID;
+    object oReturnItem = OBJECT_INVALID, oItem = GetFirstItemInInventory(oOwner);
     int index = 0;
-    for(oItem = GetFirstItemInInventory(oOwner); GetIsObjectValid(oItem); oItem = GetNextItemInInventory(owner))
+    while(GetIsObjectValid(oItem))
     {
         if(Random(++index) == 0)
             oReturnItem = oItem;
+        oItem = GetNextItemInInventory(oOwner);
     }
     return oReturnItem;
 }
