@@ -71,7 +71,7 @@ int ConstantStringToInt(string sConstantName, int nErrorValue = 0)
     // This is the error return value being set in case ExecuteScriptChunk fails.
     SetLocalInt(GetModule(), "CONVERTED_SCRIPT_PARAM", nErrorValue);
     // From the example this does SetLocalInt(GetModule(), "CONVERTED_SCRIPT_PARAM", ABILITY_INTELLIGENCE);
-    ExecuteScriptChunk("SetLocalInt(GetModule(), \"CONVERTED_SCRIPT_PARAM\", " + sConstantName + "));", GetModule());
+    ExecuteScriptChunk("SetLocalInt(GetModule(), \"CONVERTED_SCRIPT_PARAM\", " + sConstantName + ");", GetModule());
     // Returns the value set, or nErrorValue if none was set
     return GetLocalInt(GetModule(), "CONVERTED_SCRIPT_PARAM");
 }
@@ -87,7 +87,7 @@ float ConstantStringToFloat(string sConstantName, float fErrorValue = 0.0)
     // This is the error return value being set in case ExecuteScriptChunk fails.
     SetLocalFloat(GetModule(), "CONVERTED_SCRIPT_PARAM", fErrorValue);
     // From the example this does SetLocalFloat(GetModule(), "CONVERTED_SCRIPT_PARAM", RADIUS_SIZE_SMALL);
-    ExecuteScriptChunk("SetLocalFloat(GetModule(), \"CONVERTED_SCRIPT_PARAM\", " + sConstantName + "));", GetModule());
+    ExecuteScriptChunk("SetLocalFloat(GetModule(), \"CONVERTED_SCRIPT_PARAM\", " + sConstantName + ");", GetModule());
     // Returns the value set, or fErrorValue if none was set
     return GetLocalFloat(GetModule(), "CONVERTED_SCRIPT_PARAM");
 }
@@ -103,7 +103,7 @@ string ConstantStringToString(string sConstantName, string sErrorValue = "")
     // This is the error return value being set in case ExecuteScriptChunk fails.
     SetLocalString(GetModule(), "CONVERTED_SCRIPT_PARAM", sErrorValue);
     // From the example this does SetLocalString(GetModule(), "CONVERTED_SCRIPT_PARAM", TILESET_RESREF_BEHOLDER_CAVES);
-    ExecuteScriptChunk("SetLocalString(GetModule(), \"CONVERTED_SCRIPT_PARAM\", " + sConstantName + "));", GetModule());
+    ExecuteScriptChunk("SetLocalString(GetModule(), \"CONVERTED_SCRIPT_PARAM\", " + sConstantName + ");", GetModule());
     // Returns the value set, or sErrorValue if none was set
     return GetLocalString(GetModule(), "CONVERTED_SCRIPT_PARAM");
 }
