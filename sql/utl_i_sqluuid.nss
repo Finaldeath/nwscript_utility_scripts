@@ -604,7 +604,7 @@ int SQLocalsUUID_IsSet(object oPlayer, string sVarName, int nType)
 
     sqlquery sql = SqlPrepareQueryObject(oPlayer,
         "SELECT * FROM " + SQLOCALSUUID_TABLE_NAME + " " +
-        "WHERE uuid = @uuid" +
+        "WHERE uuid = @uuid " +
         (nType != SQLOCALSUUID_TYPE_ALL ? "AND type & @type " : " ") +
         "AND varname = @varname;");
 
