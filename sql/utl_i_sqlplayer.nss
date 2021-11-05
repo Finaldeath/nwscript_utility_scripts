@@ -521,28 +521,40 @@ void SQLocalsPlayer_DeleteLocation(object oPlayer, string sVarName)
 // * nType - The SQLOCALSPLAYER_TYPE_* you wish to remove (default: SQLOCALSPLAYER_TYPE_ALL)
 // * sLike - The string to compare with the SQL "like" comparison
 // * sEscape - The escape character to use with the SQL "escape" keyword
+// Note if it is TYPE_ALL and sLike is "" then it will delete all values
 void SQLocalsPlayer_Delete(object oPlayer, int nType = SQLOCALSPLAYER_TYPE_ALL, string sLike = "", string sEscape = "")
 {
     if (!GetIsPC(oPlayer) || nType < 0) return;
 
     SQLocalsPlayer_CreateTable(oPlayer);
 
-    sqlquery sql = SqlPrepareQueryObject(oPlayer,
-        "DELETE FROM " + SQLOCALSPLAYER_TABLE_NAME + " " +
-        "WHERE " +
-        (nType != SQLOCALSPLAYER_TYPE_ALL ? "AND type & @type " : " ") +
-        (sLike != "" ? "AND varname LIKE @like " + (sEscape != "" ? "ESCAPE @escape" : "") : "") +
-        ";");
-
-    if (nType != SQLOCALSPLAYER_TYPE_ALL)
-        SqlBindInt(sql, "@type", nType);
-    if (sLike != "")
+    sqlquery sql;
+    if(nType == SQLOCALSPLAYER_TYPE_ALL && sLike == "")
     {
-        SqlBindString(sql, "@like", sLike);
-
-        if (sEscape != "")
-            SqlBindString(sql, "@escape", sEscape);
+        sql = SqlPrepareQueryObject(oPlayer,
+                "DELETE FROM " + SQLOCALSPLAYER_TABLE_NAME + ";");
     }
+    else
+    {
+        sql = SqlPrepareQueryObject(oPlayer,
+                "DELETE FROM " + SQLOCALSPLAYER_TABLE_NAME + " " +
+                "WHERE TRUE " +
+                (nType != SQLOCALSPLAYER_TYPE_ALL ? "AND type & @type " : " ") +
+                (sLike != "" ? "AND varname LIKE @like " + (sEscape != "" ? "ESCAPE @escape" : "") : "") +
+                ";");
+            
+
+        if (nType != SQLOCALSPLAYER_TYPE_ALL)
+            SqlBindInt(sql, "@type", nType);
+        if (sLike != "")
+        {
+            SqlBindString(sql, "@like", sLike);
+
+            if (sEscape != "")
+                SqlBindString(sql, "@escape", sEscape);
+        }
+    }
+
 
     SqlStep(sql);
 }
@@ -558,17 +570,41 @@ int SQLocalsPlayer_Count(object oPlayer, int nType = SQLOCALSPLAYER_TYPE_ALL, st
 
     SQLocalsPlayer_CreateTable(oPlayer);
 
-    sqlquery sql = SqlPrepareQueryObject(oPlayer,
-        "SELECT COUNT(*) FROM " + SQLOCALSPLAYER_TABLE_NAME + " " +
-        "WHERE " +
-        (nType != SQLOCALSPLAYER_TYPE_ALL ? "AND type & @type " : " ") +
-        (sLike != "" ? "AND varname LIKE @like " + (sEscape != "" ? "ESCAPE @escape" : "") : "") +
-        ";");
-
-    if (nType != SQLOCALSPLAYER_TYPE_ALL)
-        SqlBindInt(sql, "@type", nType);
-    if (sLike != "")
+    sqlquery sql;
+    if(nType == SQLOCALSPLAYER_TYPE_ALL && sLike == "")
     {
+        sql = SqlPrepareQueryObject(oPlayer,
+            "SELECT COUNT(*) FROM " + SQLOCALSPLAYER_TABLE_NAME + ";");
+    }
+    else if(nType != SQLOCALSPLAYER_TYPE_ALL && sLike == "")
+    {
+        sql = SqlPrepareQueryObject(oPlayer,
+            "SELECT COUNT(*) FROM " + SQLOCALSPLAYER_TABLE_NAME + " " +
+            "WHERE type & @type;");
+
+        SqlBindInt(sql, "@type", nType);
+    }
+    else if(nType == SQLOCALSPLAYER_TYPE_ALL && sLike != "")
+    {
+        sql = SqlPrepareQueryObject(oPlayer,
+            "SELECT COUNT(*) FROM " + SQLOCALSPLAYER_TABLE_NAME + " " +
+            "varname LIKE @like " + (sEscape != "" ? "ESCAPE @escape" : "") +
+            ";");
+
+        SqlBindString(sql, "@like", sLike);
+
+        if (sEscape != "")
+            SqlBindString(sql, "@escape", sEscape);
+    }
+    else
+    {
+        sql = SqlPrepareQueryObject(oPlayer,
+            "SELECT COUNT(*) FROM " + SQLOCALSPLAYER_TABLE_NAME + " " +
+            "WHERE type & @type " +
+            "AND varname LIKE @like " + (sEscape != "" ? "ESCAPE @escape" : "") +
+            ";");
+
+        SqlBindInt(sql, "@type", nType);
         SqlBindString(sql, "@like", sLike);
 
         if (sEscape != "")
@@ -593,9 +629,9 @@ int SQLocalsPlayer_IsSet(object oPlayer, string sVarName, int nType)
 
     sqlquery sql = SqlPrepareQueryObject(oPlayer,
         "SELECT * FROM " + SQLOCALSPLAYER_TABLE_NAME + " " +
-        "WHERE " +
+        "WHERE AND varname = @varname" +
         (nType != SQLOCALSPLAYER_TYPE_ALL ? "AND type & @type " : " ") +
-        "AND varname = @varname;");
+        ";");
 
     if (nType != SQLOCALSPLAYER_TYPE_ALL)
         SqlBindInt(sql, "@type", nType);
