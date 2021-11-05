@@ -187,7 +187,7 @@ sqlquery SQLocalsUUID_PrepareInsert(object oPlayer, int nType, string sVarName)
     sqlquery sql = SqlPrepareQueryCampaign(SQLLOCALUUID_DATABASE_NAME,
         "INSERT INTO " + SQLOCALSUUID_TABLE_NAME + " " +
         "(type, uuid, varname, value, timestamp) VALUES (@type, @uuid, @varname, @value, strftime('%s','now')) " +
-        "ON CONFLICT (type, varname) DO UPDATE SET value = @value, timestamp = strftime('%s','now');");
+        "ON CONFLICT (type, uuid, varname) DO UPDATE SET value = @value, timestamp = strftime('%s','now');");
 
     SqlBindInt(sql, "@type", nType);
     SqlBindString(sql, "@uuid", GetObjectUUID(oPlayer));
@@ -536,10 +536,12 @@ void SQLocalsUUID_Delete(object oPlayer, int nType = SQLOCALSUUID_TYPE_ALL, stri
 
     sqlquery sql = SqlPrepareQueryCampaign(SQLLOCALUUID_DATABASE_NAME,
         "DELETE FROM " + SQLOCALSUUID_TABLE_NAME + " " +
-        "WHERE " +
+        "WHERE uuid = @uuid" +
         (nType != SQLOCALSUUID_TYPE_ALL ? "AND type & @type " : " ") +
         (sLike != "" ? "AND varname LIKE @like " + (sEscape != "" ? "ESCAPE @escape" : "") : "") +
         ";");
+
+    SqlBindString(sql, "@uuid", GetObjectUUID(oPlayer));
 
     if (nType != SQLOCALSUUID_TYPE_ALL)
         SqlBindInt(sql, "@type", nType);
@@ -567,10 +569,12 @@ int SQLocalsUUID_Count(object oPlayer, int nType = SQLOCALSUUID_TYPE_ALL, string
 
     sqlquery sql = SqlPrepareQueryObject(oPlayer,
         "SELECT COUNT(*) FROM " + SQLOCALSUUID_TABLE_NAME + " " +
-        "WHERE " +
+        "WHERE uuid = @uuid " +
         (nType != SQLOCALSUUID_TYPE_ALL ? "AND type & @type " : " ") +
         (sLike != "" ? "AND varname LIKE @like " + (sEscape != "" ? "ESCAPE @escape" : "") : "") +
         ";");
+
+    SqlBindString(sql, "@uuid", GetObjectUUID(oPlayer));
 
     if (nType != SQLOCALSUUID_TYPE_ALL)
         SqlBindInt(sql, "@type", nType);
@@ -600,9 +604,11 @@ int SQLocalsUUID_IsSet(object oPlayer, string sVarName, int nType)
 
     sqlquery sql = SqlPrepareQueryObject(oPlayer,
         "SELECT * FROM " + SQLOCALSUUID_TABLE_NAME + " " +
-        "WHERE " +
+        "WHERE uuid = @uuid" +
         (nType != SQLOCALSUUID_TYPE_ALL ? "AND type & @type " : " ") +
         "AND varname = @varname;");
+
+    SqlBindString(sql, "@uuid", GetObjectUUID(oPlayer));
 
     if (nType != SQLOCALSUUID_TYPE_ALL)
         SqlBindInt(sql, "@type", nType);
@@ -624,9 +630,11 @@ int SQLocalsUUID_GetLastUpdated_UnixEpoch(object oPlayer, string sVarName, int n
     sqlquery sql = SqlPrepareQueryObject(oPlayer,
         "SELECT timestamp FROM " + SQLOCALSUUID_TABLE_NAME + " " +
         "WHERE type = @type " +
+        "AND uuid = @uuid" +
         "AND varname = @varname;");
 
     SqlBindInt(sql, "@type", nType);
+    SqlBindString(sql, "@uuid", GetObjectUUID(oPlayer));
     SqlBindString(sql, "@varname", sVarName);
 
     if (SqlStep(sql))
@@ -648,9 +656,11 @@ string SQLocalsUUID_GetLastUpdated_UTC(object oPlayer, string sVarName, int nTyp
     sqlquery sql = SqlPrepareQueryObject(oPlayer,
         "SELECT datetime(timestamp, 'unixepoch') FROM " + SQLOCALSUUID_TABLE_NAME + " " +
         "WHERE type = @type " +
+        "AND uuid = @uuid" +
         "AND varname = @varname;");
 
     SqlBindInt(sql, "@type", nType);
+    SqlBindString(sql, "@uuid", GetObjectUUID(oPlayer));
     SqlBindString(sql, "@varname", sVarName);
 
     if (SqlStep(sql))
