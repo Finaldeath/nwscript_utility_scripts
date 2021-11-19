@@ -49,7 +49,7 @@ int GetTimerStartYear()
 // Internal timer function.
 // Returns elapsed game-time in seconds and sets to variable GlobalElapsedSeconds.
 // Thanks to https://forum.neverwintervault.org/t/timers-and-timings/865/8
-void TimerCalculateEsapsedSeconds()
+void TimerCalculateElapsedSeconds()
 {
     if(GlobalElapsedSeconds) return;
 
@@ -73,7 +73,7 @@ void TimerCalculateEsapsedSeconds()
 void SetTimer(string sTimerName, int nSeconds, object oTarget = OBJECT_SELF)
 {
     // Do this every timer call for now, relatively efficient (makes sure GlobalElapsedSeconds is set first)
-    TimerCalculateEsapsedSeconds();
+    TimerCalculateElapsedSeconds();
 
     // We set the timer against them as the time we must go past
     SetLocalInt(oTarget, sTimerName, GlobalElapsedSeconds + nSeconds);
@@ -83,7 +83,7 @@ void SetTimer(string sTimerName, int nSeconds, object oTarget = OBJECT_SELF)
 int GetTimerEnded(string sTimerName, object oTarget = OBJECT_SELF)
 {
     // Do this every timer call for now, relatively efficient (makes sure GlobalElapsedSeconds is set first)
-    TimerCalculateEsapsedSeconds();
+    TimerCalculateElapsedSeconds();
 
     // If timer isn't set it'll return 0, so elapsed seconds will always be higher
     return (GlobalElapsedSeconds >= GetLocalInt(oTarget, sTimerName));
