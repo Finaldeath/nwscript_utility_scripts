@@ -28,28 +28,28 @@ void ClearInventory(object oObject);
 // Destroys all the items in the inventory of oObject that matches the given resref
 // Creatures also have all equipped items checked
 // * oObject - a placeable, store, creature or container
-// * sResRef - item resref to check
+// * sResRef - resref of item to destroy
 void DestroyAllItemsByResRef(object oObject, string sResRef);
 
 // Destroys all the items in the inventory of oObject that matches the resref
 // list given.
 // Creatures also have all equipped items checked
 // * oObject - a placeable, store, creature or container
-// * sResRefList - item resref to check, or multiple resrefs divided by an 
+// * sResRefList - resref of item to destroy, or multiple resrefs divided by an
 //                 resref-invalid character, eg; abc12;xyz34
 void DestroyAllItemsByResRefList(object oObject, string sResRefList);
 
 // Destroys all the items in the inventory of oObject that matches the tag
 // Creatures also have all equipped items checked
 // * oObject - a placeable, store, creature or container
-// * sTag - item tag to check
+// * sTag - tag of item to destroy
 void DestroyAllItemsByTag(object oObject, string sTag);
 
 // Destroys all the items in the inventory of oObject that matches the tag list
 // Creatures also have all equipped items checked
 // * oObject - a placeable, store, creature or container
 // * sTagList - item tag list. Divide it with a tag-invalid character, eg; abc12;xyz34
-// - Note: This function assumes tags are unique! Do not use if you 
+// - Note: This function assumes tags are unique! Do not use if you
 //         have both mybadasssword and mybadasssword2 and search for tag "mybadasssword"
 //         since this finds both.
 void DestroyAllItemsByTagList(object oObject, string sTagList);
@@ -69,8 +69,8 @@ object GetRandomItemInInventory(object oOwner);
 // Counts the amount of items possessed by oObject that match sTag. Takes into account stacks
 // (so 1 item of 99 arrows will return 99).
 // * oOwner - a placeable, creature, or container to look through the inventory of
-int CountItemsByTag(object oObject, string sTag);
-
+// * sTag - item tag to check
+int CountItemsByTagInInventory(object oObject, string sTag);
 
 // Returns the base AC value of oArmor, based on the appearance of it
 // * oArmor - Armor piece to check
@@ -81,7 +81,7 @@ int GetArmorBaseACValue(object oArmor)
     // Look up in parts_chest.2da the relevant line, which links to the actual AC bonus of the armor
     // We cast it to int, even though the column is technically a float.
     int nAC = StringToInt(Get2DAString("parts_chest", "ACBONUS", nAppearance));
- 
+
     // Return the given AC value (0 to 8)
     return nAC;
 }
@@ -94,7 +94,7 @@ int GetGoldAcquired()
     int nTotalGold = 0;
     object oItem = GetModuleItemAcquired();
 
-    // The only item that is not valid after acquiring it is gold 
+    // The only item that is not valid after acquiring it is gold
     // therefore an invalid item is always gold
     if(GetIsObjectValid(oItem) == FALSE)
     {
@@ -140,7 +140,7 @@ void ClearInventory(object oObject)
 // Destroys all the items in the inventory of oObject that matches the given resref
 // Creatures also have all equipped items checked
 // * oObject - a placeable, store, creature or container
-// * sResRef - item resref to check
+// * sResRef - resref of item to destroy
 void DestroyAllItemsByResRef(object oObject, string sResRef)
 {
     object oItem = GetFirstItemInInventory(oObject);
@@ -179,7 +179,7 @@ void DestroyAllItemsByResRef(object oObject, string sResRef)
 // Creatures also have all equipped items checked
 // * oObject - a placeable, store, creature or container
 // * sResRefList - item resref list. Divide it with a resref-invalid character, eg; abc12;xyz34
-// - Note: This function assumes resrefs are unique! Do not use if you 
+// - Note: This function assumes resrefs are unique! Do not use if you
 //         have both mybadasssword and mybadasssword2 and search for resref "mybadasssword"
 //         since this finds both.
 void DestroyAllItemsByResRefList(object oObject, string sResRefList)
@@ -218,7 +218,7 @@ void DestroyAllItemsByResRefList(object oObject, string sResRefList)
 // Destroys all the items in the inventory of oObject that matches the tag
 // Creatures also have all equipped items checked
 // * oObject - a placeable, store, creature or container
-// * sTag - item tag to check
+// * sTag - tag of item to destroy
 void DestroyAllItemsByTag(object oObject, string sTag)
 {
     object oItem = GetFirstItemInInventory(oObject);
@@ -256,7 +256,7 @@ void DestroyAllItemsByTag(object oObject, string sTag)
 // Creatures also have all equipped items checked
 // * oObject - a placeable, store, creature or container
 // * sTagList - item tag list. Divide it with a tag-invalid character, eg; abc12;xyz34
-// - Note: This function assumes tags are unqiue! Do not use if you 
+// - Note: This function assumes tags are unqiue! Do not use if you
 //         have both mybadasssword and mybadasssword2 and search for tag "mybadasssword"
 //         since this finds both.
 void DestroyAllItemsByTagList(object oObject, string sTagList)
@@ -355,25 +355,15 @@ object GetRandomItemInInventory(object oOwner)
 // Counts the amount of items possessed by oObject that match sTag. Takes into account stacks
 // (so 1 item of 99 arrows will return 99).
 // * oOwner - a placeable, creature, or container to look through the inventory of
-int CountItemsByTag(object oObject, string sTag)
+// * sTag - item tag to check
+int CountItemsByTagInInventory(object oObject, string sTag)
 {
     object oItem = GetFirstItemInInventory(oObject);
     int nCount = 0;
     while(GetIsObjectValid(oItem))
     {
-        if(GetHasInventory(oItem))
-        {
-            object oItem2 = GetFirstItemInInventory(oItem);
-            while(oItem2 != OBJECT_INVALID)
-            {
-                if(GetTag(oItem2) == sTag)
-                    nCount += GetItemStackSize(oItem2);
-                oItem2 = GetNextItemInInventory(oItem);
-            }
-        }
-
         if(GetTag(oItem) == sTag)
-            DestroyObject(oItem);
+            nCount += GetItemStackSize(oItem);
         oItem = GetNextItemInInventory(oObject);
     }
     // Check inventory slots as well for creatures
@@ -384,7 +374,7 @@ int CountItemsByTag(object oObject, string sTag)
         {
             oItem = GetItemInSlot(i, oObject);
             if(GetTag(oItem) == sTag)
-                nCount += GetItemStackSize(oItem2);
+                nCount += GetItemStackSize(oItem);
         }
     }
     return nCount;
