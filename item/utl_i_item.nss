@@ -66,6 +66,11 @@ void SetInventoryDroppable(object oObject, int bDroppable = TRUE);
 // * oOwner - a placeable, creature, or container to look through the inventory of
 object GetRandomItemInInventory(object oOwner);
 
+// Counts the amount of items possessed by oObject that match sTag. Takes into account stacks
+// (so 1 item of 99 arrows will return 99).
+// * oOwner - a placeable, creature, or container to look through the inventory of
+int CountItemsByTag(object oObject, string sTag);
+
 
 // Returns the base AC value of oArmor, based on the appearance of it
 // * oArmor - Armor piece to check
@@ -345,4 +350,42 @@ object GetRandomItemInInventory(object oOwner)
         oItem = GetNextItemInInventory(oOwner);
     }
     return oReturnItem;
+}
+
+// Counts the amount of items possessed by oObject that match sTag. Takes into account stacks
+// (so 1 item of 99 arrows will return 99).
+// * oOwner - a placeable, creature, or container to look through the inventory of
+int CountItemsByTag(object oObject, string sTag)
+{
+    object oItem = GetFirstItemInInventory(oObject);
+    int nCount = 0;
+    while(GetIsObjectValid(oItem))
+    {
+        if(GetHasInventory(oItem))
+        {
+            object oItem2 = GetFirstItemInInventory(oItem);
+            while(oItem2 != OBJECT_INVALID)
+            {
+                if(GetTag(oItem2) == sTag)
+                    nCount += GetItemStackSize(oItem2);
+                oItem2 = GetNextItemInInventory(oItem);
+            }
+        }
+
+        if(GetTag(oItem) == sTag)
+            DestroyObject(oItem);
+        oItem = GetNextItemInInventory(oObject);
+    }
+    // Check inventory slots as well for creatures
+    if(GetObjectType(oObject) == OBJECT_TYPE_CREATURE)
+    {
+        int i;
+        for(i = 0; i < NUM_INVENTORY_SLOTS; i++)
+        {
+            oItem = GetItemInSlot(i, oObject);
+            if(GetTag(oItem) == sTag)
+                nCount += GetItemStackSize(oItem2);
+        }
+    }
+    return nCount;
 }
