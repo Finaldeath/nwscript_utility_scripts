@@ -46,6 +46,13 @@ object CreateDoppleganger(object oCreature, location lSpawn, int nStandardFactio
 // the two target's alignments' differ.
 int CompareAlignment(object oSource, object oTarget);
 
+// Checks for a creatures favored class, which should not get XP penalties.
+// * oCreature - Creature to check
+// - Returns CLASS_TYPE_INVALID if none are found or on error 
+int GetFavoredClass(object oCreature);
+
+// Checks if nClass is a prestige class for the purposes of XP / multiclassing and returns TRUE if so
+int GetIsPrestigeClass(int nClass);
 
 
 // Returns the ENCUMBRANCE_LEVEL_* value related to how many items are on the creature
@@ -177,50 +184,6 @@ object CreateDoppleganger(object oCreature, location lSpawn, int nStandardFactio
     return oClone;
 }
 
-
-int CompareAlignment(object oSource, object oTarget)
-{
-    int iStepDif;
-    int iGE1 = GetAlignmentGoodEvil(oSource);
-    int iLC1 = GetAlignmentLawChaos(oSource);
-    int iGE2 = GetAlignmentGoodEvil(oTarget);
-    int iLC2 = GetAlignmentLawChaos(oTarget);
-
-    if(iGE1 == ALIGNMENT_GOOD){
-        if(iGE2 == ALIGNMENT_NEUTRAL)
-            iStepDif += 1;
-        else if(iGE2 == ALIGNMENT_EVIL)
-            iStepDif += 2;
-    }
-    else if(iGE1 == ALIGNMENT_NEUTRAL){
-        if(iGE2 != ALIGNMENT_NEUTRAL)
-            iStepDif += 1;
-    }
-    else if(iGE1 == ALIGNMENT_EVIL){
-        if(iLC2 == ALIGNMENT_NEUTRAL)
-            iStepDif += 1;
-        else if(iLC2 == ALIGNMENT_GOOD)
-            iStepDif += 2;
-    }
-    if(iLC1 == ALIGNMENT_LAWFUL){
-        if(iLC2 == ALIGNMENT_NEUTRAL)
-            iStepDif += 1;
-        else if(iLC2 == ALIGNMENT_CHAOTIC)
-            iStepDif += 2;
-    }
-    else if(iLC1 == ALIGNMENT_NEUTRAL){
-        if(iLC2 != ALIGNMENT_NEUTRAL)
-            iStepDif += 1;
-    }
-    else if(iLC1 == ALIGNMENT_CHAOTIC){
-        if(iLC2 == ALIGNMENT_NEUTRAL)
-            iStepDif += 1;
-        else if(iLC2 == ALIGNMENT_LAWFUL)
-            iStepDif += 2;
-    }
-    return iStepDif;
-}
-
 // Calculates the number of steps along both moral and ethical axes that
 // the two target's alignments' differ.
 int CompareAlignment(object oSource, object oTarget)
@@ -235,7 +198,7 @@ int CompareAlignment(object oSource, object oTarget)
     {
         if(nGE2 == ALIGNMENT_NEUTRAL)
             nStepDif += 1;
-        else if(iGE2 == ALIGNMENT_EVIL)
+        else if(nGE2 == ALIGNMENT_EVIL)
             nStepDif += 2;
     }
     else if(nGE1 == ALIGNMENT_NEUTRAL)
@@ -247,14 +210,14 @@ int CompareAlignment(object oSource, object oTarget)
     {
         if(nLC2 == ALIGNMENT_NEUTRAL)
             nStepDif += 1;
-        else if(iLC2 == ALIGNMENT_GOOD)
+        else if(nLC2 == ALIGNMENT_GOOD)
             nStepDif += 2;
     }
     if(nLC1 == ALIGNMENT_LAWFUL)
     {
         if(nLC2 == ALIGNMENT_NEUTRAL)
             nStepDif += 1;
-        else if(iLC2 == ALIGNMENT_CHAOTIC)
+        else if(nLC2 == ALIGNMENT_CHAOTIC)
             nStepDif += 2;
     }
     else if(nLC1 == ALIGNMENT_NEUTRAL)
@@ -270,4 +233,23 @@ int CompareAlignment(object oSource, object oTarget)
             niStepDif += 2;
     }
     return nStepDif;
+}
+
+// Checks for a creatures favored class, which should not get XP penalties.
+// * oCreature - Creature to check
+// - Returns CLASS_TYPE_INVALID if none are found or on error 
+int GetFavoredClass(object oCreature)
+{
+    string sFavored = Get2DAString("racialtypes", "Favored", GetRacialType(oCreature));
+    if(sFavored == "") return CLASS_TYPE_INVALID;
+    
+    return StringToInt(sFavored);
+}
+
+// Checks if nClass is a prestige class for the purposes of XP / multiclassing and returns TRUE if so
+int GetIsPrestigeClass(int nClass)
+{
+    if(Get2DAString("classes", "XPPenalty", nClass) == "1") return TRUE;
+    // Invalid 2da entry or error
+    return FALSE;
 }
