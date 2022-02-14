@@ -394,13 +394,13 @@ int GetMaxSingleItemValue(object oItem)
 {
     // Get true item value (ie identify it and reset identified flag)
     int bIdentified = GetIdentified(oItem);
-    if(!bIdentified) SetIdentified(oItem, TRUE);
+    SetIdentified(oItem, TRUE);
     int nGP = GetGoldPieceValue(oItem);
     SetIdentified(oItem, bIdentified);
 
     // Loop itemvalue.2da to find what level you'd need to be to equip it
-    int nRow;
-    for(nRow = 0; nRow <= Get2DARowCount("itemvalue"); nRow++)
+    int nRow, nRows = Get2DARowCount("itemvalue");
+    for(nRow = 0; nRow < nRows; nRow++)
     {
         if(nGP <= StringToInt(Get2DAString("itemvalue", "MAXSINGLEITEMVALUE", nRow)))
         {
@@ -409,5 +409,5 @@ int GetMaxSingleItemValue(object oItem)
         }
     }
     // Else return row count + 1 - impossible to equip (usually this is 61)
-    return Get2DARowCount("itemvalue") + 1;
+    return nRows + 1;
 }
