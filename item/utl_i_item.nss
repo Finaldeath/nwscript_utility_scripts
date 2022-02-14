@@ -72,6 +72,13 @@ object GetRandomItemInInventory(object oOwner);
 // * sTag - item tag to check
 int CountItemsByTagInInventory(object oObject, string sTag);
 
+// Retrieves the ELC level required to equip oItem. Uses the itemvalue.2da file. Uses the identified value.
+// - Returns the last row +1 for anything valued over the last row in that 2da
+//   to match how the game works for very high value items (makes them unequippable)
+int GetMaxSingleItemValue(object oItem);
+
+
+
 // Returns the base AC value of oArmor, based on the appearance of it
 // * oArmor - Armor piece to check
 int GetArmorBaseACValue(object oArmor)
@@ -378,4 +385,29 @@ int CountItemsByTagInInventory(object oObject, string sTag)
         }
     }
     return nCount;
+}
+
+// Retrieves the ELC level required to equip oItem. Uses the itemvalue.2da file. Uses the identified value.
+// - Returns the last row +1 for anything valued over the last row in that 2da
+//   to match how the game works for very high value items (makes them unequippable)
+int GetMaxSingleItemValue(object oItem)
+{
+    // Get true item value (ie identify it and reset identified flag)
+    int bIdentified = GetIdentified(oItem);
+    if(!bIdentified) SetIdentified(oItem, TRUE);
+    int nGP = GetGoldPieceValue(oItem);
+    SetIdentified(oItem, bIdentified);
+
+    // Loop itemvalue.2da to find what level you'd need to be to equip it
+    int nRow;
+    for(nRow = 0; nRow <= Get2DARowCount("itemvalue"); nRow++)
+    {
+        if(nGP <= StringToInt(Get2DAString("itemvalue", "MAXSINGLEITEMVALUE", nRow)))
+        {
+            // Level is row + 1 as per Label column
+            return nRow + 1;
+        }
+    }
+    // Else return row count + 1 - impossible to equip (usually this is 61)
+    return Get2DARowCount("itemvalue") + 1;
 }
