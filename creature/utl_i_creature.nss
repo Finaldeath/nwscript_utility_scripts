@@ -54,6 +54,10 @@ int GetFavoredClass(object oCreature);
 // Checks if nClass is a prestige class for the purposes of XP / multiclassing and returns TRUE if so
 int GetIsPrestigeClass(int nClass);
 
+// Returns the CLASS_TYPE_* of the highest class oCreature has.
+// Returns CLASS_TYPE_INVALID on error
+int GetHighestLevelClass(object oCreature);
+
 
 // Returns the ENCUMBRANCE_LEVEL_* value related to how many items are on the creature
 // * oCreature - Creature to check encumbrance of
@@ -252,4 +256,23 @@ int GetIsPrestigeClass(int nClass)
     if(Get2DAString("classes", "XPPenalty", nClass) == "1") return TRUE;
     // Invalid 2da entry or error
     return FALSE;
+}
+
+// Returns the CLASS_TYPE_* of the highest class oCreature has.
+// Returns CLASS_TYPE_INVALID on error
+int GetHighestLevelClass(object oCreature)
+{
+    int nSlot, nClass, nLevel, nHighest;
+    int nHighestClass = CLASS_TYPE_INVALID;
+    for(nSlot = 1; nSlot <= 3; nSlot++)
+    {
+        nClass = GetClassByPosition(nSlot, oCreature);
+        nLevel = GetLevelByClass(nClass, oCreature);
+        if(nLevel > nHighest)
+        {
+            nHighest = nLevel;
+            nHighestClass = nClass;
+        }
+    }
+    return nHighestClass;
 }
