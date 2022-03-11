@@ -87,6 +87,19 @@ float GetTotalMovementSpeedEffectsModifier(object oCreature);
 // the speed increases and decreases get recalculated.
 void FixMovementSpeedEffectsModifiers(object oCreature);
 
+// This function is currently INCOMPLETE and may have some issues being a true fully working function.
+// This will return the total saving throw bonus with a given saving throw type and if it is a spell
+// adds on the spellcraft save bonus.
+// - nSave - SAVING_THROW_* eg SAVING_THROW_WILL
+// - oObject - The object to get saving throw of (Creature, Door, Placeable)
+// - Opponent - If present will be used for race/alignement specific saving throw bonuses
+// - nSaveType - SAVING_THROW_TYPE_* value, eg: SAVING_THROW_TYPE_FIRE
+// - bSpell - If TRUE will also assume nSaveType adds SAVING_THROW_TYPE_SPELL
+//     SAVING_THROW_TYPE_SPELL adds spell-specific saves but also a bonus from spellcraft.
+// * Returns -100 on error (should always fail that save!)
+int GetEffectSavingThrowBonuses(int nSave, object oObject, object oOpponent = OBJECT_INVALID, int nSaveType = SAVING_THROW_TYPE_NONE, int bSpell = FALSE);
+
+
 
 
 // This will work through the negative level effects on oCreature and figure out what the
@@ -532,4 +545,211 @@ void FixMovementSpeedEffectsModifiers(object oCreature)
         }
         eCheck = GetNextEffect(oCreature);
     }
+}
+
+// This function is currently INCOMPLETE and may have some issues being a true fully working function.
+// This will return the total saving throw bonus with a given saving throw type and if it is a spell
+// adds on the spellcraft save bonus.
+// - nSave - SAVING_THROW_* eg SAVING_THROW_WILL
+// - oObject - The object to get saving throw of (Creature, Door, Placeable)
+// - Opponent - If present will be used for race/alignement specific saving throw bonuses
+// - nSaveType - SAVING_THROW_TYPE_* value, eg: SAVING_THROW_TYPE_FIRE
+// - bSpell - If TRUE will also assume nSaveType adds SAVING_THROW_TYPE_SPELL
+//     SAVING_THROW_TYPE_SPELL adds spell-specific saves but also a bonus from spellcraft.
+// * Returns -100 on error (should always fail that save!)
+int GetEffectSavingThrowBonuses(int nSave, object oObject, object oOpponent = OBJECT_INVALID, int nSaveType = SAVING_THROW_TYPE_NONE, int bSpell = FALSE)
+{
+    if(!GetIsObjectValid(oObject)) return -100;
+
+    // The different bonuses we calculate
+    int nBaseSave;
+
+    // Check the specific save
+    // This does:
+    // * Base stats
+    // * Misc effect bonuses (as if SAVING_THROW_TYPE_NONE)
+    // * Feats
+    switch(nSave)
+    {
+        case SAVING_THROW_FORT:   nBaseSave = GetFortitudeSavingThrow(oObject); break;
+        case SAVING_THROW_REFLEX: nBaseSave = GetReflexSavingThrow(oObject); break;
+        case SAVING_THROW_WILL:   nBaseSave = GetWillSavingThrow(oObject); break;
+        default: return -100; break;
+    }
+
+    // If invalid opponent and no save type or spell we just return the above
+    if(!GetIsObjectValid(oOpponent) &&  nSaveType == SAVING_THROW_TYPE_NONE && bSpell == FALSE)
+    {
+        return nBaseSave;
+    }
+
+    // Other variables used for specific vs. type or vs. alignment etc.
+    int nSavePenalty, nSaveBonus;
+    int x, nValue;
+    int nRace = GetRacialType(oOpponent);
+    int nGoodEvil = GetAlignmentGoodEvil(oOpponent);
+    int nLawChaos = GetAlignmentLawChaos(oOpponent);
+
+    // We need vs. specific saves on items first
+    if(nSaveType != SAVING_THROW_TYPE_NONE && bSpell == FALSE)
+    {
+        int nSubtype;
+        object oItem;
+        itemproperty ip;
+
+        // Convert the item property subtype we need. Annoyingly not the same as the SAVING_THROW_TYPE_* constants
+        int nItemSubtypeNeeded = -1;
+        switch(nSaveType)
+        {
+            case SAVING_THROW_TYPE_ACID:        nItemSubtypeNeeded = 1; break;
+            case SAVING_THROW_TYPE_CHAOS:       nItemSubtypeNeeded = 19; break;
+            case SAVING_THROW_TYPE_COLD:        nItemSubtypeNeeded = 3; break;
+            case SAVING_THROW_TYPE_DEATH:       nItemSubtypeNeeded = 4; break;
+            case SAVING_THROW_TYPE_DISEASE:     nItemSubtypeNeeded = 5; break;
+            case SAVING_THROW_TYPE_DIVINE:      nItemSubtypeNeeded = 6; break;
+            case SAVING_THROW_TYPE_ELECTRICITY: nItemSubtypeNeeded = 7; break;
+            case SAVING_THROW_TYPE_EVIL:        nItemSubtypeNeeded = 21; break;
+            case SAVING_THROW_TYPE_FEAR:        nItemSubtypeNeeded = 8; break;
+            case SAVING_THROW_TYPE_FIRE:        nItemSubtypeNeeded = 9; break;
+            case SAVING_THROW_TYPE_GOOD:        nItemSubtypeNeeded = 20; break;
+            case SAVING_THROW_TYPE_LAW:         nItemSubtypeNeeded = 18; break;
+            case SAVING_THROW_TYPE_MIND_SPELLS: nItemSubtypeNeeded = 11; break;
+            case SAVING_THROW_TYPE_NEGATIVE:    nItemSubtypeNeeded = 12; break;
+            case SAVING_THROW_TYPE_POISON:      nItemSubtypeNeeded = 13; break;
+            case SAVING_THROW_TYPE_POSITIVE:    nItemSubtypeNeeded = 14; break;
+            case SAVING_THROW_TYPE_SONIC:       nItemSubtypeNeeded = 15; break;
+            case SAVING_THROW_TYPE_SPELL:       nItemSubtypeNeeded = 17; break;
+            case SAVING_THROW_TYPE_TRAP:        nItemSubtypeNeeded = 16; break;
+        }
+        // Not finding anything is fine, since it might default to spells only.
+
+        // Spells "constant"
+        int nSpellsItemSubtype = 17;
+
+        // Equipped items first
+        for(x = 0; x < NUM_INVENTORY_SLOTS; x++)
+        {
+            oItem = GetItemInSlot(x, oObject);
+            if(GetIsObjectValid(oItem))
+            {
+                // Check item properties
+                ip = GetFirstItemProperty(oItem);
+                while(GetIsItemPropertyValid(ip))
+                {
+                    // We only need to check for SPECIFIC saving throw bonuses, since ITEM_PROPERTY_DECREASED_SAVING_THROWS is already accounted for
+                    // There is no "vs. Alignment/Race" for item effects, but the SPECIFIC saving throws apply to every save type (fortitude, reflex, will)
+                    switch(GetItemPropertyType(ip))
+                    {
+                        case ITEM_PROPERTY_DECREASED_SAVING_THROWS_SPECIFIC:
+                        {
+                            nSubtype = GetItemPropertySubType(ip);
+                            // Note by default nSubtype can't be SAVING_THROW_TYPE_SPELL (it's not in iprp_saveelement.2da) but
+                            // it's here for future proofing / does no harm
+                            if(nSubtype == nSaveType || (bSpell && nSubtype == nSpellsItemSubtype))
+                            {
+                                nSavePenalty += GetItemPropertyCostTableValue(ip);
+                            }
+                        }
+                        break;
+                        case ITEM_PROPERTY_SAVING_THROW_BONUS_SPECIFIC:
+                        {
+                            nSubtype = GetItemPropertySubType(ip);
+                            // Note by default nSubtype can't be SAVING_THROW_TYPE_SPELL (it's not in iprp_saveelement.2da) but
+                            // it's here for future proofing / does no harm
+                            if(nSubtype == nSaveType || (bSpell && nSubtype == nSpellsItemSubtype))
+                            {
+                                nSaveBonus += GetItemPropertyCostTableValue(ip);
+                            }
+                        }
+                        break;
+                    }
+                    ip = GetNextItemProperty(oItem);
+                }
+            }
+        }
+    }
+
+    // Effects that affect saves:
+    // * Bonuses/penalties to base saves - we just ones matching alignment however (other misc ones accounted for)
+    // * Bonuses/penalties to specific save types - eg vs. Fire
+    // * Negative levels (-1 per level) (already accounted for)
+    effect eCheck = GetFirstEffect(oObject);
+    while(GetIsEffectValid(eCheck))
+    {
+        switch(GetEffectType(eCheck))
+        {
+            case EFFECT_TYPE_SAVING_THROW_INCREASE:
+            case EFFECT_TYPE_SAVING_THROW_DECREASE:
+            {
+                // Correct base type of save
+                nValue = GetEffectInteger(eCheck, 1);
+                if(nValue == SAVING_THROW_ALL || nValue == nSave)
+                {
+                    // Correct specific save type, or all
+                    nValue = GetEffectInteger(eCheck, 2);
+                    if(nValue == SAVING_THROW_TYPE_ALL || nValue == nSaveType || (bSpell && nValue == SAVING_THROW_TYPE_SPELL))
+                    {
+                        // Check race etc.
+                        nValue = GetEffectInteger(eCheck, 3);
+                        if(nValue == RACIAL_TYPE_INVALID ||
+                           nValue == nRace)
+                        {
+                            // Alignment Law/Chaos
+                            nValue = GetEffectInteger(eCheck, 4);
+                            if(nValue == ALIGNMENT_ALL ||
+                               nValue == nLawChaos)
+                            {
+                                // Alignment Good/Evil
+                                nValue = GetEffectInteger(eCheck, 5);
+                                if(nValue == ALIGNMENT_ALL ||
+                                   nValue == nGoodEvil)
+                                {
+                                    // All matches so we add/remove the bonus
+                                    if(GetEffectType(eCheck) == EFFECT_TYPE_SAVING_THROW_INCREASE)
+                                    {
+                                        nSaveBonus += GetEffectInteger(eCheck, 0);
+                                    }
+                                    else
+                                    {
+                                        nSavePenalty += GetEffectInteger(eCheck, 0);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            break;
+        }
+        eCheck = GetNextEffect(oObject);
+    }
+
+    // Bonus from spellcraft
+    int nSpellcraftBonus = 0;
+    if(bSpell || nSaveType == SAVING_THROW_TYPE_SPELL)
+    {
+        // No bonuses without ranks
+        if(GetHasSkill(SKILL_SPELLCRAFT, oObject))
+        {
+            // Get total skill plus specific bonus versus the target
+            int nSkill = GetSkillRank(SKILL_SPELLCRAFT, oObject);
+            // Increase with specific bonuses vs. alignment etc.
+            // TODO
+
+            if(nSkill > 0)
+            {
+                // Bonus calculation using ruleset.2da value
+                nSpellcraftBonus = nSkill / StringToInt(Get2DAString("ruleset", "Value", 197));
+            }
+        }
+    }
+
+    // Cap bonuses and penalties
+    int nCap = GetSavingThrowBonusLimit();
+
+    // This isn't perfect since we can't actually get the base-base saving throw...urg.
+    if(nSaveBonus > nCap) nSaveBonus = nCap;
+    if(nSavePenalty > nCap) nSavePenalty = nCap;
+
+    return nSave + nSaveBonus - nSavePenalty + nSpellcraftBonus;
 }
