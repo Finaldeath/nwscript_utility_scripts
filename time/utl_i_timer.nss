@@ -11,7 +11,8 @@
     future using the module time.
 
     It uses a global variable so to be more efficient in loops or larger
-    scripts like AI.
+    scripts like AI. However this means do not use them inside a DelayCommand() 
+    call since the elapsed seconds will be set at script execution time once only.
 */
 //:://////////////////////////////////////////////
 //:: Part of the nwscript_utility_scripts project; see for dates/creator info
@@ -19,7 +20,7 @@
 //:://////////////////////////////////////////////
 
 
-// This is a global variable for the TimerCalculateEsapsedSeconds()
+// This is a global variable for the TimerCalculateElapsedSeconds()
 int GlobalElapsedSeconds;
 
 // Sets a timer named sTimerName on oTarget, elapsing in nSeconds

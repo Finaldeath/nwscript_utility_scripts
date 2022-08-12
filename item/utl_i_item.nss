@@ -77,6 +77,19 @@ int CountItemsByTagInInventory(object oObject, string sTag);
 //   to match how the game works for very high value items (makes them unequippable)
 int GetMaxSingleItemValue(object oItem);
 
+// Returns TRUE if the given item is a throwable item, like a throwing axe
+int GetItemIsThrowable(object oItem);
+
+// Returns TRUE if the given item is a held ranged weapon, like a crossbow
+int GetItemIsRanged(object oItem);
+
+// Returns TRUE if the given item is a melee weapon, like a longsword
+int GetItemIsMelee(object oItem);
+
+// Returns TRUE if the given item is a weapon, as in does damage and is equippable
+// Ammo is not considered a weapon.
+int GetItemIsWeapon(object oItem);
+
 
 
 // Returns the base AC value of oArmor, based on the appearance of it
@@ -410,4 +423,60 @@ int GetMaxSingleItemValue(object oItem)
     }
     // Else return row count + 1 - impossible to equip (usually this is 61)
     return nRows + 1;
+}
+
+// Returns TRUE if the given item is a throwable item, like a throwing axe
+int GetItemIsThrowable(object oItem)
+{
+    int nType = GetBaseItemType(oItem);
+    // Error check
+    if(nType == BASE_ITEM_INVALID) return FALSE;
+
+    // Type 11 is thrown weapons
+    return (Get2DAString("baseitems", "WeaponWield", nType) == "11");
+}
+
+// Returns TRUE if the given item is a held ranged weapon, like a crossbow
+int GetItemIsRanged(object oItem)
+{
+    int nType = GetBaseItemType(oItem);
+    // Error check
+    if(nType == BASE_ITEM_INVALID) return FALSE;
+
+    string sWeaponWield = Get2DAString("baseitems", "WeaponWield", nType);
+
+    // Type 5 = bow, 6 = crossbow and 10 = sling
+    return (sWeaponWield == "5" || sWeaponWield == "6" || sWeaponWield == "10");
+}
+
+// Returns TRUE if the given item is a melee weapon, like a longsword
+int GetItemIsMelee(object oItem)
+{
+    int nType = GetBaseItemType(oItem);
+    // Error check
+    if(nType == BASE_ITEM_INVALID) return FALSE;
+
+    // Check it has a valid WeaponSize
+    if(Get2DAString("baseitems", "WeaponSize", nType) == "") return FALSE;
+
+    string sWeaponWield = Get2DAString("baseitems", "WeaponWield", nType);
+
+    // Blank == 1 handed, 4 = 2 handed, 8 = double sided, 9 = creature weapon
+    return (sWeaponWield == "" || sWeaponWield == "4" || sWeaponWield == "8" || sWeaponWield == "9");
+}
+
+// Returns TRUE if the given item is a weapon, as in does damage and is equippable
+// Ammo is not considered a weapon.
+int GetItemIsWeapon(object oItem)
+{
+    int nType = GetBaseItemType(oItem);
+    // Error check
+    if(nType == BASE_ITEM_INVALID) return FALSE;
+
+    // Check it has a valid WeaponSize
+    if(Get2DAString("baseitems", "WeaponSize", nType) == "") return FALSE;
+
+    // Check if there is damage assigned
+    // Creature weapons get 0 NumDice
+    return (Get2DAString("baseitems", "NumDice", nType) != "");
 }

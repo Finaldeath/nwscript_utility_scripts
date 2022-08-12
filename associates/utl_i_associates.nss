@@ -62,10 +62,13 @@ void PortAssociates(object oMaster, location lTarget)
 // * nLimit - The amount of summons we should allow, default: 1
 void AllowMultipleSummonedCreatures(object oSummoner = OBJECT_SELF, int nLimit = 1)
 {
+    // Are we at our limit? If we are we let the last one expire (don't do anything)
+    if(GetIsObjectValid(GetAssociate(ASSOCIATE_TYPE_SUMMONED, oSummoner, nLimit))) return;
+
     int nNth = 1;
     object oSummon = GetAssociate(ASSOCIATE_TYPE_SUMMONED, oSummoner, nNth);
     // Do nLimit - 1 of summons
-    while(GetIsObjectValid(oSummon) && nNth < nLimit)
+    while(GetIsObjectValid(oSummon))
     {
         // This code stops the usual engine calls to DestroyObject() for the time
         // EffectSummonCreature occurs.
