@@ -73,13 +73,13 @@ int clamp(int nValue, int nMin, int nMax)
 }
 
 // Returns the higher of a or b
-int fmax(float a, float b)
+float fmax(float a, float b)
 {
     return (a > b) ? a : b;
 }
 
 // Returns the lower of a or b
-int fmin(float a, float b)
+float fmin(float a, float b)
 {
     return (a < b) ? a : b;
 }
