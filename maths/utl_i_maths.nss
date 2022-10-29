@@ -20,10 +20,10 @@ int min(int a, int b);
 int clamp(int nValue, int nMin, int nMax);
 
 // Returns the higher of a or b
-int fmax(float a, float b);
+float fmax(float a, float b);
 
 // Returns the lower of a or b
-int fmin(float a, float b);
+float fmin(float a, float b);
 
 // Floors the given float, eg: 2.9999 = 2
 int floor(float fFloat);
