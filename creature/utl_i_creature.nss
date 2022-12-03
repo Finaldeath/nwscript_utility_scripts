@@ -44,6 +44,8 @@ object CreateDoppleganger(object oCreature, location lSpawn, int nStandardFactio
 
 // Calculates the number of steps along both moral and ethical axes that
 // the two target's alignments' differ.
+// EG: Neutral Good vs Chaotic Good is 1 step change.
+// The maximum difference is 4 (Chaotic Evil vs. Lawful Good)
 int CompareAlignment(object oSource, object oTarget);
 
 // Checks for a creatures favored class, which should not get XP penalties.
@@ -57,6 +59,11 @@ int GetIsPrestigeClass(int nClass);
 // Returns the CLASS_TYPE_* of the highest class oCreature has.
 // Returns CLASS_TYPE_INVALID on error
 int GetHighestLevelClass(object oCreature);
+
+// Returns the maximum number of class slots allowed in the current game. Use for loops of creature classes.
+// Defaults to 3 if the ruleset.2da entry is not found.
+int GetMaximumCreatureClassSlot();
+
 
 
 // Returns the ENCUMBRANCE_LEVEL_* value related to how many items are on the creature
@@ -88,7 +95,7 @@ int GetEncumbranceLevel(object oCreature = OBJECT_SELF)
 int GetHasDomain(object oCreature, int nDomain)
 {
     int nPosition, nClass;
-    for(nPosition = 1; nPosition <= 3; nPosition++)
+    for(nPosition = 1; nPosition <= GetMaximumCreatureClassSlot(); nPosition++)
     {
         nClass = GetClassByPosition(nPosition, oCreature);
         if(nClass == CLASS_TYPE_INVALID)
@@ -113,7 +120,7 @@ void SetCreatureEventScripts(object oCreature, string sBlock = "", string sDamag
     if (sBlock != "" ) SetEventScript(oCreature, EVENT_SCRIPT_CREATURE_ON_BLOCKED_BY_DOOR, sBlock);
     if (sDamage != "" ) SetEventScript(oCreature, EVENT_SCRIPT_CREATURE_ON_DAMAGED, sDamage);
     if (sDeath != "" ) SetEventScript(oCreature, EVENT_SCRIPT_CREATURE_ON_DEATH, sDeath);
-    if (sConversation != "" ) SetEventScript(oCreature, EVENT_SCRIPT_CREATURE_ON_DIALOGUE, sConv);
+    if (sConversation != "" ) SetEventScript(oCreature, EVENT_SCRIPT_CREATURE_ON_DIALOGUE, sConversation);
     if (sDisturb != "" ) SetEventScript(oCreature, EVENT_SCRIPT_CREATURE_ON_DISTURBED, sDisturb);
     if (sCombat != "" ) SetEventScript(oCreature, EVENT_SCRIPT_CREATURE_ON_END_COMBATROUND, sCombat);
     if (sHeart != "" ) SetEventScript(oCreature, EVENT_SCRIPT_CREATURE_ON_HEARTBEAT, sHeart);
@@ -190,6 +197,8 @@ object CreateDoppleganger(object oCreature, location lSpawn, int nStandardFactio
 
 // Calculates the number of steps along both moral and ethical axes that
 // the two target's alignments' differ.
+// EG: Neutral Good vs Chaotic Good is 1 step change.
+// The maximum difference is 4 (Chaotic Evil vs. Lawful Good)
 int CompareAlignment(object oSource, object oTarget)
 {
     int nStepDif;
@@ -234,7 +243,7 @@ int CompareAlignment(object oSource, object oTarget)
         if(nLC2 == ALIGNMENT_NEUTRAL)
             nStepDif += 1;
         else if(nLC2 == ALIGNMENT_LAWFUL)
-            niStepDif += 2;
+            nStepDif += 2;
     }
     return nStepDif;
 }
@@ -264,7 +273,7 @@ int GetHighestLevelClass(object oCreature)
 {
     int nSlot, nClass, nLevel, nHighest;
     int nHighestClass = CLASS_TYPE_INVALID;
-    for(nSlot = 1; nSlot <= 3; nSlot++)
+    for(nSlot = 1; nSlot <= GetMaximumCreatureClassSlot(); nSlot++)
     {
         nClass = GetClassByPosition(nSlot, oCreature);
         nLevel = GetLevelByClass(nClass, oCreature);
@@ -275,4 +284,14 @@ int GetHighestLevelClass(object oCreature)
         }
     }
     return nHighestClass;
+}
+
+// Returns the maximum number of class slots allowed in the current game. Use for loops of creature classes.
+// Defaults to 3 if the ruleset.2da entry is not found.
+int GetMaximumCreatureClassSlot()
+{
+    int nLimit = StringToInt(Get2DAString("ruleset", "Value", 519));
+    if(nLimit > 0) return nLimit;
+    // Default to 3
+    return 3;
 }
