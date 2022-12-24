@@ -14,9 +14,12 @@
 
     Since sometimes iterating over many locals is slow, this might be an excellent way to
     speed up large amounts of access, or for debugging, or using regex or whatever else.
-    
-    These are functions for PC Object persistence only. See utl_i_sqlocals.nss for
-    the module saved version.
+
+    These are functions for PC Object persistence only. They save on the BIC directly.
+    See utl_i_sqlocals.nss for the module saved version.
+
+    Note: Since this is persistent across server resets the Location portions rely on the
+    tags of areas not changing. Make sure to error check this if you rely on it.
 */
 //:://////////////////////////////////////////////
 //:: Based off of the nwscript_utility_scripts project; see for dates/creator info
@@ -206,7 +209,7 @@ sqlquery SQLocalsPlayer_PrepareDelete(object oPlayer, int nType, string sVarName
 
 string SQLocalsPlayer_LocationToString(location locLocation)
 {
-    string sAreaId = ObjectToString(GetAreaFromLocation(locLocation));
+    string sAreaId = GetTag(GetAreaFromLocation(locLocation));
     vector vPosition = GetPositionFromLocation(locLocation);
     float fFacing = GetFacingFromLocation(locLocation);
 
@@ -229,7 +232,7 @@ location SQLocalsPlayer_StringToLocation(string sLocation)
 
         nPos = FindSubString(sLocation, "#A#") + 3;
         nCount = FindSubString(GetSubString(sLocation, nPos, nLength - nPos), "#");
-        object oArea = StringToObject(GetSubString(sLocation, nPos, nCount));
+        object oArea = GetObjectByTag(GetSubString(sLocation, nPos, nCount));
 
         nPos = FindSubString(sLocation, "#X#") + 3;
         nCount = FindSubString(GetSubString(sLocation, nPos, nLength - nPos), "#");
@@ -542,7 +545,7 @@ void SQLocalsPlayer_Delete(object oPlayer, int nType = SQLOCALSPLAYER_TYPE_ALL, 
                 (nType != SQLOCALSPLAYER_TYPE_ALL ? "AND type & @type " : " ") +
                 (sLike != "" ? "AND varname LIKE @like " + (sEscape != "" ? "ESCAPE @escape" : "") : "") +
                 ";");
-            
+
 
         if (nType != SQLOCALSPLAYER_TYPE_ALL)
             SqlBindInt(sql, "@type", nType);
