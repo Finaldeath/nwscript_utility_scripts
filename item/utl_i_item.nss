@@ -134,16 +134,6 @@ void ClearInventory(object oObject)
     object oItem = GetFirstItemInInventory(oObject);
     while(GetIsObjectValid(oItem))
     {
-        // Boxes in inventories
-        if(GetHasInventory(oItem))
-        {
-            object oItem2 = GetFirstItemInInventory(oItem);
-            while(GetIsObjectValid(oItem))
-            {
-                DestroyObject(oItem2);
-                oItem2 = GetNextItemInInventory(oItem);
-            }
-        }
         DestroyObject(oItem);
         oItem = GetNextItemInInventory(oObject);
     }
@@ -166,17 +156,6 @@ void DestroyAllItemsByResRef(object oObject, string sResRef)
     object oItem = GetFirstItemInInventory(oObject);
     while(GetIsObjectValid(oItem))
     {
-        if(GetHasInventory(oItem))
-        {
-            object oItem2 = GetFirstItemInInventory(oItem);
-            while(oItem2 != OBJECT_INVALID)
-            {
-                if(GetResRef(oItem2) == sResRef)
-                    DestroyObject(oItem2);
-                oItem2 = GetNextItemInInventory(oItem);
-            }
-        }
-
         if(GetResRef(oItem) == sResRef)
             DestroyObject(oItem);
         oItem = GetNextItemInInventory(oObject);
@@ -207,17 +186,6 @@ void DestroyAllItemsByResRefList(object oObject, string sResRefList)
     object oItem = GetFirstItemInInventory(oObject);
     while(GetIsObjectValid(oItem))
     {
-        if(GetHasInventory(oItem))
-        {
-            object oItem2 = GetFirstItemInInventory(oItem);
-            while(oItem2 != OBJECT_INVALID)
-            {
-                if(FindSubString(sResRefList, GetResRef(oItem2)) >= 0)
-                    DestroyObject(oItem2);
-                oItem2 = GetNextItemInInventory(oItem);
-            }
-        }
-
         if (FindSubString(sResRefList, GetResRef(oItem)) >= 0)
             DestroyObject(oItem);
         oItem = GetNextItemInInventory(oObject);
@@ -244,17 +212,6 @@ void DestroyAllItemsByTag(object oObject, string sTag)
     object oItem = GetFirstItemInInventory(oObject);
     while(GetIsObjectValid(oItem))
     {
-        if(GetHasInventory(oItem))
-        {
-            object oItem2 = GetFirstItemInInventory(oItem);
-            while(oItem2 != OBJECT_INVALID)
-            {
-                if(GetTag(oItem2) == sTag)
-                    DestroyObject(oItem2);
-                oItem2 = GetNextItemInInventory(oItem);
-            }
-        }
-
         if(GetTag(oItem) == sTag)
             DestroyObject(oItem);
         oItem = GetNextItemInInventory(oObject);
@@ -284,17 +241,6 @@ void DestroyAllItemsByTagList(object oObject, string sTagList)
     object oItem = GetFirstItemInInventory(oObject);
     while(GetIsObjectValid(oItem))
     {
-        if(GetHasInventory(oItem))
-        {
-            object oItem2 = GetFirstItemInInventory(oItem);
-            while(oItem2 != OBJECT_INVALID)
-            {
-                if(FindSubString(sTagList, GetTag(oItem2)) >= 0)
-                    DestroyObject(oItem2);
-                oItem2 = GetNextItemInInventory(oItem);
-            }
-        }
-
         if (FindSubString(sTagList, GetTag(oItem)) >= 0)
             DestroyObject(oItem);
         oItem = GetNextItemInInventory(oObject);
@@ -327,17 +273,6 @@ void SetInventoryDroppable(object oObject, int bDroppable = TRUE)
     object oItem = GetFirstItemInInventory(oObject);
     while(GetIsObjectValid(oItem))
     {
-        // Boxes in inventories
-        if(GetHasInventory(oItem))
-        {
-            object oItem2 = GetFirstItemInInventory(oItem);
-            while(GetIsObjectValid(oItem))
-            {
-                SetItemCursedFlag(oItem2, bCursed);
-                SetDroppableFlag(oItem2, bDroppable);
-                oItem2 = GetNextItemInInventory(oItem);
-            }
-        }
         SetItemCursedFlag(oItem, bCursed);
         SetDroppableFlag(oItem, bDroppable);
         oItem = GetNextItemInInventory(oObject);
