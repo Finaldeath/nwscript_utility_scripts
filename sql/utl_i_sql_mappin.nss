@@ -53,7 +53,6 @@ void GetMapTilesExplored(object oPC, object oArea);
 // * oArea - the area to save exploration information for
 void SaveMapTilesExplored(object oPC, object oArea);
 
-
 /* INTERNAL */
 
 // Finds an area object based upon a resref
@@ -61,7 +60,7 @@ void SaveMapTilesExplored(object oPC, object oArea);
 object GetAreaByResRef(string sResRef)
 {
     object oFoundArea = OBJECT_INVALID;
-    object oArea = GetFirstArea();
+    object oArea      = GetFirstArea();
     while (oArea != OBJECT_INVALID)
     {
         if (GetResRef(oArea) == sResRef)
@@ -80,12 +79,12 @@ void CreateMapPinTable(object oPC)
 {
     sqlquery sql = SqlPrepareQueryObject(oPC,
                                          "CREATE TABLE IF NOT EXISTS map_pins (" +
-                                         "id INTEGER, " +
-                                         "area_resref TEXT, " +
-                                         "xpos FLOAT, " +
-                                         "ypos FLOAT, " +
-                                         "ntry TEXT, " +
-                                         "PRIMARY KEY(id));");
+                                             "id INTEGER, " +
+                                             "area_resref TEXT, " +
+                                             "xpos FLOAT, " +
+                                             "ypos FLOAT, " +
+                                             "ntry TEXT, " +
+                                             "PRIMARY KEY(id));");
     SqlStep(sql);
 }
 
@@ -95,10 +94,10 @@ void CreateMapExploredTable(object oPC)
 {
     sqlquery sql = SqlPrepareQueryObject(oPC,
                                          "CREATE TABLE IF NOT EXISTS map_tiles_explored (" +
-                                         "area_resref TEXT, " +
-                                         "x INT, " +
-                                         "y INT, " +
-                                         "PRIMARY KEY(area_resref, x, y));");
+                                             "area_resref TEXT, " +
+                                             "x INT, " +
+                                             "y INT, " +
+                                             "PRIMARY KEY(area_resref, x, y));");
     SqlStep(sql);
 }
 /* **** */
@@ -117,14 +116,14 @@ void GetMapPins(object oPC)
 
     CreateMapPinTable(oPC);
 
-    int nIter = 1;
+    int nIter    = 1;
     sqlquery sql = SqlPrepareQueryObject(oPC, "SELECT area_resref, xpos, ypos, ntry FROM map_pins;");
     while (SqlStep(sql))
     {
-        string sIter = IntToString(nIter);
-        object oArea = GetAreaByResRef(SqlGetString(sql, 0));
-        float fX = SqlGetFloat(sql, 1);
-        float fY = SqlGetFloat(sql, 2);
+        string sIter  = IntToString(nIter);
+        object oArea  = GetAreaByResRef(SqlGetString(sql, 0));
+        float fX      = SqlGetFloat(sql, 1);
+        float fY      = SqlGetFloat(sql, 2);
         string sEntry = SqlGetString(sql, 3);
         SetLocalString(oPC, "NW_MAP_PIN_NTRY_" + sIter, sEntry);
         SetLocalFloat(oPC, "NW_MAP_PIN_XPOS_" + sIter, fX);
@@ -161,7 +160,7 @@ void SaveMapPins(object oPC)
         iIter++;
     }
     sSQL = GetSubString(sSQL, 0, GetStringLength(sSQL) - 1) + ";";
-    sql = SqlPrepareQueryObject(oPC, sSQL);
+    sql  = SqlPrepareQueryObject(oPC, sSQL);
 
     iIter = 1;
     while (iIter <= iPins)
@@ -188,7 +187,7 @@ void GetMapTilesExplored(object oPC, object oArea)
 
     CreateMapExploredTable(oPC);
 
-    int nIter = 1;
+    int nIter    = 1;
     sqlquery sql = SqlPrepareQueryObject(oPC, "SELECT x, y FROM map_tiles_explored WHERE area_resref = @area_resref;");
     SqlBindString(sql, "@area_resref", GetResRef(oArea));
     while (SqlStep(sql))
@@ -208,10 +207,10 @@ void SaveMapTilesExplored(object oPC, object oArea)
 
     string sSQL = "INSERT or IGNORE INTO map_tiles_explored (area_resref, x, y) VALUES ";
 
-    int iWidthInTiles = GetAreaSize(AREA_WIDTH, oArea);
+    int iWidthInTiles  = GetAreaSize(AREA_WIDTH, oArea);
     int iHeightInTiles = GetAreaSize(AREA_HEIGHT, oArea);
-    int iIter = 0;
-    int x = 0;
+    int iIter          = 0;
+    int x              = 0;
     while (x < iWidthInTiles)
     {
         int y = 0;
@@ -227,10 +226,10 @@ void SaveMapTilesExplored(object oPC, object oArea)
         }
         x++;
     }
-    sSQL = GetSubString(sSQL, 0, GetStringLength(sSQL) - 1);
+    sSQL         = GetSubString(sSQL, 0, GetStringLength(sSQL) - 1);
     sqlquery sql = SqlPrepareQueryObject(oPC, sSQL);
 
-    x = 0;
+    x     = 0;
     iIter = 0;
     while (x < iWidthInTiles)
     {

@@ -39,7 +39,7 @@ void main()
 // Only constants in nwscript.nss will be returned.
 // Example: "ABILITY_INTELLIGENCE" will get converted to the integer 3
 // Use this to convert script params into usable values.
-// * sConstantName - The name of a constant to convert 
+// * sConstantName - The name of a constant to convert
 // * nErrorValue - The value to return if the constant isn't found. Default: 0
 int ConstantStringToInt(string sConstantName, int nErrorValue = 0);
 
@@ -47,7 +47,7 @@ int ConstantStringToInt(string sConstantName, int nErrorValue = 0);
 // Only constants in nwscript.nss will be returned.
 // Example: "RADIUS_SIZE_SMALL" will get converted to the float 1.67
 // Use this to convert script params into usable values.
-// * sConstantName - The name of a constant to convert 
+// * sConstantName - The name of a constant to convert
 // * nErrorValue - The value to return if the constant isn't found. Default: 0.0
 float ConstantStringToFloat(string sConstantName, float fErrorValue = 0.0);
 
@@ -55,16 +55,15 @@ float ConstantStringToFloat(string sConstantName, float fErrorValue = 0.0);
 // Only constants in nwscript.nss will be returned.
 // Example: "TILESET_RESREF_BEHOLDER_CAVES" will get converted to the string "tib01"
 // Use this to convert script params into usable values.
-// * sConstantName - The name of a constant to convert 
+// * sConstantName - The name of a constant to convert
 // * sErrorValue - The value to return if the constant isn't found. Default: ""
 string ConstantStringToString(string sConstantName, string sErrorValue = "");
-
 
 // This function will convert a string of a constant name into an integer.
 // Only constants in nwscript.nss will be returned.
 // Example: "ABILITY_INTELLIGENCE" will get converted to the integer 3
 // Use this to convert script params into usable values.
-// * sConstantName - The name of a constant to convert 
+// * sConstantName - The name of a constant to convert
 // * nErrorValue - The value to return if the constant isn't found. Default: 0
 int ConstantStringToInt(string sConstantName, int nErrorValue = 0)
 {
@@ -80,7 +79,7 @@ int ConstantStringToInt(string sConstantName, int nErrorValue = 0)
 // Only constants in nwscript.nss will be returned.
 // Example: "RADIUS_SIZE_SMALL" will get converted to the float 1.67
 // Use this to convert script params into usable values.
-// * sConstantName - The name of a constant to convert 
+// * sConstantName - The name of a constant to convert
 // * fErrorValue - The value to return if the constant isn't found. Default: 0.0
 float ConstantStringToFloat(string sConstantName, float fErrorValue = 0.0)
 {
@@ -96,7 +95,7 @@ float ConstantStringToFloat(string sConstantName, float fErrorValue = 0.0)
 // Only constants in nwscript.nss will be returned.
 // Example: "TILESET_RESREF_BEHOLDER_CAVES" will get converted to the string "tib01"
 // Use this to convert script params into usable values.
-// * sConstantName - The name of a constant to convert 
+// * sConstantName - The name of a constant to convert
 // * sErrorValue - The value to return if the constant isn't found. Default: ""
 string ConstantStringToString(string sConstantName, string sErrorValue = "")
 {

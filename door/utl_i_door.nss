@@ -10,7 +10,6 @@
 //:: https://github.com/Finaldeath/nwscript_utility_scripts
 //:://////////////////////////////////////////////
 
-
 // Causes a door to always open forward
 // place on both OnOpen and OnClose events of a door
 void OpenDoorForward();
@@ -19,15 +18,13 @@ void OpenDoorForward();
 // place on both OnOpen and OnClose events of a door
 void OpenDoorBackward();
 
-
-
 // Causes a door to always open backward
 // place on both OnOpen and OnClose events of a door
 void OpenDoorForward()
 {
     int nDoorOpen = GetLocalInt(OBJECT_SELF, "DoorOpen");
 
-    if(nDoorOpen == FALSE)
+    if (nDoorOpen == FALSE)
     {
         AssignCommand(OBJECT_SELF, PlayAnimation(ANIMATION_DOOR_OPEN1));
         SetLocalInt(OBJECT_SELF, "DoorOpen", TRUE);
@@ -45,7 +42,7 @@ void OpenDoorBackward()
 {
     int nDoorOpen = GetLocalInt(OBJECT_SELF, "DoorOpen");
 
-    if(nDoorOpen == FALSE)
+    if (nDoorOpen == FALSE)
     {
         AssignCommand(OBJECT_SELF, PlayAnimation(ANIMATION_DOOR_OPEN2));
         SetLocalInt(OBJECT_SELF, "DoorOpen", TRUE);

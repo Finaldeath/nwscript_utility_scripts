@@ -31,8 +31,6 @@ int GetItemScrollUsable(itemproperty ip, object oItem);
 // Uses 2da & tlk lookups and should work for custom itemproperties too
 string ItemPropertyToString(itemproperty ipItemProperty);
 
-
-
 // This checks if a item is usable by ourselves based on any item restrictions on it (class/race/alignment).
 // If any restriction item properties are on there it checks we have at least 1 level in that class. Must have at least one match if any exist
 // This is not optimal to run often without caching
@@ -46,81 +44,81 @@ int GetCanUseItemDueToItemRestrictions(object oItem)
     while (GetIsItemPropertyValid(ip))
     {
         nItemPropertyType = GetItemPropertyType(ip);
-        switch(nItemPropertyType)
+        switch (nItemPropertyType)
         {
             // Uses IPRP_ALIGNGRP.2da
             case ITEM_PROPERTY_USE_LIMITATION_ALIGNMENT_GROUP:
             {
-                switch(GetItemPropertySubType(ip))
+                switch (GetItemPropertySubType(ip))
                 {
                     case IP_CONST_ALIGNMENTGROUP_ALL:
                         // Do nothing!
-                    break;
+                        break;
                     case IP_CONST_ALIGNMENTGROUP_NEUTRAL:
                         // Any alignment axis can be neutral for this to work so both have to not be it for it to not work.
-                        if(GetAlignmentGoodEvil(OBJECT_SELF) != ALIGNMENT_NEUTRAL && GetAlignmentLawChaos(OBJECT_SELF) != ALIGNMENT_NEUTRAL) return FALSE;
-                    break;
+                        if (GetAlignmentGoodEvil(OBJECT_SELF) != ALIGNMENT_NEUTRAL && GetAlignmentLawChaos(OBJECT_SELF) != ALIGNMENT_NEUTRAL) return FALSE;
+                        break;
                     case IP_CONST_ALIGNMENTGROUP_LAWFUL:
-                        if(GetAlignmentLawChaos(OBJECT_SELF) != ALIGNMENT_LAWFUL) return FALSE;
-                    break;
+                        if (GetAlignmentLawChaos(OBJECT_SELF) != ALIGNMENT_LAWFUL) return FALSE;
+                        break;
                     case IP_CONST_ALIGNMENTGROUP_CHAOTIC:
-                        if(GetAlignmentLawChaos(OBJECT_SELF) != ALIGNMENT_CHAOTIC) return FALSE;
-                    break;
+                        if (GetAlignmentLawChaos(OBJECT_SELF) != ALIGNMENT_CHAOTIC) return FALSE;
+                        break;
                     case IP_CONST_ALIGNMENTGROUP_GOOD:
-                        if(GetAlignmentGoodEvil(OBJECT_SELF) != ALIGNMENT_GOOD) return FALSE;
-                    break;
+                        if (GetAlignmentGoodEvil(OBJECT_SELF) != ALIGNMENT_GOOD) return FALSE;
+                        break;
                     case IP_CONST_ALIGNMENTGROUP_EVIL:
-                        if(GetAlignmentGoodEvil(OBJECT_SELF) != ALIGNMENT_EVIL) return FALSE;
-                    break;
+                        if (GetAlignmentGoodEvil(OBJECT_SELF) != ALIGNMENT_EVIL) return FALSE;
+                        break;
                 }
             }
             break;
             // Uses classes.2da list (although it won't include "monster" classes)
             case ITEM_PROPERTY_USE_LIMITATION_CLASS:
-                if(GetLevelByClass(GetItemPropertySubType(ip)) == 0) return FALSE;
-            break;
-            // Uses racialtypes.2da 
+                if (GetLevelByClass(GetItemPropertySubType(ip)) == 0) return FALSE;
+                break;
+            // Uses racialtypes.2da
             case ITEM_PROPERTY_USE_LIMITATION_RACIAL_TYPE:
-                if(GetRacialType(OBJECT_SELF) != GetItemPropertySubType(ip)) return FALSE;
-            break;
+                if (GetRacialType(OBJECT_SELF) != GetItemPropertySubType(ip)) return FALSE;
+                break;
             // Uses IPRP_ALIGNMENT.2da
             case ITEM_PROPERTY_USE_LIMITATION_SPECIFIC_ALIGNMENT:
             {
-                switch(GetItemPropertySubType(ip))
+                switch (GetItemPropertySubType(ip))
                 {
                     // Must match exactly these...
                     case IP_CONST_ALIGNMENT_LG:
-                        if(GetAlignmentLawChaos(OBJECT_SELF) != ALIGNMENT_LAWFUL || GetAlignmentGoodEvil(OBJECT_SELF) != ALIGNMENT_GOOD) return FALSE;
-                    break;
+                        if (GetAlignmentLawChaos(OBJECT_SELF) != ALIGNMENT_LAWFUL || GetAlignmentGoodEvil(OBJECT_SELF) != ALIGNMENT_GOOD) return FALSE;
+                        break;
                     case IP_CONST_ALIGNMENT_LN:
-                        if(GetAlignmentLawChaos(OBJECT_SELF) != ALIGNMENT_LAWFUL || GetAlignmentGoodEvil(OBJECT_SELF) != ALIGNMENT_NEUTRAL) return FALSE;
-                    break;
+                        if (GetAlignmentLawChaos(OBJECT_SELF) != ALIGNMENT_LAWFUL || GetAlignmentGoodEvil(OBJECT_SELF) != ALIGNMENT_NEUTRAL) return FALSE;
+                        break;
                     case IP_CONST_ALIGNMENT_NG:
-                        if(GetAlignmentLawChaos(OBJECT_SELF) != ALIGNMENT_NEUTRAL || GetAlignmentGoodEvil(OBJECT_SELF) != ALIGNMENT_GOOD) return FALSE;
-                    break;
+                        if (GetAlignmentLawChaos(OBJECT_SELF) != ALIGNMENT_NEUTRAL || GetAlignmentGoodEvil(OBJECT_SELF) != ALIGNMENT_GOOD) return FALSE;
+                        break;
                     case IP_CONST_ALIGNMENT_TN:
-                        if(GetAlignmentLawChaos(OBJECT_SELF) != ALIGNMENT_NEUTRAL || GetAlignmentGoodEvil(OBJECT_SELF) != ALIGNMENT_NEUTRAL) return FALSE;
-                    break;
+                        if (GetAlignmentLawChaos(OBJECT_SELF) != ALIGNMENT_NEUTRAL || GetAlignmentGoodEvil(OBJECT_SELF) != ALIGNMENT_NEUTRAL) return FALSE;
+                        break;
                     case IP_CONST_ALIGNMENT_NE:
-                        if(GetAlignmentLawChaos(OBJECT_SELF) != ALIGNMENT_NEUTRAL || GetAlignmentGoodEvil(OBJECT_SELF) != ALIGNMENT_EVIL) return FALSE;
-                    break;
+                        if (GetAlignmentLawChaos(OBJECT_SELF) != ALIGNMENT_NEUTRAL || GetAlignmentGoodEvil(OBJECT_SELF) != ALIGNMENT_EVIL) return FALSE;
+                        break;
                     case IP_CONST_ALIGNMENT_CG:
-                        if(GetAlignmentLawChaos(OBJECT_SELF) != ALIGNMENT_CHAOTIC || GetAlignmentGoodEvil(OBJECT_SELF) != ALIGNMENT_GOOD) return FALSE;
-                    break;
+                        if (GetAlignmentLawChaos(OBJECT_SELF) != ALIGNMENT_CHAOTIC || GetAlignmentGoodEvil(OBJECT_SELF) != ALIGNMENT_GOOD) return FALSE;
+                        break;
                     case IP_CONST_ALIGNMENT_CN:
-                        if(GetAlignmentLawChaos(OBJECT_SELF) != ALIGNMENT_CHAOTIC || GetAlignmentGoodEvil(OBJECT_SELF) != ALIGNMENT_NEUTRAL) return FALSE;
-                    break;
+                        if (GetAlignmentLawChaos(OBJECT_SELF) != ALIGNMENT_CHAOTIC || GetAlignmentGoodEvil(OBJECT_SELF) != ALIGNMENT_NEUTRAL) return FALSE;
+                        break;
                     case IP_CONST_ALIGNMENT_CE:
-                        if(GetAlignmentLawChaos(OBJECT_SELF) != ALIGNMENT_CHAOTIC || GetAlignmentGoodEvil(OBJECT_SELF) != ALIGNMENT_EVIL) return FALSE;
-                    break;
+                        if (GetAlignmentLawChaos(OBJECT_SELF) != ALIGNMENT_CHAOTIC || GetAlignmentGoodEvil(OBJECT_SELF) != ALIGNMENT_EVIL) return FALSE;
+                        break;
                 }
             }
             break;
-            // Would use IPRP_TERRAINTYPE which is blank.
-            // While this is defined, nothing can have this set on it in itemprops.2da
-            // I highly suspect it is buggy, duff, too risky for Bioware to enable (hakpack tileset)
-            // OR just they never needed it :)
-            //case ITEM_PROPERTY_USE_LIMITATION_TILESET:
+                // Would use IPRP_TERRAINTYPE which is blank.
+                // While this is defined, nothing can have this set on it in itemprops.2da
+                // I highly suspect it is buggy, duff, too risky for Bioware to enable (hakpack tileset)
+                // OR just they never needed it :)
+                // case ITEM_PROPERTY_USE_LIMITATION_TILESET:
         }
         ip = GetNextItemProperty(oItem);
     }
@@ -134,7 +132,7 @@ int GetItemSpellChargesAreUsable(itemproperty ip, object oItem)
 {
     // What kind of thing is it, and therefore we need to check charges etc.
     int nCostTable = GetItemPropertyCostTableValue(ip);
-    switch(nCostTable)
+    switch (nCostTable)
     {
         // Scrolls, potions mainly
         case IP_CONST_CASTSPELL_NUMUSES_SINGLE_USE:
@@ -142,35 +140,35 @@ int GetItemSpellChargesAreUsable(itemproperty ip, object oItem)
         case IP_CONST_CASTSPELL_NUMUSES_UNLIMITED_USE:
         case IP_CONST_CASTSPELL_NUMUSES_0_CHARGES_PER_USE:
             return TRUE;
-        break;
+            break;
         // 5 charges/use
         case IP_CONST_CASTSPELL_NUMUSES_5_CHARGES_PER_USE:
-            if(GetItemCharges(oItem) >= 5) return TRUE;
-        break;
+            if (GetItemCharges(oItem) >= 5) return TRUE;
+            break;
         // 4 charges/use
         case IP_CONST_CASTSPELL_NUMUSES_4_CHARGES_PER_USE:
-            if(GetItemCharges(oItem) >= 4) return TRUE;
-        break;
+            if (GetItemCharges(oItem) >= 4) return TRUE;
+            break;
         // 3 charges/use
         case IP_CONST_CASTSPELL_NUMUSES_3_CHARGES_PER_USE:
-            if(GetItemCharges(oItem) >= 3) return TRUE;
-        break;
+            if (GetItemCharges(oItem) >= 3) return TRUE;
+            break;
         // 2 charges/use
         case IP_CONST_CASTSPELL_NUMUSES_2_CHARGES_PER_USE:
-            if(GetItemCharges(oItem) >= 2) return TRUE;
-        break;
+            if (GetItemCharges(oItem) >= 2) return TRUE;
+            break;
         // 1 charges/use
         case IP_CONST_CASTSPELL_NUMUSES_1_CHARGE_PER_USE:
-            if(GetItemCharges(oItem) >= 1) return TRUE;
-        break;
+            if (GetItemCharges(oItem) >= 1) return TRUE;
+            break;
         // Uses/Day need some left
         case IP_CONST_CASTSPELL_NUMUSES_1_USE_PER_DAY:
         case IP_CONST_CASTSPELL_NUMUSES_2_USES_PER_DAY:
         case IP_CONST_CASTSPELL_NUMUSES_3_USES_PER_DAY:
         case IP_CONST_CASTSPELL_NUMUSES_4_USES_PER_DAY:
         case IP_CONST_CASTSPELL_NUMUSES_5_USES_PER_DAY:
-            if(GetItemPropertyUsesPerDayRemaining(oItem, ip) > 0) return TRUE;
-        break;
+            if (GetItemPropertyUsesPerDayRemaining(oItem, ip) > 0) return TRUE;
+            break;
     }
     // Either an error or not enough charges/uses.
     return FALSE;
@@ -184,24 +182,24 @@ int GetItemScrollUsable(itemproperty ip, object oItem)
 {
     // Scrolls only are affected by this (hardcoded)
     int nItemType = GetBaseItemType(oItem);
-    if(nItemType == BASE_ITEM_SCROLL || 
-       nItemType == BASE_ITEM_ENCHANTED_SCROLL ||
-       nItemType == BASE_ITEM_SPELLSCROLL)
+    if (nItemType == BASE_ITEM_SCROLL ||
+        nItemType == BASE_ITEM_ENCHANTED_SCROLL ||
+        nItemType == BASE_ITEM_SPELLSCROLL)
     {
         // PickSchool in NWNEE allows classes to pick a spell school so we check all 3 of our classes for it
         int nClassPosition = 1;
-        int nClass = GetClassByPosition(nClassPosition);
-        while(nClass != CLASS_TYPE_INVALID)
+        int nClass         = GetClassByPosition(nClassPosition);
+        while (nClass != CLASS_TYPE_INVALID)
         {
-            if(Get2DAString("classes", "PickSchool", nClass) == "1")
+            if (Get2DAString("classes", "PickSchool", nClass) == "1")
             {
                 // Check spell school of the spell item property
                 // This returns an ID from iprp_spells - ie; it is a spell, but the level / spell ID is codified in another 2DA. So look it up.
-                int nSpellID = StringToInt(Get2DAString("iprp_spells","SpellIndex",GetItemPropertySubType(ip)));
+                int nSpellID        = StringToInt(Get2DAString("iprp_spells", "SpellIndex", GetItemPropertySubType(ip)));
                 string sSpellSchool = Get2DAString("spells", "School", nSpellID);
 
                 // General spells can be cast by any wizard
-                if(sSpellSchool != "G")
+                if (sSpellSchool != "G")
                 {
                     // Check specalization
                     int nSpecalization = GetSpecialization(OBJECT_SELF, nClass);
@@ -209,10 +207,10 @@ int GetItemScrollUsable(itemproperty ip, object oItem)
                     int nOpposedSchool = StringToInt(Get2DAString("spellschools", "Opposition", nSpecalization));
 
                     // 0 is blank or "General"
-                    if(nOpposedSchool > 0)
+                    if (nOpposedSchool > 0)
                     {
                         // Get opposed school ID, if it is equal we can't cast it
-                        if(sSpellSchool == Get2DAString("spellschools", "Letter", nOpposedSchool))
+                        if (sSpellSchool == Get2DAString("spellschools", "Letter", nOpposedSchool))
                         {
                             return FALSE;
                         }
@@ -241,13 +239,13 @@ itemproperty GetFirstItemPropertyOnItemWithSpell(int nSpellID, object oItem)
         if (GetItemPropertyType(ip) == ITEM_PROPERTY_CAST_SPELL)
         {
             // This returns an ID from iprp_spells - ie; it is a spell, but the level / spell ID is codified in another 2DA. So look it up.
-            nItemSpell = StringToInt(Get2DAString("iprp_spells","SpellIndex",GetItemPropertySubType(ip)));
+            nItemSpell = StringToInt(Get2DAString("iprp_spells", "SpellIndex", GetItemPropertySubType(ip)));
 
             // Check if valid. If it is do we have charges etc.
-            if(nItemSpell == nSpellID)
+            if (nItemSpell == nSpellID)
             {
                 // Usable charges?
-                if(GetItemSpellChargesAreUsable(ip, oItem) && GetItemScrollUsable(ip, oItem))
+                if (GetItemSpellChargesAreUsable(ip, oItem) && GetItemScrollUsable(ip, oItem))
                 {
                     return ip;
                 }
@@ -258,35 +256,34 @@ itemproperty GetFirstItemPropertyOnItemWithSpell(int nSpellID, object oItem)
     return ipInvalid;
 }
 
-
 // Returns the same string you would get if you examined the item in-game
 // Uses 2da & tlk lookups and should work for custom itemproperties too
 string ItemPropertyToString(itemproperty ipItemProperty)
 {
-    int nIPType = GetItemPropertyType(ipItemProperty);
+    int nIPType  = GetItemPropertyType(ipItemProperty);
     string sName = GetStringByStrRef(StringToInt(Get2DAString("itempropdef", "GameStrRef", nIPType)));
-    if(GetItemPropertySubType(ipItemProperty) != -1)//nosubtypes
+    if (GetItemPropertySubType(ipItemProperty) != -1)  // nosubtypes
     {
         string sSubTypeResRef = Get2DAString("itempropdef", "SubTypeResRef", nIPType);
-        int nTlk = StringToInt(Get2DAString(sSubTypeResRef, "Name", GetItemPropertySubType(ipItemProperty)));
-        if(nTlk > 0)
+        int nTlk              = StringToInt(Get2DAString(sSubTypeResRef, "Name", GetItemPropertySubType(ipItemProperty)));
+        if (nTlk > 0)
             sName += " " + GetStringByStrRef(nTlk);
     }
-    if(GetItemPropertyParam1(ipItemProperty) != -1)
+    if (GetItemPropertyParam1(ipItemProperty) != -1)
     {
         string sParamResRef = Get2DAString("iprp_paramtable", "TableResRef", GetItemPropertyParam1(ipItemProperty));
-        if(Get2DAString("itempropdef", "SubTypeResRef", nIPType) != "" && 
-           Get2DAString(Get2DAString("itempropdef", "SubTypeResRef", nIPType), "TableResRef", GetItemPropertyParam1(ipItemProperty)) != "")
+        if (Get2DAString("itempropdef", "SubTypeResRef", nIPType) != "" &&
+            Get2DAString(Get2DAString("itempropdef", "SubTypeResRef", nIPType), "TableResRef", GetItemPropertyParam1(ipItemProperty)) != "")
             sParamResRef = Get2DAString(Get2DAString("itempropdef", "SubTypeResRef", nIPType), "TableResRef", GetItemPropertyParam1(ipItemProperty));
         int nTlk = StringToInt(Get2DAString(sParamResRef, "Name", GetItemPropertyParam1Value(ipItemProperty)));
-        if(nTlk > 0)
+        if (nTlk > 0)
             sName += " " + GetStringByStrRef(nTlk);
     }
-    if(GetItemPropertyCostTable(ipItemProperty) != -1)
+    if (GetItemPropertyCostTable(ipItemProperty) != -1)
     {
         string sCostResRef = Get2DAString("iprp_costtable", "Name", GetItemPropertyCostTable(ipItemProperty));
-        int nTlk = StringToInt(Get2DAString(sCostResRef, "Name", GetItemPropertyCostTableValue(ipItemProperty)));
-        if(nTlk > 0)
+        int nTlk           = StringToInt(Get2DAString(sCostResRef, "Name", GetItemPropertyCostTableValue(ipItemProperty)));
+        if (nTlk > 0)
             sName += " " + GetStringByStrRef(nTlk);
     }
     return sName;

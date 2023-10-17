@@ -35,15 +35,13 @@ int SqlGetLastInsertIdCampaign(string sDatabase);
 // * oObject - Player or module object to check the last insert ID of
 int SqlGetLastInsertIdObject(object oObject);
 
-
-
 // Returns TRUE if sTableName exists in sDatabase.
 // * sDatabase - Database to query
 // * sTableName - Table name to check exists
 int SqlGetTableExistsCampaign(string sDatabase, string sTableName)
 {
     string sQuery = "SELECT name FROM sqlite_master WHERE type='table' AND name=@tableName;";
-    sqlquery sql = SqlPrepareQueryCampaign(sDatabase, sQuery);
+    sqlquery sql  = SqlPrepareQueryCampaign(sDatabase, sQuery);
     SqlBindString(sql, "@tableName", sTableName);
 
     return SqlStep(sql);
@@ -55,7 +53,7 @@ int SqlGetTableExistsCampaign(string sDatabase, string sTableName)
 int SqlGetTableExistsObject(object oObject, string sTableName)
 {
     string sQuery = "SELECT name FROM sqlite_master WHERE type='table' AND name=@tableName;";
-    sqlquery sql = SqlPrepareQueryObject(oObject, sQuery);
+    sqlquery sql  = SqlPrepareQueryObject(oObject, sQuery);
     SqlBindString(sql, "@tableName", sTableName);
 
     return SqlStep(sql);

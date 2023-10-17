@@ -47,14 +47,12 @@ int GetAnyPCInArea(object oArea = OBJECT_SELF);
 // * oPC - PC to identify items on
 void IdentifyPCInventoryUsingLore(object oPC = OBJECT_SELF);
 
-
-
 // Send a message to all PCs in the game
 // * sMessage - Message to send
 void SendMessageToAllPCs(string sMessage)
 {
     object oPC = GetFirstPC();
-    while(GetIsObjectValid(oPC))
+    while (GetIsObjectValid(oPC))
     {
         SendMessageToPC(oPC, sMessage);
         oPC = GetNextPC();
@@ -70,10 +68,10 @@ int GetLevelObtainableAtExperience(int nXP)
     string sEntry;
     for (i = 0; i < 40; i++)
     {
-        sEntry = Get2DAString("exptable", "XP", i);
+        sEntry     = Get2DAString("exptable", "XP", i);
         nXPAtLevel = StringToInt(sEntry);
-        if(nXPAtLevel > nXP)
-            return StringToInt(Get2DAString("exptable", "Level", i-1));
+        if (nXPAtLevel > nXP)
+            return StringToInt(Get2DAString("exptable", "Level", i - 1));
     }
     return 0;
 }
@@ -83,9 +81,9 @@ int GetLevelObtainableAtExperience(int nXP)
 // * nLevel - Level to check
 int GetExperienceRequiredForLevel(int nLevel)
 {
-    if(nLevel <= 1) return 0;
-    if(nLevel > 40) nLevel = 40;
-    int row = nLevel - 1;
+    if (nLevel <= 1) return 0;
+    if (nLevel > 40) nLevel = 40;
+    int row      = nLevel - 1;
     string entry = Get2DAString("exptable", "XP", row);
     return StringToInt(entry);
 }
@@ -95,7 +93,7 @@ int GetExperienceRequiredForLevel(int nLevel)
 int GetExperienceToNextLevel(int nCurrentLevel)
 {
     int nCurrent = GetExperienceRequiredForLevel(nCurrentLevel);
-    int nNext = GetExperienceRequiredForLevel(nCurrentLevel+1);
+    int nNext    = GetExperienceRequiredForLevel(nCurrentLevel + 1);
     return (nNext - nCurrent);
 }
 
@@ -106,7 +104,7 @@ int GetTrueLevel(object oCreature)
 {
     int nXP = GetXP(oCreature);
 
-    if(nXP == 0) return GetHitDice(oCreature);
+    if (nXP == 0) return GetHitDice(oCreature);
 
     return GetLevelObtainableAtExperience(nXP);
 }
@@ -115,12 +113,12 @@ int GetTrueLevel(object oCreature)
 // * oObject - Object to check
 int GetIsPCObject(object oObject)
 {
-	// Object identifiers are 32bit numbers, if converted using ObjectToString().
-	// PCs count down from 7fffffff and all other objects count up from 00000000.
-	// PC objects will start with "7ff" and be 8 characters long.
+    // Object identifiers are 32bit numbers, if converted using ObjectToString().
+    // PCs count down from 7fffffff and all other objects count up from 00000000.
+    // PC objects will start with "7ff" and be 8 characters long.
     string sCreature = ObjectToString(oObject);
-    if(GetStringLength(sCreature) == 8 &&
-       GetStringLeft(sCreature, 3) == "7ff")
+    if (GetStringLength(sCreature) == 8 &&
+        GetStringLeft(sCreature, 3) == "7ff")
     {
         return TRUE;
     }
@@ -132,9 +130,9 @@ int GetIsPCObject(object oObject)
 int GetAnyPCInArea(object oArea = OBJECT_SELF)
 {
     object oPC = GetFirstPC();
-    while(GetIsObjectValid(oPC))
+    while (GetIsObjectValid(oPC))
     {
-        if(GetArea(oPC) == oArea)
+        if (GetArea(oPC) == oArea)
         {
             return TRUE;
         }
@@ -149,18 +147,18 @@ void IdentifyPCInventoryUsingLore(object oPC = OBJECT_SELF)
 {
     int nGP;
     string sMax = Get2DAString("SkillVsItemCost", "DeviceCostMax", GetSkillRank(SKILL_LORE, oPC));
-    int nMax = StringToInt(sMax);
+    int nMax    = StringToInt(sMax);
     if (sMax == "") nMax = 120000000;
     object oItem = GetFirstItemInInventory(oPC);
-    while(GetIsObjectValid(oItem))
+    while (GetIsObjectValid(oItem))
     {
-        if(!GetIdentified(oItem))
+        if (!GetIdentified(oItem))
         {
             // Check for the value of the item first.
             SetIdentified(oItem, TRUE);
             nGP = GetGoldPieceValue(oItem);
             // If oPC has enough Lore skill to ID the item, then do so.
-            if(nMax >= nGP)
+            if (nMax >= nGP)
                 SendMessageToPC(oPC, "Item identified: " + GetName(oItem));
             else
                 SetIdentified(oItem, FALSE);

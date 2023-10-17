@@ -21,7 +21,6 @@ const int ATTACK_BONUS_CWEAPON2 = 4;
 const int ATTACK_BONUS_CWEAPON3 = 5;
 const int ATTACK_BONUS_UNARMED  = 7;
 
-
 // This will work through the negative level effects on oCreature and figure out what the
 // "real" levels of the class levels of nSlot are
 // - oCreature - The creature to check
@@ -100,9 +99,6 @@ void FixMovementSpeedEffectsModifiers(object oCreature);
 // * Returns -100 on error (should always fail that save!)
 int GetEffectSavingThrowBonuses(int nSave, object oObject, object oOpponent = OBJECT_INVALID, int nSaveType = SAVING_THROW_TYPE_NONE, int bSpell = FALSE);
 
-
-
-
 // This will work through the negative level effects on oCreature and figure out what the
 // "real" levels of the class levels of nSlot are
 // - oCreature - The creature to check
@@ -120,11 +116,11 @@ int GetClassLevelsIncludingNegativeLevelsBySlot(object oCreature, int nSlot)
 
     // Get the negative level effects affecting the given class position
     effect eCheck = GetFirstEffect(oCreature);
-    while(GetIsEffectValid(eCheck))
+    while (GetIsEffectValid(eCheck))
     {
-        if(GetEffectType(eCheck) == EFFECT_TYPE_NEGATIVELEVEL)
+        if (GetEffectType(eCheck) == EFFECT_TYPE_NEGATIVELEVEL)
         {
-            if(GetEffectInteger(eCheck, 1) == nSlot)
+            if (GetEffectInteger(eCheck, 1) == nSlot)
             {
                 nNegativeLevels += GetEffectInteger(eCheck, 0);
             }
@@ -141,24 +137,24 @@ int GetClassLevelsIncludingNegativeLevelsBySlot(object oCreature, int nSlot)
 int GetClassLevelsIncludingNegativeLevels(object oCreature, int nClass)
 {
     int nClassLevels = GetLevelByClass(nClass, oCreature);
-    if(nClassLevels == 0) return 0;
+    if (nClassLevels == 0) return 0;
 
     int nClassByPosition = GetClassByPosition(1, oCreature);
-    if(nClassByPosition == nClass)
+    if (nClassByPosition == nClass)
     {
         return GetClassLevelsIncludingNegativeLevelsBySlot(oCreature, 1);
     }
     else
     {
         nClassByPosition = GetClassByPosition(2, oCreature);
-        if(nClassByPosition == nClass)
+        if (nClassByPosition == nClass)
         {
             return GetClassLevelsIncludingNegativeLevelsBySlot(oCreature, 2);
         }
         else
         {
             nClassByPosition = GetClassByPosition(3, oCreature);
-            if(nClassByPosition == nClass)
+            if (nClassByPosition == nClass)
             {
                 return GetClassLevelsIncludingNegativeLevelsBySlot(oCreature, 3);
             }
@@ -179,25 +175,25 @@ int GetClassLevelsIncludingNegativeLevels(object oCreature, int nClass)
 // * Returns 0 on error
 int GetEffectAttackBonuses(object oCreature, int nAttackBonus = ATTACK_BONUS_MISC, object oTarget = OBJECT_INVALID)
 {
-    if(!GetIsObjectValid(oCreature)) return 0;
+    if (!GetIsObjectValid(oCreature)) return 0;
 
     // Changes - always positive integers.
-    int nAttackBonus = 0;
+    int nAttackBonus   = 0;
     int nAttackPenalty = 0;
-    int nWeaponBonus = 0;
+    int nWeaponBonus   = 0;
     int nWeaponPenalty = 0;
     // Haste/Slow, positive for haste, negative for slow
     int nHasteSlow = 0;
 
     // Other variables
     int nValue;
-    int nRace = GetRacialType(oTarget);
+    int nRace     = GetRacialType(oTarget);
     int nGoodEvil = GetAlignmentGoodEvil(oTarget);
     int nLawChaos = GetAlignmentLawChaos(oTarget);
 
     // Check the specific slot
     int nSlot = -1;
-    switch(nAttackBonus)
+    switch (nAttackBonus)
     {
         case ATTACK_BONUS_ONHAND: nSlot = INVENTORY_SLOT_RIGHTHAND; break;
         case ATTACK_BONUS_OFFHAND: nSlot = INVENTORY_SLOT_LEFTHAND; break;
@@ -208,49 +204,49 @@ int GetEffectAttackBonuses(object oCreature, int nAttackBonus = ATTACK_BONUS_MIS
     }
 
     // Check if valid
-    if(nSlot != -1)
+    if (nSlot != -1)
     {
         object oItem = GetItemInSlot(nSlot, oCreature);
-        if(GetIsObjectValid(oItem))
+        if (GetIsObjectValid(oItem))
         {
             int nType;
             // Check item properties
             itemproperty ip = GetFirstItemProperty(oItem);
-            while(GetIsItemPropertyValid(ip))
+            while (GetIsItemPropertyValid(ip))
             {
                 // Look for attack increase and decrease, and enchantment increase, for highest.
-                switch(GetItemPropertyType(ip))
+                switch (GetItemPropertyType(ip))
                 {
                     // Attack bonuses
                     case ITEM_PROPERTY_ATTACK_BONUS:
                     case ITEM_PROPERTY_ENHANCEMENT_BONUS:
                         nValue = GetItemPropertyCostTableValue(ip);
-                        if(nValue > nWeaponBonus) nWeaponBonus = nValue;
-                    break;
+                        if (nValue > nWeaponBonus) nWeaponBonus = nValue;
+                        break;
 
                     case ITEM_PROPERTY_ATTACK_BONUS_VS_ALIGNMENT_GROUP:
                     case ITEM_PROPERTY_ENHANCEMENT_BONUS_VS_ALIGNMENT_GROUP:
                         nValue = GetItemPropertySubType(ip);
                         // The alignment groups are distinct, so can be either of ours
-                        if(nValue == nGoodEvil || nValue == nLawChaos)
+                        if (nValue == nGoodEvil || nValue == nLawChaos)
                         {
                             nValue = GetItemPropertyCostTableValue(ip);
-                            if(nValue > nWeaponBonus) nWeaponBonus = nValue;
+                            if (nValue > nWeaponBonus) nWeaponBonus = nValue;
                         }
-                    break;
+                        break;
                     case ITEM_PROPERTY_ATTACK_BONUS_VS_RACIAL_GROUP:
                     case ITEM_PROPERTY_ENHANCEMENT_BONUS_VS_RACIAL_GROUP:
-                        if(GetItemPropertySubType(ip) == nRace)
+                        if (GetItemPropertySubType(ip) == nRace)
                         {
                             nValue = GetItemPropertyCostTableValue(ip);
-                            if(nValue > nWeaponBonus) nWeaponBonus = nValue;
+                            if (nValue > nWeaponBonus) nWeaponBonus = nValue;
                         }
-                    break;
+                        break;
                     case ITEM_PROPERTY_ATTACK_BONUS_VS_SPECIFIC_ALIGNMENT:
                     case ITEM_PROPERTY_ENHANCEMENT_BONUS_VS_SPECIFIC_ALIGNEMENT:
                         nValue = 0;
                         // Sadly specific alignments are weird
-                        switch(GetItemPropertySubType(ip))
+                        switch (GetItemPropertySubType(ip))
                         {
                             case IP_CONST_ALIGNMENT_LG: nValue = (nLawChaos == ALIGNMENT_LAWFUL && nGoodEvil == ALIGNMENT_GOOD); break;
                             case IP_CONST_ALIGNMENT_NG: nValue = (nLawChaos == ALIGNMENT_NEUTRAL && nGoodEvil == ALIGNMENT_GOOD); break;
@@ -263,19 +259,19 @@ int GetEffectAttackBonuses(object oCreature, int nAttackBonus = ATTACK_BONUS_MIS
                             case IP_CONST_ALIGNMENT_CE: nValue = (nLawChaos == ALIGNMENT_CHAOTIC && nGoodEvil == ALIGNMENT_EVIL); break;
                         }
                         // Valid?
-                        if(nValue)
+                        if (nValue)
                         {
                             nValue = GetItemPropertyCostTableValue(ip);
-                            if(nValue > nWeaponBonus) nWeaponBonus = nValue;
+                            if (nValue > nWeaponBonus) nWeaponBonus = nValue;
                         }
-                    break;
+                        break;
 
                     // Decreases
                     case ITEM_PROPERTY_DECREASED_ATTACK_MODIFIER:
                     case ITEM_PROPERTY_DECREASED_ENHANCEMENT_MODIFIER:
                         nValue = GetItemPropertyCostTableValue(ip);
-                        if(nValue > nWeaponPenalty) nWeaponPenalty = nValue;
-                    break;
+                        if (nValue > nWeaponPenalty) nWeaponPenalty = nValue;
+                        break;
                 }
                 ip = GetNextItemProperty(oItem);
             }
@@ -291,102 +287,102 @@ int GetEffectAttackBonuses(object oCreature, int nAttackBonus = ATTACK_BONUS_MIS
     // - EffectSlow, -2 misc (if haste doesn't normalise it to 0)
     // - EffectNegativeLevel, -1 misc per level
     effect eCheck = GetFirstEffect(oCreature);
-    while(GetIsEffectValid(eCheck))
+    while (GetIsEffectValid(eCheck))
     {
         nValue = GetEffectType(eCheck);
-        if(nValue == EFFECT_TYPE_ATTACK_INCREASE)
+        if (nValue == EFFECT_TYPE_ATTACK_INCREASE)
         {
             // Check race etc.
             nValue = GetEffectInteger(eCheck, 2);
-            if(nValue == RACIAL_TYPE_INVALID ||
-               nValue == nRace)
+            if (nValue == RACIAL_TYPE_INVALID ||
+                nValue == nRace)
             {
                 // Alignment Law/Chaos
                 nValue = GetEffectInteger(eCheck, 3);
-                if(nValue == ALIGNMENT_ALL ||
-                   nValue == nLawChaos)
+                if (nValue == ALIGNMENT_ALL ||
+                    nValue == nLawChaos)
                 {
                     // Alignment Good/Evil
                     nValue = GetEffectInteger(eCheck, 4);
-                    if(nValue == ALIGNMENT_ALL ||
-                       nValue == nGoodEvil)
+                    if (nValue == ALIGNMENT_ALL ||
+                        nValue == nGoodEvil)
                     {
                         // Attack bonus type (misc or specific)
                         nValue = GetEffectInteger(eCheck, 1);
-                        if(nValue == nAttackBonus || nValue == ATTACK_BONUS_MISC)
+                        if (nValue == nAttackBonus || nValue == ATTACK_BONUS_MISC)
                         {
                             // All misc bonuses are added
-                            if(nValue == ATTACK_BONUS_MISC)
+                            if (nValue == ATTACK_BONUS_MISC)
                             {
                                 // Misc Bonus
                                 nAttackBonus += GetEffectInteger(eCheck, 0);
                             }
                             // Catches just specific bonuses
-                            else if(nValue == nAttackBonus)
+                            else if (nValue == nAttackBonus)
                             {
                                 // Set bonus if higher
                                 nValue = GetEffectInteger(eCheck, 0);
-                                if(nValue > nWeaponBonus) nWeaponBonus = nValue;
+                                if (nValue > nWeaponBonus) nWeaponBonus = nValue;
                             }
                         }
                     }
                 }
             }
         }
-        else if(nValue == EFFECT_TYPE_ATTACK_DECREASE)
+        else if (nValue == EFFECT_TYPE_ATTACK_DECREASE)
         {
             // Check race etc.
             nValue = GetEffectInteger(eCheck, 2);
-            if(nValue == RACIAL_TYPE_INVALID ||
-               nValue == nRace)
+            if (nValue == RACIAL_TYPE_INVALID ||
+                nValue == nRace)
             {
                 // Alignment Law/Chaos
                 nValue = GetEffectInteger(eCheck, 3);
-                if(nValue == ALIGNMENT_ALL ||
-                   nValue == nLawChaos)
+                if (nValue == ALIGNMENT_ALL ||
+                    nValue == nLawChaos)
                 {
                     // Alignment Good/Evil
                     nValue = GetEffectInteger(eCheck, 4);
-                    if(nValue == ALIGNMENT_ALL ||
-                       nValue == nGoodEvil)
+                    if (nValue == ALIGNMENT_ALL ||
+                        nValue == nGoodEvil)
                     {
                         // Attack bonus type (misc or specific)
                         nValue = GetEffectInteger(eCheck, 1);
-                        if(nValue == nAttackBonus || nValue == ATTACK_BONUS_MISC)
+                        if (nValue == nAttackBonus || nValue == ATTACK_BONUS_MISC)
                         {
                             // All misc bonuses are added
-                            if(nValue == ATTACK_BONUS_MISC)
+                            if (nValue == ATTACK_BONUS_MISC)
                             {
                                 // Misc Penalty
                                 nAttackPenalty += GetEffectInteger(eCheck, 0);
                             }
                             // Catches just specific bonuses
-                            else if(nValue == nAttackBonus)
+                            else if (nValue == nAttackBonus)
                             {
                                 // Set penalty if higher
                                 nValue = GetEffectInteger(eCheck, 0);
-                                if(nValue > nWeaponPenalty) nWeaponPenalty = nValue;
+                                if (nValue > nWeaponPenalty) nWeaponPenalty = nValue;
                             }
                         }
                     }
                 }
             }
         }
-        else if(nValue == EFFECT_TYPE_ENTANGLE)
+        else if (nValue == EFFECT_TYPE_ENTANGLE)
         {
             // Entangle has a -2 misc attack penalty
             nAttackPenalty += 2;
         }
-        else if(nValue == EFFECT_TYPE_NEGATIVELEVEL)
+        else if (nValue == EFFECT_TYPE_NEGATIVELEVEL)
         {
             // Negative Levels apply -1 per negative level
             nAttackPenalty += GetEffectInteger(eCheck, 0);
         }
-        else if(nValue == EFFECT_TYPE_HASTE)
+        else if (nValue == EFFECT_TYPE_HASTE)
         {
             nHasteSlow++;
         }
-        else if(nValue == EFFECT_TYPE_SLOW)
+        else if (nValue == EFFECT_TYPE_SLOW)
         {
             nHasteSlow--;
         }
@@ -394,11 +390,11 @@ int GetEffectAttackBonuses(object oCreature, int nAttackBonus = ATTACK_BONUS_MIS
     }
 
     // Haste and Slow
-    if(nHasteSlow > 0)
+    if (nHasteSlow > 0)
     {
         nAttackBonus += 2;
     }
-    else if(nHasteSlow < 0)
+    else if (nHasteSlow < 0)
     {
         nAttackPenalty += 2;
     }
@@ -412,12 +408,11 @@ int GetEffectAttackBonuses(object oCreature, int nAttackBonus = ATTACK_BONUS_MIS
 
     // Seems the game caps both, and then takes one from the other.
     // A +30 weapon with a -10 penalty goes to +10 only if cap is default 20.
-    if(nAttackBonus > nCap) nAttackBonus = nCap;
-    if(nAttackPenalty > nCap) nAttackPenalty = nCap;
+    if (nAttackBonus > nCap) nAttackBonus = nCap;
+    if (nAttackPenalty > nCap) nAttackPenalty = nCap;
 
     return nAttackBonus - nAttackPenalty;
 }
-
 
 // This will return the amount of change in the given attack for for EffectAttackIncrease or
 // EffectAttackDecrease
@@ -425,8 +420,8 @@ int GetEffectAttackBonuses(object oCreature, int nAttackBonus = ATTACK_BONUS_MIS
 // * Returns -1 on error
 int GetEffectAttackChangeAmount(effect eAttackEffect)
 {
-    if(GetEffectType(eAttackEffect) != EFFECT_TYPE_ATTACK_INCREASE &&
-       GetEffectType(eAttackEffect) != EFFECT_TYPE_ATTACK_DECREASE) return -1;
+    if (GetEffectType(eAttackEffect) != EFFECT_TYPE_ATTACK_INCREASE &&
+        GetEffectType(eAttackEffect) != EFFECT_TYPE_ATTACK_DECREASE) return -1;
     return GetEffectInteger(eAttackEffect, 0);
 }
 
@@ -436,8 +431,8 @@ int GetEffectAttackChangeAmount(effect eAttackEffect)
 // * Returns -1 on error
 int GetEffectAttackChangeBonusType(effect eAttackEffect)
 {
-    if(GetEffectType(eAttackEffect) != EFFECT_TYPE_ATTACK_INCREASE &&
-       GetEffectType(eAttackEffect) != EFFECT_TYPE_ATTACK_DECREASE) return -1;
+    if (GetEffectType(eAttackEffect) != EFFECT_TYPE_ATTACK_INCREASE &&
+        GetEffectType(eAttackEffect) != EFFECT_TYPE_ATTACK_DECREASE) return -1;
     return GetEffectInteger(eAttackEffect, 1);
 }
 
@@ -449,7 +444,7 @@ int GetEffectAttackChangeBonusType(effect eAttackEffect)
 // * Returns 0 on error
 int GetEffectMovementSpeedIncreaseAmount(effect eEffect)
 {
-    if(GetEffectType(eEffect) != EFFECT_TYPE_MOVEMENT_SPEED_DECREASE) return 0;
+    if (GetEffectType(eEffect) != EFFECT_TYPE_MOVEMENT_SPEED_DECREASE) return 0;
     return GetEffectInteger(eEffect, 0);
 }
 
@@ -461,7 +456,7 @@ int GetEffectMovementSpeedIncreaseAmount(effect eEffect)
 // * Returns 0 on error
 int GetEffectMovementSpeedDecreaseAmount(effect eEffect)
 {
-    if(GetEffectType(eEffect) != EFFECT_TYPE_MOVEMENT_SPEED_DECREASE) return 0;
+    if (GetEffectType(eEffect) != EFFECT_TYPE_MOVEMENT_SPEED_DECREASE) return 0;
     return GetEffectInteger(eEffect, 0);
 }
 
@@ -480,28 +475,28 @@ float GetTotalMovementSpeedEffectsModifier(object oCreature)
     // Remove it immediately
     effect eCheck = GetFirstEffect(oCreature);
     int nType, nHasteSlow = 0;
-    while(GetIsEffectValid(eCheck))
+    while (GetIsEffectValid(eCheck))
     {
         nType = GetEffectType(eCheck);
-        if(nType == EFFECT_TYPE_MOVEMENT_SPEED_INCREASE)
+        if (nType == EFFECT_TYPE_MOVEMENT_SPEED_INCREASE)
         {
             // Example:
             // nPercentIncrease = 250 -> 2.5, multiply by 2.5 (250% change)
             // nPercentIncrease = -150 -> -1.5, multiply by -1.5 (-150% change)
             fSpeed *= IntToFloat(GetEffectInteger(eCheck, 0)) / 100.0;
         }
-        else if(nType == EFFECT_TYPE_MOVEMENT_SPEED_DECREASE)
+        else if (nType == EFFECT_TYPE_MOVEMENT_SPEED_DECREASE)
         {
             // Example:
             // nPercentDecrease = 80 -> 0.8, 1.0 - 0.8, multiply by 0.2 (20% of total)
             // nPercentDecrease = -80 -> -0.8, 1.0 - -0.8, multiply 1.8 (80% increase)
             fSpeed *= (1.0 - (IntToFloat(GetEffectInteger(eCheck, 0)) / 100));
         }
-        else if(nType == EFFECT_TYPE_HASTE)
+        else if (nType == EFFECT_TYPE_HASTE)
         {
             nHasteSlow++;
         }
-        else if(nType == EFFECT_TYPE_SLOW)
+        else if (nType == EFFECT_TYPE_SLOW)
         {
             nHasteSlow--;
         }
@@ -509,19 +504,19 @@ float GetTotalMovementSpeedEffectsModifier(object oCreature)
     }
 
     // Haste * 1.5, slow reduces it by 0.5
-    if(nHasteSlow > 0)
+    if (nHasteSlow > 0)
     {
         fSpeed *= 1.5;
     }
-    else if(nHasteSlow < 0)
+    else if (nHasteSlow < 0)
     {
         fSpeed *= 0.5;
     }
 
     // Cap at end
-    if(fSpeed > 3.0 && GetLevelByClass(CLASS_TYPE_MONK, oCreature) >= 3) fSpeed = 3.0;
-    if(fSpeed > 1.5 && GetLevelByClass(CLASS_TYPE_MONK, oCreature) < 3) fSpeed = 1.5;
-    if(fSpeed < 0.125) fSpeed = 0.125;
+    if (fSpeed > 3.0 && GetLevelByClass(CLASS_TYPE_MONK, oCreature) >= 3) fSpeed = 3.0;
+    if (fSpeed > 1.5 && GetLevelByClass(CLASS_TYPE_MONK, oCreature) < 3) fSpeed = 1.5;
+    if (fSpeed < 0.125) fSpeed = 0.125;
 
     return fSpeed;
 }
@@ -536,11 +531,11 @@ void FixMovementSpeedEffectsModifiers(object oCreature)
 
     // Remove it immediately
     effect eCheck = GetFirstEffect(oCreature);
-    while(GetIsEffectValid(eCheck))
+    while (GetIsEffectValid(eCheck))
     {
-        if(GetEffectType(eCheck) == EFFECT_TYPE_MOVEMENT_SPEED_INCREASE &&
-           GetEffectTag(eCheck) == "FIX" &&
-           GetEffectInteger(eCheck, 0) == 100)
+        if (GetEffectType(eCheck) == EFFECT_TYPE_MOVEMENT_SPEED_INCREASE &&
+            GetEffectTag(eCheck) == "FIX" &&
+            GetEffectInteger(eCheck, 0) == 100)
         {
             RemoveEffect(oCreature, eSpeed);
         }
@@ -560,7 +555,7 @@ void FixMovementSpeedEffectsModifiers(object oCreature)
 // * Returns -100 on error (should always fail that save!)
 int GetEffectSavingThrowBonuses(int nSave, object oObject, object oOpponent = OBJECT_INVALID, int nSaveType = SAVING_THROW_TYPE_NONE, int bSpell = FALSE)
 {
-    if(!GetIsObjectValid(oObject)) return -100;
+    if (!GetIsObjectValid(oObject)) return -100;
 
     // The different bonuses we calculate
     int nBaseSave;
@@ -570,16 +565,16 @@ int GetEffectSavingThrowBonuses(int nSave, object oObject, object oOpponent = OB
     // * Base stats
     // * Misc effect bonuses (as if SAVING_THROW_TYPE_NONE)
     // * Feats
-    switch(nSave)
+    switch (nSave)
     {
-        case SAVING_THROW_FORT:   nBaseSave = GetFortitudeSavingThrow(oObject); break;
+        case SAVING_THROW_FORT: nBaseSave = GetFortitudeSavingThrow(oObject); break;
         case SAVING_THROW_REFLEX: nBaseSave = GetReflexSavingThrow(oObject); break;
-        case SAVING_THROW_WILL:   nBaseSave = GetWillSavingThrow(oObject); break;
+        case SAVING_THROW_WILL: nBaseSave = GetWillSavingThrow(oObject); break;
         default: return -100; break;
     }
 
     // If invalid opponent and no save type or spell we just return the above
-    if(!GetIsObjectValid(oOpponent) &&  nSaveType == SAVING_THROW_TYPE_NONE && bSpell == FALSE)
+    if (!GetIsObjectValid(oOpponent) && nSaveType == SAVING_THROW_TYPE_NONE && bSpell == FALSE)
     {
         return nBaseSave;
     }
@@ -587,12 +582,12 @@ int GetEffectSavingThrowBonuses(int nSave, object oObject, object oOpponent = OB
     // Other variables used for specific vs. type or vs. alignment etc.
     int nSavePenalty, nSaveBonus;
     int x, nValue;
-    int nRace = GetRacialType(oOpponent);
+    int nRace     = GetRacialType(oOpponent);
     int nGoodEvil = GetAlignmentGoodEvil(oOpponent);
     int nLawChaos = GetAlignmentLawChaos(oOpponent);
 
     // We need vs. specific saves on items first
-    if(nSaveType != SAVING_THROW_TYPE_NONE && bSpell == FALSE)
+    if (nSaveType != SAVING_THROW_TYPE_NONE && bSpell == FALSE)
     {
         int nSubtype;
         object oItem;
@@ -600,27 +595,27 @@ int GetEffectSavingThrowBonuses(int nSave, object oObject, object oOpponent = OB
 
         // Convert the item property subtype we need. Annoyingly not the same as the SAVING_THROW_TYPE_* constants
         int nItemSubtypeNeeded = -1;
-        switch(nSaveType)
+        switch (nSaveType)
         {
-            case SAVING_THROW_TYPE_ACID:        nItemSubtypeNeeded = 1; break;
-            case SAVING_THROW_TYPE_CHAOS:       nItemSubtypeNeeded = 19; break;
-            case SAVING_THROW_TYPE_COLD:        nItemSubtypeNeeded = 3; break;
-            case SAVING_THROW_TYPE_DEATH:       nItemSubtypeNeeded = 4; break;
-            case SAVING_THROW_TYPE_DISEASE:     nItemSubtypeNeeded = 5; break;
-            case SAVING_THROW_TYPE_DIVINE:      nItemSubtypeNeeded = 6; break;
+            case SAVING_THROW_TYPE_ACID: nItemSubtypeNeeded = 1; break;
+            case SAVING_THROW_TYPE_CHAOS: nItemSubtypeNeeded = 19; break;
+            case SAVING_THROW_TYPE_COLD: nItemSubtypeNeeded = 3; break;
+            case SAVING_THROW_TYPE_DEATH: nItemSubtypeNeeded = 4; break;
+            case SAVING_THROW_TYPE_DISEASE: nItemSubtypeNeeded = 5; break;
+            case SAVING_THROW_TYPE_DIVINE: nItemSubtypeNeeded = 6; break;
             case SAVING_THROW_TYPE_ELECTRICITY: nItemSubtypeNeeded = 7; break;
-            case SAVING_THROW_TYPE_EVIL:        nItemSubtypeNeeded = 21; break;
-            case SAVING_THROW_TYPE_FEAR:        nItemSubtypeNeeded = 8; break;
-            case SAVING_THROW_TYPE_FIRE:        nItemSubtypeNeeded = 9; break;
-            case SAVING_THROW_TYPE_GOOD:        nItemSubtypeNeeded = 20; break;
-            case SAVING_THROW_TYPE_LAW:         nItemSubtypeNeeded = 18; break;
+            case SAVING_THROW_TYPE_EVIL: nItemSubtypeNeeded = 21; break;
+            case SAVING_THROW_TYPE_FEAR: nItemSubtypeNeeded = 8; break;
+            case SAVING_THROW_TYPE_FIRE: nItemSubtypeNeeded = 9; break;
+            case SAVING_THROW_TYPE_GOOD: nItemSubtypeNeeded = 20; break;
+            case SAVING_THROW_TYPE_LAW: nItemSubtypeNeeded = 18; break;
             case SAVING_THROW_TYPE_MIND_SPELLS: nItemSubtypeNeeded = 11; break;
-            case SAVING_THROW_TYPE_NEGATIVE:    nItemSubtypeNeeded = 12; break;
-            case SAVING_THROW_TYPE_POISON:      nItemSubtypeNeeded = 13; break;
-            case SAVING_THROW_TYPE_POSITIVE:    nItemSubtypeNeeded = 14; break;
-            case SAVING_THROW_TYPE_SONIC:       nItemSubtypeNeeded = 15; break;
-            case SAVING_THROW_TYPE_SPELL:       nItemSubtypeNeeded = 17; break;
-            case SAVING_THROW_TYPE_TRAP:        nItemSubtypeNeeded = 16; break;
+            case SAVING_THROW_TYPE_NEGATIVE: nItemSubtypeNeeded = 12; break;
+            case SAVING_THROW_TYPE_POISON: nItemSubtypeNeeded = 13; break;
+            case SAVING_THROW_TYPE_POSITIVE: nItemSubtypeNeeded = 14; break;
+            case SAVING_THROW_TYPE_SONIC: nItemSubtypeNeeded = 15; break;
+            case SAVING_THROW_TYPE_SPELL: nItemSubtypeNeeded = 17; break;
+            case SAVING_THROW_TYPE_TRAP: nItemSubtypeNeeded = 16; break;
         }
         // Not finding anything is fine, since it might default to spells only.
 
@@ -628,25 +623,25 @@ int GetEffectSavingThrowBonuses(int nSave, object oObject, object oOpponent = OB
         int nSpellsItemSubtype = 17;
 
         // Equipped items first
-        for(x = 0; x < NUM_INVENTORY_SLOTS; x++)
+        for (x = 0; x < NUM_INVENTORY_SLOTS; x++)
         {
             oItem = GetItemInSlot(x, oObject);
-            if(GetIsObjectValid(oItem))
+            if (GetIsObjectValid(oItem))
             {
                 // Check item properties
                 ip = GetFirstItemProperty(oItem);
-                while(GetIsItemPropertyValid(ip))
+                while (GetIsItemPropertyValid(ip))
                 {
                     // We only need to check for SPECIFIC saving throw bonuses, since ITEM_PROPERTY_DECREASED_SAVING_THROWS is already accounted for
                     // There is no "vs. Alignment/Race" for item effects, but the SPECIFIC saving throws apply to every save type (fortitude, reflex, will)
-                    switch(GetItemPropertyType(ip))
+                    switch (GetItemPropertyType(ip))
                     {
                         case ITEM_PROPERTY_DECREASED_SAVING_THROWS_SPECIFIC:
                         {
                             nSubtype = GetItemPropertySubType(ip);
                             // Note by default nSubtype can't be SAVING_THROW_TYPE_SPELL (it's not in iprp_saveelement.2da) but
                             // it's here for future proofing / does no harm
-                            if(nSubtype == nSaveType || (bSpell && nSubtype == nSpellsItemSubtype))
+                            if (nSubtype == nSaveType || (bSpell && nSubtype == nSpellsItemSubtype))
                             {
                                 nSavePenalty += GetItemPropertyCostTableValue(ip);
                             }
@@ -657,7 +652,7 @@ int GetEffectSavingThrowBonuses(int nSave, object oObject, object oOpponent = OB
                             nSubtype = GetItemPropertySubType(ip);
                             // Note by default nSubtype can't be SAVING_THROW_TYPE_SPELL (it's not in iprp_saveelement.2da) but
                             // it's here for future proofing / does no harm
-                            if(nSubtype == nSaveType || (bSpell && nSubtype == nSpellsItemSubtype))
+                            if (nSubtype == nSaveType || (bSpell && nSubtype == nSpellsItemSubtype))
                             {
                                 nSaveBonus += GetItemPropertyCostTableValue(ip);
                             }
@@ -675,38 +670,38 @@ int GetEffectSavingThrowBonuses(int nSave, object oObject, object oOpponent = OB
     // * Bonuses/penalties to specific save types - eg vs. Fire
     // * Negative levels (-1 per level) (already accounted for)
     effect eCheck = GetFirstEffect(oObject);
-    while(GetIsEffectValid(eCheck))
+    while (GetIsEffectValid(eCheck))
     {
-        switch(GetEffectType(eCheck))
+        switch (GetEffectType(eCheck))
         {
             case EFFECT_TYPE_SAVING_THROW_INCREASE:
             case EFFECT_TYPE_SAVING_THROW_DECREASE:
             {
                 // Correct base type of save
                 nValue = GetEffectInteger(eCheck, 1);
-                if(nValue == SAVING_THROW_ALL || nValue == nSave)
+                if (nValue == SAVING_THROW_ALL || nValue == nSave)
                 {
                     // Correct specific save type, or all
                     nValue = GetEffectInteger(eCheck, 2);
-                    if(nValue == SAVING_THROW_TYPE_ALL || nValue == nSaveType || (bSpell && nValue == SAVING_THROW_TYPE_SPELL))
+                    if (nValue == SAVING_THROW_TYPE_ALL || nValue == nSaveType || (bSpell && nValue == SAVING_THROW_TYPE_SPELL))
                     {
                         // Check race etc.
                         nValue = GetEffectInteger(eCheck, 3);
-                        if(nValue == RACIAL_TYPE_INVALID ||
-                           nValue == nRace)
+                        if (nValue == RACIAL_TYPE_INVALID ||
+                            nValue == nRace)
                         {
                             // Alignment Law/Chaos
                             nValue = GetEffectInteger(eCheck, 4);
-                            if(nValue == ALIGNMENT_ALL ||
-                               nValue == nLawChaos)
+                            if (nValue == ALIGNMENT_ALL ||
+                                nValue == nLawChaos)
                             {
                                 // Alignment Good/Evil
                                 nValue = GetEffectInteger(eCheck, 5);
-                                if(nValue == ALIGNMENT_ALL ||
-                                   nValue == nGoodEvil)
+                                if (nValue == ALIGNMENT_ALL ||
+                                    nValue == nGoodEvil)
                                 {
                                     // All matches so we add/remove the bonus
-                                    if(GetEffectType(eCheck) == EFFECT_TYPE_SAVING_THROW_INCREASE)
+                                    if (GetEffectType(eCheck) == EFFECT_TYPE_SAVING_THROW_INCREASE)
                                     {
                                         nSaveBonus += GetEffectInteger(eCheck, 0);
                                     }
@@ -727,17 +722,17 @@ int GetEffectSavingThrowBonuses(int nSave, object oObject, object oOpponent = OB
 
     // Bonus from spellcraft
     int nSpellcraftBonus = 0;
-    if(bSpell || nSaveType == SAVING_THROW_TYPE_SPELL)
+    if (bSpell || nSaveType == SAVING_THROW_TYPE_SPELL)
     {
         // No bonuses without ranks
-        if(GetHasSkill(SKILL_SPELLCRAFT, oObject))
+        if (GetHasSkill(SKILL_SPELLCRAFT, oObject))
         {
             // Get total skill plus specific bonus versus the target
             int nSkill = GetSkillRank(SKILL_SPELLCRAFT, oObject);
             // Increase with specific bonuses vs. alignment etc.
             // TODO
 
-            if(nSkill > 0)
+            if (nSkill > 0)
             {
                 // Bonus calculation using ruleset.2da value
                 nSpellcraftBonus = nSkill / GetRulesetInt("SPELLCRAFT_NUM_RANKS_PER_SAVE_BONUS", 5);
@@ -749,8 +744,8 @@ int GetEffectSavingThrowBonuses(int nSave, object oObject, object oOpponent = OB
     int nCap = GetSavingThrowBonusLimit();
 
     // This isn't perfect since we can't actually get the base-base saving throw...urg.
-    if(nSaveBonus > nCap) nSaveBonus = nCap;
-    if(nSavePenalty > nCap) nSavePenalty = nCap;
+    if (nSaveBonus > nCap) nSaveBonus = nCap;
+    if (nSavePenalty > nCap) nSavePenalty = nCap;
 
     return nSave + nSaveBonus - nSavePenalty + nSpellcraftBonus;
 }

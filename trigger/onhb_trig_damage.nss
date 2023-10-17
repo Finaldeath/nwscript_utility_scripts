@@ -5,7 +5,7 @@
 /*
     Example of how to use an efficient trigger to do damage to all creatures within it.
 
-    This script should not be assigned to the trigger. The trigger script "onen_trig_damage" 
+    This script should not be assigned to the trigger. The trigger script "onen_trig_damage"
     will set this to run on the heartbeat and remove it automatically.
 
     Based on scripts by Sacha.
@@ -25,12 +25,12 @@ void main()
         return;
     }
     // For consistency with the On Enter script we do this damage for PCs and associates only
-    while(GetIsObjectValid(oCreature))
+    while (GetIsObjectValid(oCreature))
     {
-        if(GetIsPC(oCreature) || GetIsPC(GetMaster(oCreature)))
+        if (GetIsPC(oCreature) || GetIsPC(GetMaster(oCreature)))
         {
             // Fortitude saving throw, DC 15, versus Traps
-            if(!FortitudeSave(oCreature, 15, SAVING_THROW_TYPE_TRAP))
+            if (!FortitudeSave(oCreature, 15, SAVING_THROW_TYPE_TRAP))
             {
                 // Apply 2d6 acid damage and an effect
                 ApplyEffectToObject(DURATION_TYPE_INSTANT, EffectVisualEffect(VFX_IMP_ACID_S), oCreature);

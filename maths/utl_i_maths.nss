@@ -52,8 +52,6 @@ int RGBToDecimal(int nRed, int nGreen, int nBlue);
 // a empty string, or "00" or similar that StringToInt doesn't inherantly capture.
 int IsStringReallyZero(string s);
 
-
-
 // Returns the higher of a or b
 int max(int a, int b)
 {
@@ -107,15 +105,16 @@ int round(float fFloat)
 // * sString - String to convert
 int HexStringToInt(string sString)
 {
-    sString = GetStringLowerCase(sString);
+    sString     = GetStringLowerCase(sString);
     int nResult = 0;
     int nLength = GetStringLength(sString);
     int i;
-    for (i = nLength - 1; i >= 0; i--) {
+    for (i = nLength - 1; i >= 0; i--)
+    {
         int n = FindSubString("0123456789abcdef", GetSubString(sString, i, 1));
         if (n == -1)
             return nResult;
-        nResult |= n << ((nLength - i -1) * 4);
+        nResult |= n << ((nLength - i - 1) * 4);
     }
     return nResult;
 }
@@ -127,7 +126,7 @@ string IntToBinaryString(int nInteger)
 {
     string sResult;
     int i;
-    for(i = 1; i <= 32; i++)
+    for (i = 1; i <= 32; i++)
     {
         sResult = IntToString(nInteger & 0x01) + sResult;
         nInteger >>= 1;

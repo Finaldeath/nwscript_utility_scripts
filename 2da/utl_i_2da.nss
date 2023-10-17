@@ -10,10 +10,10 @@
 //:: https://github.com/Finaldeath/nwscript_utility_scripts
 //:://////////////////////////////////////////////
 
-const string RULESET_2DA = "ruleset";
+const string RULESET_2DA       = "ruleset";
 const string CACHED_2DA_PREFIX = "CACHED";
 
-// Caches all ruleset.2da entries onto the module as local variables, both 
+// Caches all ruleset.2da entries onto the module as local variables, both
 // as float and integers. Strings and blanks are ignored.
 void CacheRuleset2da();
 
@@ -23,13 +23,13 @@ int GetRulesetInt(string sEntry, int nDefault = 0);
 // Gets a float ruleset.2da entry from the cache (generate cache if not present)
 float GetRulesetFloat(string sEntry, float fDefault = 0.0);
 
-// Caches all ruleset.2da entries onto the module as local variables, both 
+// Caches all ruleset.2da entries onto the module as local variables, both
 // as float and integers. Strings and blanks are ignored.
 void CacheRuleset2da()
 {
     int nRow;
     object oModule = GetModule();
-    for(nRow = 0; nRow <= Get2DARowCount(RULESET_2DA); nRow++)
+    for (nRow = 0; nRow <= Get2DARowCount(RULESET_2DA); nRow++)
     {
         string sLabel = Get2DAString(RULESET_2DA, "Label", nRow);
 

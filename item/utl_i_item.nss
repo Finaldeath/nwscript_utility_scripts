@@ -90,8 +90,6 @@ int GetItemIsMelee(object oItem);
 // Ammo is not considered a weapon.
 int GetItemIsWeapon(object oItem);
 
-
-
 // Returns the base AC value of oArmor, based on the appearance of it
 // * oArmor - Armor piece to check
 int GetArmorBaseACValue(object oArmor)
@@ -112,11 +110,11 @@ int GetArmorBaseACValue(object oArmor)
 int GetGoldAcquired()
 {
     int nTotalGold = 0;
-    object oItem = GetModuleItemAcquired();
+    object oItem   = GetModuleItemAcquired();
 
     // The only item that is not valid after acquiring it is gold
     // therefore an invalid item is always gold
-    if(GetIsObjectValid(oItem) == FALSE)
+    if (GetIsObjectValid(oItem) == FALSE)
     {
         nTotalGold = GetModuleItemAcquiredStackSize();
     }
@@ -129,10 +127,10 @@ int GetGoldAcquired()
 void ClearInventory(object oObject)
 {
     // In case we're passed something else
-    if(!GetHasInventory(oObject)) return;
+    if (!GetHasInventory(oObject)) return;
 
     object oItem = GetFirstItemInInventory(oObject);
-    while(GetIsObjectValid(oItem))
+    while (GetIsObjectValid(oItem))
     {
         DestroyObject(oItem);
         oItem = GetNextItemInInventory(oObject);
@@ -141,11 +139,10 @@ void ClearInventory(object oObject)
     if (GetObjectType(oObject) == OBJECT_TYPE_CREATURE)
     {
         int i;
-        for(i = 0; i < NUM_INVENTORY_SLOTS; i++)
+        for (i = 0; i < NUM_INVENTORY_SLOTS; i++)
             DestroyObject(GetItemInSlot(i, oObject));
     }
 }
-
 
 // Destroys all the items in the inventory of oObject that matches the given resref
 // Creatures also have all equipped items checked
@@ -154,20 +151,20 @@ void ClearInventory(object oObject)
 void DestroyAllItemsByResRef(object oObject, string sResRef)
 {
     object oItem = GetFirstItemInInventory(oObject);
-    while(GetIsObjectValid(oItem))
+    while (GetIsObjectValid(oItem))
     {
-        if(GetResRef(oItem) == sResRef)
+        if (GetResRef(oItem) == sResRef)
             DestroyObject(oItem);
         oItem = GetNextItemInInventory(oObject);
     }
     // Check inventory slots as well for creatures
-    if(GetObjectType(oObject) == OBJECT_TYPE_CREATURE)
+    if (GetObjectType(oObject) == OBJECT_TYPE_CREATURE)
     {
         int i;
-        for(i = 0; i < NUM_INVENTORY_SLOTS; i++)
+        for (i = 0; i < NUM_INVENTORY_SLOTS; i++)
         {
             oItem = GetItemInSlot(i, oObject);
-            if(GetResRef(oItem) == sResRef)
+            if (GetResRef(oItem) == sResRef)
                 DestroyObject(oItem);
         }
     }
@@ -184,20 +181,20 @@ void DestroyAllItemsByResRef(object oObject, string sResRef)
 void DestroyAllItemsByResRefList(object oObject, string sResRefList)
 {
     object oItem = GetFirstItemInInventory(oObject);
-    while(GetIsObjectValid(oItem))
+    while (GetIsObjectValid(oItem))
     {
         if (FindSubString(sResRefList, GetResRef(oItem)) >= 0)
             DestroyObject(oItem);
         oItem = GetNextItemInInventory(oObject);
     }
     // Check inventory slots as well for creatures
-    if(GetObjectType(oObject) == OBJECT_TYPE_CREATURE)
+    if (GetObjectType(oObject) == OBJECT_TYPE_CREATURE)
     {
         int i;
-        for(i = 0; i < NUM_INVENTORY_SLOTS; i++)
+        for (i = 0; i < NUM_INVENTORY_SLOTS; i++)
         {
             oItem = GetItemInSlot(i, oObject);
-            if(FindSubString(sResRefList, GetResRef(oItem)) >= 0)
+            if (FindSubString(sResRefList, GetResRef(oItem)) >= 0)
                 DestroyObject(oItem);
         }
     }
@@ -210,20 +207,20 @@ void DestroyAllItemsByResRefList(object oObject, string sResRefList)
 void DestroyAllItemsByTag(object oObject, string sTag)
 {
     object oItem = GetFirstItemInInventory(oObject);
-    while(GetIsObjectValid(oItem))
+    while (GetIsObjectValid(oItem))
     {
-        if(GetTag(oItem) == sTag)
+        if (GetTag(oItem) == sTag)
             DestroyObject(oItem);
         oItem = GetNextItemInInventory(oObject);
     }
     // Check inventory slots as well for creatures
-    if(GetObjectType(oObject) == OBJECT_TYPE_CREATURE)
+    if (GetObjectType(oObject) == OBJECT_TYPE_CREATURE)
     {
         int i;
-        for(i = 0; i < NUM_INVENTORY_SLOTS; i++)
+        for (i = 0; i < NUM_INVENTORY_SLOTS; i++)
         {
             oItem = GetItemInSlot(i, oObject);
-            if(GetTag(oItem) == sTag)
+            if (GetTag(oItem) == sTag)
                 DestroyObject(oItem);
         }
     }
@@ -239,20 +236,20 @@ void DestroyAllItemsByTag(object oObject, string sTag)
 void DestroyAllItemsByTagList(object oObject, string sTagList)
 {
     object oItem = GetFirstItemInInventory(oObject);
-    while(GetIsObjectValid(oItem))
+    while (GetIsObjectValid(oItem))
     {
         if (FindSubString(sTagList, GetTag(oItem)) >= 0)
             DestroyObject(oItem);
         oItem = GetNextItemInInventory(oObject);
     }
     // Check inventory slots as well for creatures
-    if(GetObjectType(oObject) == OBJECT_TYPE_CREATURE)
+    if (GetObjectType(oObject) == OBJECT_TYPE_CREATURE)
     {
         int i;
-        for(i = 0; i < NUM_INVENTORY_SLOTS; i++)
+        for (i = 0; i < NUM_INVENTORY_SLOTS; i++)
         {
             oItem = GetItemInSlot(i, oObject);
-            if(FindSubString(sTagList, GetTag(oItem)) >= 0)
+            if (FindSubString(sTagList, GetTag(oItem)) >= 0)
                 DestroyObject(oItem);
         }
     }
@@ -267,22 +264,22 @@ void SetInventoryDroppable(object oObject, int bDroppable = TRUE)
 {
     // Cursed flag setup
     int bCursed = TRUE;
-    if(bDroppable) bCursed = FALSE;
+    if (bDroppable) bCursed = FALSE;
 
     // Set all the clones items to be undroppable so cannot be retrieved on death
     object oItem = GetFirstItemInInventory(oObject);
-    while(GetIsObjectValid(oItem))
+    while (GetIsObjectValid(oItem))
     {
         SetItemCursedFlag(oItem, bCursed);
         SetDroppableFlag(oItem, bDroppable);
         oItem = GetNextItemInInventory(oObject);
     }
     // Check inventory slots as well for creatures
-    if(GetObjectType(oObject) == OBJECT_TYPE_CREATURE)
+    if (GetObjectType(oObject) == OBJECT_TYPE_CREATURE)
     {
         int i;
         // Bolts are the 13th slot, everything after are creature items
-        for(i = 0; i < INVENTORY_SLOT_BOLTS; i++)
+        for (i = 0; i < INVENTORY_SLOT_BOLTS; i++)
         {
             oItem = GetItemInSlot(i, oObject);
             SetItemCursedFlag(oItem, bCursed);
@@ -298,9 +295,9 @@ object GetRandomItemInInventory(object oOwner)
 {
     object oReturnItem = OBJECT_INVALID, oItem = GetFirstItemInInventory(oOwner);
     int index = 0;
-    while(GetIsObjectValid(oItem))
+    while (GetIsObjectValid(oItem))
     {
-        if(Random(++index) == 0)
+        if (Random(++index) == 0)
             oReturnItem = oItem;
         oItem = GetNextItemInInventory(oOwner);
     }
@@ -314,21 +311,21 @@ object GetRandomItemInInventory(object oOwner)
 int CountItemsByTagInInventory(object oObject, string sTag)
 {
     object oItem = GetFirstItemInInventory(oObject);
-    int nCount = 0;
-    while(GetIsObjectValid(oItem))
+    int nCount   = 0;
+    while (GetIsObjectValid(oItem))
     {
-        if(GetTag(oItem) == sTag)
+        if (GetTag(oItem) == sTag)
             nCount += GetItemStackSize(oItem);
         oItem = GetNextItemInInventory(oObject);
     }
     // Check inventory slots as well for creatures
-    if(GetObjectType(oObject) == OBJECT_TYPE_CREATURE)
+    if (GetObjectType(oObject) == OBJECT_TYPE_CREATURE)
     {
         int i;
-        for(i = 0; i < NUM_INVENTORY_SLOTS; i++)
+        for (i = 0; i < NUM_INVENTORY_SLOTS; i++)
         {
             oItem = GetItemInSlot(i, oObject);
-            if(GetTag(oItem) == sTag)
+            if (GetTag(oItem) == sTag)
                 nCount += GetItemStackSize(oItem);
         }
     }
@@ -348,9 +345,9 @@ int GetMaxSingleItemValue(object oItem)
 
     // Loop itemvalue.2da to find what level you'd need to be to equip it
     int nRow, nRows = Get2DARowCount("itemvalue");
-    for(nRow = 0; nRow < nRows; nRow++)
+    for (nRow = 0; nRow < nRows; nRow++)
     {
-        if(nGP <= StringToInt(Get2DAString("itemvalue", "MAXSINGLEITEMVALUE", nRow)))
+        if (nGP <= StringToInt(Get2DAString("itemvalue", "MAXSINGLEITEMVALUE", nRow)))
         {
             // Level is row + 1 as per Label column
             return nRow + 1;
@@ -365,7 +362,7 @@ int GetItemIsThrowable(object oItem)
 {
     int nType = GetBaseItemType(oItem);
     // Error check
-    if(nType == BASE_ITEM_INVALID) return FALSE;
+    if (nType == BASE_ITEM_INVALID) return FALSE;
 
     // Type 11 is thrown weapons
     return (Get2DAString("baseitems", "WeaponWield", nType) == "11");
@@ -376,7 +373,7 @@ int GetItemIsRanged(object oItem)
 {
     int nType = GetBaseItemType(oItem);
     // Error check
-    if(nType == BASE_ITEM_INVALID) return FALSE;
+    if (nType == BASE_ITEM_INVALID) return FALSE;
 
     string sWeaponWield = Get2DAString("baseitems", "WeaponWield", nType);
 
@@ -389,10 +386,10 @@ int GetItemIsMelee(object oItem)
 {
     int nType = GetBaseItemType(oItem);
     // Error check
-    if(nType == BASE_ITEM_INVALID) return FALSE;
+    if (nType == BASE_ITEM_INVALID) return FALSE;
 
     // Check it has a valid WeaponSize
-    if(Get2DAString("baseitems", "WeaponSize", nType) == "") return FALSE;
+    if (Get2DAString("baseitems", "WeaponSize", nType) == "") return FALSE;
 
     string sWeaponWield = Get2DAString("baseitems", "WeaponWield", nType);
 
@@ -406,10 +403,10 @@ int GetItemIsWeapon(object oItem)
 {
     int nType = GetBaseItemType(oItem);
     // Error check
-    if(nType == BASE_ITEM_INVALID) return FALSE;
+    if (nType == BASE_ITEM_INVALID) return FALSE;
 
     // Check it has a valid WeaponSize
-    if(Get2DAString("baseitems", "WeaponSize", nType) == "") return FALSE;
+    if (Get2DAString("baseitems", "WeaponSize", nType) == "") return FALSE;
 
     // Check if there is damage assigned
     // Creature weapons get 0 NumDice

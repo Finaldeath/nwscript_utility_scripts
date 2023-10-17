@@ -16,11 +16,11 @@
     Since sometimes iterating over many locals is slow, this might be an excellent way to
     speed up large amounts of access, or for debugging, or using regex or whatever else.
 
-    The oObject field is used as a reference - all of these are set on the modules sqlite DB. 
+    The oObject field is used as a reference - all of these are set on the modules sqlite DB.
 
     The module sqlite DB is saved to the save game so is persistent within a singleplayer (or co-op) module
     runthrough but not retained on restarting a PW server.
-    
+
     See utl_i_sqlplayer.nss for the player persistent version (which does travel between modules).
 */
 //:://////////////////////////////////////////////
@@ -28,15 +28,15 @@
 //:: https://github.com/Finaldeath/nwscript_utility_scripts
 //:://////////////////////////////////////////////
 
-const string SQLOCALS_TABLE_NAME     = "sqlocals_table";
+const string SQLOCALS_TABLE_NAME = "sqlocals_table";
 
-const int SQLOCALS_TYPE_ALL          = 0;
-const int SQLOCALS_TYPE_INT          = 1;
-const int SQLOCALS_TYPE_FLOAT        = 2;
-const int SQLOCALS_TYPE_STRING       = 4;
-const int SQLOCALS_TYPE_OBJECT       = 8;
-const int SQLOCALS_TYPE_VECTOR       = 16;
-const int SQLOCALS_TYPE_LOCATION     = 32;
+const int SQLOCALS_TYPE_ALL      = 0;
+const int SQLOCALS_TYPE_INT      = 1;
+const int SQLOCALS_TYPE_FLOAT    = 2;
+const int SQLOCALS_TYPE_STRING   = 4;
+const int SQLOCALS_TYPE_OBJECT   = 8;
+const int SQLOCALS_TYPE_VECTOR   = 16;
+const int SQLOCALS_TYPE_LOCATION = 32;
 
 // Returns an integer stored on oObject, or 0 on error
 // * oObject - an object to reference against
@@ -152,18 +152,17 @@ int SQLocals_GetLastUpdated_UnixEpoch(object oObject, string sVarName, int nType
 // * nType - The SQLOCALS_TYPE_* you wish to check
 string SQLocals_GetLastUpdated_UTC(object oObject, string sVarName, int nType);
 
-
 /* INTERNAL */
 void SQLocals_CreateTable()
 {
     sqlquery sql = SqlPrepareQueryObject(GetModule(),
-        "CREATE TABLE IF NOT EXISTS " + SQLOCALS_TABLE_NAME + " (" +
-        "object TEXT, " +
-        "type INTEGER, " +
-        "varname TEXT, " +
-        "value TEXT, " +
-        "timestamp INTEGER, " +
-        "PRIMARY KEY(object, type, varname));");
+                                         "CREATE TABLE IF NOT EXISTS " + SQLOCALS_TABLE_NAME + " (" +
+                                             "object TEXT, " +
+                                             "type INTEGER, " +
+                                             "varname TEXT, " +
+                                             "value TEXT, " +
+                                             "timestamp INTEGER, " +
+                                             "PRIMARY KEY(object, type, varname));");
     SqlStep(sql);
 }
 
@@ -172,8 +171,8 @@ sqlquery SQLocals_PrepareSelect(object oObject, int nType, string sVarName)
     SQLocals_CreateTable();
 
     sqlquery sql = SqlPrepareQueryObject(GetModule(),
-        "SELECT value FROM " + SQLOCALS_TABLE_NAME + " " +
-        "WHERE object = @object AND type = @type AND varname = @varname;");
+                                         "SELECT value FROM " + SQLOCALS_TABLE_NAME + " " +
+                                             "WHERE object = @object AND type = @type AND varname = @varname;");
 
     SqlBindString(sql, "@object", ObjectToString(oObject));
     SqlBindInt(sql, "@type", nType);
@@ -187,9 +186,9 @@ sqlquery SQLocals_PrepareInsert(object oObject, int nType, string sVarName)
     SQLocals_CreateTable();
 
     sqlquery sql = SqlPrepareQueryObject(GetModule(),
-        "INSERT INTO " + SQLOCALS_TABLE_NAME + " " +
-        "(object, type, varname, value, timestamp) VALUES (@object, @type, @varname, @value, strftime('%s','now')) " +
-        "ON CONFLICT (object, type, varname) DO UPDATE SET value = @value, timestamp = strftime('%s','now');");
+                                         "INSERT INTO " + SQLOCALS_TABLE_NAME + " " +
+                                             "(object, type, varname, value, timestamp) VALUES (@object, @type, @varname, @value, strftime('%s','now')) " +
+                                             "ON CONFLICT (object, type, varname) DO UPDATE SET value = @value, timestamp = strftime('%s','now');");
 
     SqlBindString(sql, "@object", ObjectToString(oObject));
     SqlBindInt(sql, "@type", nType);
@@ -203,8 +202,8 @@ sqlquery SQLocals_PrepareDelete(object oObject, int nType, string sVarName)
     SQLocals_CreateTable();
 
     sqlquery sql = SqlPrepareQueryObject(GetModule(),
-        "DELETE FROM " + SQLOCALS_TABLE_NAME + " " +
-        "WHERE object = @object AND type = @type AND varname = @varname;");
+                                         "DELETE FROM " + SQLOCALS_TABLE_NAME + " " +
+                                             "WHERE object = @object AND type = @type AND varname = @varname;");
 
     SqlBindString(sql, "@object", ObjectToString(oObject));
     SqlBindInt(sql, "@type", nType);
@@ -215,9 +214,9 @@ sqlquery SQLocals_PrepareDelete(object oObject, int nType, string sVarName)
 
 string SQLocals_LocationToString(location locLocation)
 {
-    string sAreaId = ObjectToString(GetAreaFromLocation(locLocation));
+    string sAreaId   = ObjectToString(GetAreaFromLocation(locLocation));
     vector vPosition = GetPositionFromLocation(locLocation);
-    float fFacing = GetFacingFromLocation(locLocation);
+    float fFacing    = GetFacingFromLocation(locLocation);
 
     return "#A#" + sAreaId +
            "#X#" + FloatToString(vPosition.x, 0, 5) +
@@ -232,30 +231,30 @@ location SQLocals_StringToLocation(string sLocation)
 
     int nLength = GetStringLength(sLocation);
 
-    if(nLength > 0)
+    if (nLength > 0)
     {
         int nPos, nCount;
 
-        nPos = FindSubString(sLocation, "#A#") + 3;
-        nCount = FindSubString(GetSubString(sLocation, nPos, nLength - nPos), "#");
+        nPos         = FindSubString(sLocation, "#A#") + 3;
+        nCount       = FindSubString(GetSubString(sLocation, nPos, nLength - nPos), "#");
         object oArea = StringToObject(GetSubString(sLocation, nPos, nCount));
 
-        nPos = FindSubString(sLocation, "#X#") + 3;
-        nCount = FindSubString(GetSubString(sLocation, nPos, nLength - nPos), "#");
+        nPos     = FindSubString(sLocation, "#X#") + 3;
+        nCount   = FindSubString(GetSubString(sLocation, nPos, nLength - nPos), "#");
         float fX = StringToFloat(GetSubString(sLocation, nPos, nCount));
 
-        nPos = FindSubString(sLocation, "#Y#") + 3;
-        nCount = FindSubString(GetSubString(sLocation, nPos, nLength - nPos), "#");
+        nPos     = FindSubString(sLocation, "#Y#") + 3;
+        nCount   = FindSubString(GetSubString(sLocation, nPos, nLength - nPos), "#");
         float fY = StringToFloat(GetSubString(sLocation, nPos, nCount));
 
-        nPos = FindSubString(sLocation, "#Z#") + 3;
-        nCount = FindSubString(GetSubString(sLocation, nPos, nLength - nPos), "#");
+        nPos     = FindSubString(sLocation, "#Z#") + 3;
+        nCount   = FindSubString(GetSubString(sLocation, nPos, nLength - nPos), "#");
         float fZ = StringToFloat(GetSubString(sLocation, nPos, nCount));
 
         vector vPosition = Vector(fX, fY, fZ);
 
-        nPos = FindSubString(sLocation, "#F#") + 3;
-        nCount = FindSubString(GetSubString(sLocation, nPos, nLength - nPos), "#");
+        nPos               = FindSubString(sLocation, "#F#") + 3;
+        nCount             = FindSubString(GetSubString(sLocation, nPos, nLength - nPos), "#");
         float fOrientation = StringToFloat(GetSubString(sLocation, nPos, nCount));
 
         if (GetIsObjectValid(oArea))
@@ -396,7 +395,6 @@ void SQLocals_DeleteString(object oObject, string sVarName)
 
 /* OBJECT */
 
-
 // Returns an object identifier stored on oObject
 // If this is used on a player it might return a "once valid" OID, so check
 // with GetIsObjectValid, do not compare to OBJECT_INVALID.
@@ -446,14 +444,14 @@ void SQLocals_DeleteObject(object oObject, string sVarName)
 // * sVarName - name of the variable to retrieve
 vector SQLocals_GetVector(object oObject, string sVarName)
 {
-    if (oObject == OBJECT_INVALID || sVarName == "") return [0.0f, 0.0f, 0.0f];
+    if (oObject == OBJECT_INVALID || sVarName == "") return [ 0.0f, 0.0f, 0.0f ];
 
     sqlquery sql = SQLocals_PrepareSelect(oObject, SQLOCALS_TYPE_VECTOR, sVarName);
 
     if (SqlStep(sql))
         return SqlGetVector(sql, 0);
     else
-        return [0.0f, 0.0f, 0.0f];
+        return [ 0.0f, 0.0f, 0.0f ];
 }
 
 // Sets a vector stored on oObject to the given value
@@ -537,11 +535,11 @@ void SQLocals_Delete(object oObject, int nType = SQLOCALS_TYPE_ALL, string sLike
     SQLocals_CreateTable();
 
     sqlquery sql = SqlPrepareQueryObject(GetModule(),
-        "DELETE FROM " + SQLOCALS_TABLE_NAME + " " +
-        "WHERE object = @object " +
-        (nType != SQLOCALS_TYPE_ALL ? "AND type & @type " : " ") +
-        (sLike != "" ? "AND varname LIKE @like " + (sEscape != "" ? "ESCAPE @escape" : "") : "") +
-        ";");
+                                         "DELETE FROM " + SQLOCALS_TABLE_NAME + " " +
+                                             "WHERE object = @object " +
+                                             (nType != SQLOCALS_TYPE_ALL ? "AND type & @type " : " ") +
+                                             (sLike != "" ? "AND varname LIKE @like " + (sEscape != "" ? "ESCAPE @escape" : "") : "") +
+                                             ";");
 
     SqlBindString(sql, "@object", ObjectToString(oObject));
 
@@ -570,11 +568,11 @@ int SQLocals_Count(object oObject, int nType = SQLOCALS_TYPE_ALL, string sLike =
     SQLocals_CreateTable();
 
     sqlquery sql = SqlPrepareQueryObject(GetModule(),
-        "SELECT COUNT(*) FROM " + SQLOCALS_TABLE_NAME + " " +
-        "WHERE object = @object " +
-        (nType != SQLOCALS_TYPE_ALL ? "AND type & @type " : " ") +
-        (sLike != "" ? "AND varname LIKE @like " + (sEscape != "" ? "ESCAPE @escape" : "") : "") +
-        ";");
+                                         "SELECT COUNT(*) FROM " + SQLOCALS_TABLE_NAME + " " +
+                                             "WHERE object = @object " +
+                                             (nType != SQLOCALS_TYPE_ALL ? "AND type & @type " : " ") +
+                                             (sLike != "" ? "AND varname LIKE @like " + (sEscape != "" ? "ESCAPE @escape" : "") : "") +
+                                             ";");
 
     SqlBindString(sql, "@object", ObjectToString(oObject));
 
@@ -605,10 +603,10 @@ int SQLocals_IsSet(object oObject, string sVarName, int nType)
     SQLocals_CreateTable();
 
     sqlquery sql = SqlPrepareQueryObject(GetModule(),
-        "SELECT * FROM " + SQLOCALS_TABLE_NAME + " " +
-        "WHERE object = @object " +
-        (nType != SQLOCALS_TYPE_ALL ? "AND type & @type " : " ") +
-        "AND varname = @varname;");
+                                         "SELECT * FROM " + SQLOCALS_TABLE_NAME + " " +
+                                             "WHERE object = @object " +
+                                             (nType != SQLOCALS_TYPE_ALL ? "AND type & @type " : " ") +
+                                             "AND varname = @varname;");
 
     SqlBindString(sql, "@object", ObjectToString(oObject));
     if (nType != SQLOCALS_TYPE_ALL)
@@ -629,10 +627,10 @@ int SQLocals_GetLastUpdated_UnixEpoch(object oObject, string sVarName, int nType
     SQLocals_CreateTable();
 
     sqlquery sql = SqlPrepareQueryObject(GetModule(),
-        "SELECT timestamp FROM " + SQLOCALS_TABLE_NAME + " " +
-        "WHERE object = @object " +
-        "AND type = @type " +
-        "AND varname = @varname;");
+                                         "SELECT timestamp FROM " + SQLOCALS_TABLE_NAME + " " +
+                                             "WHERE object = @object " +
+                                             "AND type = @type " +
+                                             "AND varname = @varname;");
 
     SqlBindString(sql, "@object", ObjectToString(oObject));
     SqlBindInt(sql, "@type", nType);
@@ -655,10 +653,10 @@ string SQLocals_GetLastUpdated_UTC(object oObject, string sVarName, int nType)
     SQLocals_CreateTable();
 
     sqlquery sql = SqlPrepareQueryObject(GetModule(),
-        "SELECT datetime(timestamp, 'unixepoch') FROM " + SQLOCALS_TABLE_NAME + " " +
-        "WHERE object = @object " +
-        "AND type = @type " +
-        "AND varname = @varname;");
+                                         "SELECT datetime(timestamp, 'unixepoch') FROM " + SQLOCALS_TABLE_NAME + " " +
+                                             "WHERE object = @object " +
+                                             "AND type = @type " +
+                                             "AND varname = @varname;");
 
     SqlBindString(sql, "@object", ObjectToString(oObject));
     SqlBindInt(sql, "@type", nType);

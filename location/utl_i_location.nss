@@ -70,7 +70,6 @@ vector GetCenterOfTileFromPosition(vector vPosition);
 // * vPosition - A position within the bounds of oArea
 int GetTileIndexFromPosition(object oArea, vector vPosition);
 
-
 // Get a local vector (variable prefixed VEC:)
 // * oObject - Object to check for vector
 // * sVarName - variable name
@@ -117,11 +116,11 @@ int GetIsLocationIsWater(location lLocation)
 // * oArea - Area to provide a random location in
 location GetRandomLocation(object oArea)
 {
-    int nX = Random(GetAreaSize(AREA_WIDTH, oArea)*100);
-    int nY = Random(GetAreaSize(AREA_HEIGHT, oArea)*100);
+    int nX = Random(GetAreaSize(AREA_WIDTH, oArea) * 100);
+    int nY = Random(GetAreaSize(AREA_HEIGHT, oArea) * 100);
 
-    float fX = IntToFloat(nX)/100;
-    float fY = IntToFloat(nY)/100;
+    float fX = IntToFloat(nX) / 100;
+    float fY = IntToFloat(nY) / 100;
 
     return Location(oArea, Vector(fX, fY, 0.0), 0.0);
 }
@@ -131,16 +130,16 @@ location GetRandomLocation(object oArea)
 // * lLocation - Location to encode
 string EncodeLocation(location lLocation)
 {
-    object oArea = GetAreaFromLocation(lLocation);
+    object oArea     = GetAreaFromLocation(lLocation);
     vector vPosition = GetPositionFromLocation(lLocation);
-    float fFacing = GetFacingFromLocation(lLocation);
+    float fFacing    = GetFacingFromLocation(lLocation);
     string sReturnValue;
 
-    return  "#TAG#" + GetTag(oArea) + "#RESREF#" + GetResRef(oArea) +
-            "#X#" + FloatToString(vPosition.x, 5, 2) +
-            "#Y#" + FloatToString(vPosition.y, 5, 2) +
-            "#Z#" + FloatToString(vPosition.z, 5, 2) +
-            "#F#" + FloatToString(fFacing, 5, 2) + "#";
+    return "#TAG#" + GetTag(oArea) + "#RESREF#" + GetResRef(oArea) +
+           "#X#" + FloatToString(vPosition.x, 5, 2) +
+           "#Y#" + FloatToString(vPosition.y, 5, 2) +
+           "#Z#" + FloatToString(vPosition.z, 5, 2) +
+           "#F#" + FloatToString(fFacing, 5, 2) + "#";
 }
 
 // Decodes a location from a string that was encoded with EncodeLocation
@@ -153,12 +152,12 @@ location DecodeLocation(string sLocation)
     int nIdX, nCount;
     int nStrlen = GetStringLength(sLocation);
 
-    nIdX = FindSubString(sLocation, "#TAG#") + 5;
-    nCount = FindSubString(GetSubString(sLocation, nIdX, nStrlen - nIdX), "#");
+    nIdX       = FindSubString(sLocation, "#TAG#") + 5;
+    nCount     = FindSubString(GetSubString(sLocation, nIdX, nStrlen - nIdX), "#");
     string tag = GetSubString(sLocation, nIdX, nCount);
 
-    nIdX = FindSubString(sLocation, "#RESREF#") + 8;
-    nCount = FindSubString(GetSubString(sLocation, nIdX, nStrlen - nIdX), "#");
+    nIdX          = FindSubString(sLocation, "#RESREF#") + 8;
+    nCount        = FindSubString(GetSubString(sLocation, nIdX, nStrlen - nIdX), "#");
     string resref = GetSubString(sLocation, nIdX, nCount);
 
     object area = GetFirstArea();
@@ -169,20 +168,20 @@ location DecodeLocation(string sLocation)
         area = GetNextArea();
     }
 
-    nIdX = FindSubString(sLocation, "#X#") + 3;
+    nIdX   = FindSubString(sLocation, "#X#") + 3;
     nCount = FindSubString(GetSubString(sLocation, nIdX, nStrlen - nIdX), "#");
-    x = StringToFloat(GetSubString(sLocation, nIdX, nCount));
+    x      = StringToFloat(GetSubString(sLocation, nIdX, nCount));
 
-    nIdX = FindSubString(sLocation, "#Y#") + 3;
+    nIdX   = FindSubString(sLocation, "#Y#") + 3;
     nCount = FindSubString(GetSubString(sLocation, nIdX, nStrlen - nIdX), "#");
-    y = StringToFloat(GetSubString(sLocation, nIdX, nCount));
+    y      = StringToFloat(GetSubString(sLocation, nIdX, nCount));
 
-    nIdX = FindSubString(sLocation, "#Z#") + 3;
+    nIdX   = FindSubString(sLocation, "#Z#") + 3;
     nCount = FindSubString(GetSubString(sLocation, nIdX, nStrlen - nIdX), "#");
-    z = StringToFloat(GetSubString(sLocation, nIdX, nCount));
+    z      = StringToFloat(GetSubString(sLocation, nIdX, nCount));
 
-    nIdX = FindSubString(sLocation, "#F#") + 3;
-    nCount = FindSubString(GetSubString(sLocation, nIdX, nStrlen - nIdX), "#");
+    nIdX    = FindSubString(sLocation, "#F#") + 3;
+    nCount  = FindSubString(GetSubString(sLocation, nIdX, nStrlen - nIdX), "#");
     fFacing = StringToFloat(GetSubString(sLocation, nIdX, nCount));
 
     return Location(area, Vector(x, y, z), fFacing);
@@ -195,12 +194,12 @@ float GetRelativeAngleBetweenLocations(location lFrom, location lTo)
     vector vPos1 = GetPositionFromLocation(lFrom);
     vector vPos2 = GetPositionFromLocation(lTo);
     // Sanity check, no difference in angle
-    if(GetDistanceBetweenLocations(lFrom, lTo) == 0.0)
+    if (GetDistanceBetweenLocations(lFrom, lTo) == 0.0)
         return 0.0;
 
     float fAngle = acos((vPos2.x - vPos1.x) / GetDistanceBetweenLocations(lFrom, lTo));
     // The above formula only returns values [0, 180], so test for negative y movement
-    if((vPos2.y - vPos1.y) < 0.0f)
+    if ((vPos2.y - vPos1.y) < 0.0f)
         fAngle = 360.0f - fAngle;
 
     return fAngle;
@@ -240,10 +239,10 @@ location AddLocationToLocation(location lMaster, location lAdd)
     // Zero is +y in NWN convert zero to +x
     float fAngle = GetFacingFromLocation(lMaster);
     // Convert angle to radians
-    fAngle = ((fAngle-90)/360.0)*2.0*PI;
+    fAngle = ((fAngle - 90) / 360.0) * 2.0 * PI;
     vector vNew;
-    vNew.x = (vAdd.x*cos(fAngle))-(vAdd.y*sin(fAngle));
-    vNew.y = (vAdd.x*sin(fAngle))+(vAdd.y*cos(fAngle));
+    vNew.x = (vAdd.x * cos(fAngle)) - (vAdd.y * sin(fAngle));
+    vNew.y = (vAdd.x * sin(fAngle)) + (vAdd.y * cos(fAngle));
     vNew.z = vAdd.z;
 
     // Now just add them on
@@ -251,7 +250,7 @@ location AddLocationToLocation(location lMaster, location lAdd)
     vNew.x += vMaster.x;
     vNew.y += vMaster.y;
     vNew.z += vMaster.z;
-    float fNew = GetFacingFromLocation(lAdd)+GetFacingFromLocation(lMaster);
+    float fNew = GetFacingFromLocation(lAdd) + GetFacingFromLocation(lMaster);
 
     // Return the final location
     return Location(GetAreaFromLocation(lMaster), vNew, fNew);

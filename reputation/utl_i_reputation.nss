@@ -10,7 +10,7 @@
 
     This has some utility functions to take the edge off the issues especially
     around making a hostile creature friendly (it is recommended to make
-    these kinds of creatures immortal if they must do some kind of 
+    these kinds of creatures immortal if they must do some kind of
     speaking).
 */
 //:://////////////////////////////////////////////
@@ -24,7 +24,7 @@
 // - Clear all personal reputations (ClearPersonalReputation)
 // - Set the personal reputation to "friendly" with no decay (SetIsTemporaryFriend)
 // * oSource - the NPC who's faction we want to be friendly to all PC parties
-// * bRemoveHostileSpells - If TRUE removes any AOE effects in the area, all effects from 
+// * bRemoveHostileSpells - If TRUE removes any AOE effects in the area, all effects from
 //      oSource and all faction members of oSource, and any effects they've created on any PC.
 // * bPlot - If TRUE sets all faction members of oSource's faction in the area
 //   to plot to stop further damage and faction changes
@@ -42,15 +42,13 @@ void SetAllPlayerPartiesFriendlyTo(object oCreature);
 // Uses SetIsTemporaryFriend and ClearPersonalReputation
 void SetPlayerPartyFriendlyTo(object oPC, object oCreature);
 
-
-
 // This will make all PC and PC party faction members friendly with oSource and all of oSource
 // factions, in the given area oSource is in. This will do these actions:
 // - Clear all combat actions from creatures (ClearAllActions(TRUE)) regardless of faction
 // - Clear all personal reputations (ClearPersonalReputation)
 // - Set the personal reputation to "friendly" with no decay (SetIsTemporaryFriend)
 // * oSource - the NPC who's faction we want to be friendly to all PC parties
-// * bRemoveHostileSpells - If TRUE removes any AOE effects in the area, all effects from 
+// * bRemoveHostileSpells - If TRUE removes any AOE effects in the area, all effects from
 //      oSource and all faction members of oSource, and any effects they've created on any PC.
 // * bPlot - If TRUE sets all faction members of oSource's faction in the area
 //   to plot to stop further damage and faction changes
@@ -62,25 +60,25 @@ void SetAllCreaturesFriendly(object oSource, int bRemoveHostileSpells = TRUE, in
     effect eEffect;
     object oEffectCreator;
     object oObject = GetFirstObjectInArea(oArea);
-    while(GetIsObjectValid(oObject))
+    while (GetIsObjectValid(oObject))
     {
         nObjectType = GetObjectType(oObject);
-        if(nObjectType == OBJECT_TYPE_CREATURE)
+        if (nObjectType == OBJECT_TYPE_CREATURE)
         {
             // All creatures actions and combat state is cleared regardless
             AssignCommand(oObject, ClearAllActions(TRUE));
 
             // Check if they are a different faction
-            if(!GetFactionEqual(oObject, oSource))
+            if (!GetFactionEqual(oObject, oSource))
             {
                 // Remove effects from target that oSource's faction created
-                if(bRemoveHostileSpells)
+                if (bRemoveHostileSpells)
                 {
                     eEffect = GetFirstEffect(oObject);
-                    while(GetIsEffectValid(eEffect))
+                    while (GetIsEffectValid(eEffect))
                     {
                         oEffectCreator = GetEffectCreator(eEffect);
-                        if(GetIsObjectValid(oEffectCreator) && GetFactionEqual(oSource, oEffectCreator))
+                        if (GetIsObjectValid(oEffectCreator) && GetFactionEqual(oSource, oEffectCreator))
                         {
                             RemoveEffect(oObject, eEffect);
                         }
@@ -94,26 +92,26 @@ void SetAllCreaturesFriendly(object oSource, int bRemoveHostileSpells = TRUE, in
                 SetAllPlayerPartiesFriendlyTo(oObject);
 
                 // Equal factions optionally get all effects removed and optionally set to plot
-                if(bRemoveHostileSpells)
+                if (bRemoveHostileSpells)
                 {
                     eEffect = GetFirstEffect(oObject);
-                    while(GetIsEffectValid(eEffect))
+                    while (GetIsEffectValid(eEffect))
                     {
                         RemoveEffect(oObject, eEffect);
                         eEffect = GetNextEffect(oObject);
                     }
                 }
                 // Set plot flag if we requested it
-                if(bPlot)
+                if (bPlot)
                 {
                     SetPlotFlag(oObject, TRUE);
                 }
             }
         }
-        else if(nObjectType == OBJECT_TYPE_AREA_OF_EFFECT)
+        else if (nObjectType == OBJECT_TYPE_AREA_OF_EFFECT)
         {
             // Destroy if removing effects
-            if(bRemoveHostileSpells)
+            if (bRemoveHostileSpells)
             {
                 DestroyObject(oObject);
             }
@@ -128,14 +126,14 @@ void SetAllCreaturesFriendly(object oSource, int bRemoveHostileSpells = TRUE, in
 void SetAllPlayerPartiesFriendlyTo(object oCreature)
 {
     object oPC = GetFirstPC();
-    while(GetIsObjectValid(oPC))
+    while (GetIsObjectValid(oPC))
     {
         // No DMs
-        if(!GetIsDM(oPC))
+        if (!GetIsDM(oPC))
         {
             // Optimises it so that if they are the faction leader, we run a loop of their party,
             // else it will find them when we find their party leader.
-            if(GetFactionLeader(oPC) == oPC)
+            if (GetFactionLeader(oPC) == oPC)
             {
                 SetPlayerPartyFriendlyTo(oPC, oCreature);
             }
@@ -153,7 +151,7 @@ void SetPlayerPartyFriendlyTo(object oPC, object oCreature)
 {
     // For each member of the faction
     object oFactionMember = GetFirstFactionMember(oPC);
-    while(GetIsObjectValid(oFactionMember))
+    while (GetIsObjectValid(oFactionMember))
     {
         // Set to be friendly, both ways
         ClearPersonalReputation(oFactionMember, oCreature);

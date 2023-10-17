@@ -32,22 +32,20 @@ const int COOL_NUMBER_5 = 8675309;  // Jenny's phone number
 // * nNumber - The number to check
 int GetIsTheNumberCool(int nNumber);
 
-
 // The functions can omit the documentation or repeat it.
-
 
 int GetIsTheNumberCool(int nNumber)
 {
     // Comments may explain something inline
 
     // 42 is known to be the answer to life, the universe and everything and we check it first.
-    if(nNumber == COOL_NUMBER_1) return TRUE;
+    if (nNumber == COOL_NUMBER_1) return TRUE;
 
     // Declared variables may have a comment.
     int bReturn = FALSE;
 
     // Switch statements may have a number of ways of looking
-    switch(nNumber)
+    switch (nNumber)
     {
         case COOL_NUMBER_2:
         case COOL_NUMBER_3:
@@ -57,10 +55,10 @@ int GetIsTheNumberCool(int nNumber)
             bReturn = TRUE;
         }
         break;
-        case COOL_NUMBER_5: bReturn = TRUE;     break; // Special number 5
+        case COOL_NUMBER_5: bReturn = TRUE; break;  // Special number 5
         default:
         {
-			// We don't think it's cool
+            // We don't think it's cool
             bReturn = FALSE;
         }
         break;

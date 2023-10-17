@@ -27,16 +27,16 @@ void main()
     object oEnterer = GetEnteringObject();
 
     // Stop if not a PC or associate of a PC
-    if(!GetIsPC(oEnterer) && !GetIsPC(GetMaster(oEnterer))) return;
+    if (!GetIsPC(oEnterer) && !GetIsPC(GetMaster(oEnterer))) return;
 
     // Check event script is set and set it if not.
-    if(GetEventScript(OBJECT_SELF, EVENT_SCRIPT_TRIGGER_ON_HEARTBEAT) != "")
+    if (GetEventScript(OBJECT_SELF, EVENT_SCRIPT_TRIGGER_ON_HEARTBEAT) != "")
     {
         SetEventScript(OBJECT_SELF, EVENT_SCRIPT_TRIGGER_ON_HEARTBEAT, "onhb_trig_damage");
     }
 
     // Fortitude saving throw, DC 15, versus Traps
-    if(!FortitudeSave(oEnterer, 15, SAVING_THROW_TYPE_TRAP))
+    if (!FortitudeSave(oEnterer, 15, SAVING_THROW_TYPE_TRAP))
     {
         // Apply 2d6 acid damage and an effect
         ApplyEffectToObject(DURATION_TYPE_INSTANT, EffectVisualEffect(VFX_IMP_ACID_S), oEnterer);

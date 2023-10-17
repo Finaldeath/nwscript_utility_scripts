@@ -23,14 +23,14 @@ const int STOP_EXPERTISE_ABUSE = 1;
 void main()
 {
     object oModule = GetModule();
-    
+
     // Loop every PC and check what they are doing.
     object oPC = GetFirstPC();
-    while(GetIsObjectValid(oPC))
+    while (GetIsObjectValid(oPC))
     {
-        if(!GetIsDM(oPC))
+        if (!GetIsDM(oPC))
         {
-            if(STOP_EXPERTISE_ABUSE && GetCurrentAction(oPC) == ACTION_CASTSPELL)
+            if (STOP_EXPERTISE_ABUSE && GetCurrentAction(oPC) == ACTION_CASTSPELL)
             {
                 SetActionMode(oPC, ACTION_MODE_EXPERTISE, FALSE);
                 SetActionMode(oPC, ACTION_MODE_IMPROVED_EXPERTISE, FALSE);

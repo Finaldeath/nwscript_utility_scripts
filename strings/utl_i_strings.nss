@@ -36,7 +36,7 @@ string rtrim(string sString);
 string ReplaceChars(string sString, string sToReplace, string sReplacement);
 
 // Converts the given integer to string as IntToString and then pads the left side until
-// it's nLength characters long. If sign is specified, the first character is reserved 
+// it's nLength characters long. If sign is specified, the first character is reserved
 // for it, and it is always present.
 // Strings longer than the given length are truncated to their nLength right characters.
 // Examples:
@@ -46,7 +46,7 @@ string IntToPaddedString(int nX, int nLength = 4, int nSigned = FALSE);
 
 // Converts a boolean to a string.
 // * bBoolean - Boolean to convert
-// * bTLK - If TRUE this uses TLK values 8141 "True" and 8142 "False" to localise, 
+// * bTLK - If TRUE this uses TLK values 8141 "True" and 8142 "False" to localise,
 //          if FALSE it will always return "True" or "False".
 string BooleanToString(int bBoolean, int bTLK = FALSE);
 
@@ -61,15 +61,13 @@ string RandomiseString(string sOriginalString, int nCharCount = 0);
 // - nRed - Red amount (0-255)
 // - nGreen - Green amount (0-255)
 // - nBlue - Blue amount (0-255)
-string GetColorCode(int nRed=255, int nGreen=255, int nBlue=255);
+string GetColorCode(int nRed = 255, int nGreen = 255, int nBlue = 255);
 
 // Converts sString into a colored string, <cXXX>sString</c>.
 // - nRed - Red amount (0-255)
 // - nGreen - Green amount (0-255)
 // - nBlue - Blue amount (0-255)
-string GetStringColoredRGB(string sString, int nRed=255, int nGreen=255, int nBlue=255);
-
-
+string GetStringColoredRGB(string sString, int nRed = 255, int nGreen = 255, int nBlue = 255);
 
 // Removes all spaces from the left side of a given string
 string ltrim(string sString)
@@ -100,7 +98,7 @@ string trim(string sString)
 string ReplaceChars(string sString, string sToReplace, string sReplacement)
 {
     int nIndex;
-    while((nIndex = FindSubString(sString, sToReplace)) != -1)
+    while ((nIndex = FindSubString(sString, sToReplace)) != -1)
     {
         sString = GetStringLeft(sString, nIndex) +
                   sReplacement +
@@ -110,7 +108,7 @@ string ReplaceChars(string sString, string sToReplace, string sReplacement)
 }
 
 // Converts the given integer to string as IntToString and then pads the left side until
-// it's nLength characters long. If sign is specified, the first character is reserved 
+// it's nLength characters long. If sign is specified, the first character is reserved
 // for it, and it is always present.
 // Strings longer than the given length are truncated to their nLength right characters.
 // Examples:
@@ -118,20 +116,20 @@ string ReplaceChars(string sString, string sToReplace, string sReplacement)
 //  IntToPaddedString(-15, 4, TRUE)  = "-015"
 string IntToPaddedString(int nX, int nLength = 4, int nSigned = FALSE)
 {
-    if(nSigned)
-        nLength--; // To allow for sign
+    if (nSigned)
+        nLength--;  // To allow for sign
     string sResult = IntToString(nX);
     // Trunctate to nLength rightmost characters
-    if(GetStringLength(sResult) > nLength)
+    if (GetStringLength(sResult) > nLength)
         sResult = GetStringRight(sResult, nLength);
     // Pad the left side with zero
-    while(GetStringLength(sResult) < nLength)
+    while (GetStringLength(sResult) < nLength)
     {
         sResult = "0" + sResult;
     }
-    if(nSigned)
+    if (nSigned)
     {
-        if(nX >= 0)
+        if (nX >= 0)
             sResult = "+" + sResult;
         else
             sResult = "-" + sResult;
@@ -141,13 +139,11 @@ string IntToPaddedString(int nX, int nLength = 4, int nSigned = FALSE)
 
 // Converts a boolean to a string.
 // * bBoolean - Boolean to convert
-// * bTLK - If TRUE this uses TLK values 8141 "True" and 8142 "False" to localise, 
+// * bTLK - If TRUE this uses TLK values 8141 "True" and 8142 "False" to localise,
 //          if FALSE it will always return "True" or "False".
 string BooleanToString(int bBoolean, int bTLK = FALSE)
 {
-    return bTLK ?
-            (bBoolean ? GetStringByStrRef(8141) : GetStringByStrRef(8142)):
-            (bBoolean ? "True" : "False");
+    return bTLK ? (bBoolean ? GetStringByStrRef(8141) : GetStringByStrRef(8142)) : (bBoolean ? "True" : "False");
 }
 
 // Returns a randomised string of the first nCharCount characters in sOriginalString.
@@ -158,17 +154,17 @@ string BooleanToString(int bBoolean, int bTLK = FALSE)
 string RandomiseString(string sOriginalString, int nCharCount = 0)
 {
     // Error handling
-    if(sOriginalString == "") return "";
+    if (sOriginalString == "") return "";
     // Check for if we want to use the entire string.
-    if(nCharCount < 1 || nCharCount > GetStringLength(sOriginalString))
+    if (nCharCount < 1 || nCharCount > GetStringLength(sOriginalString))
     {
         nCharCount = GetStringLength(sOriginalString);
     }
     string sReturnValue = "";
     int nCount, nPlace;
-    for(nCount = 0; nCount < nCharCount; nCount++)
+    for (nCount = 0; nCount < nCharCount; nCount++)
     {
-        nPlace = Random(nCount + 1);
+        nPlace       = Random(nCount + 1);
         sReturnValue = GetSubString(sReturnValue, 0, nPlace) + GetSubString(sOriginalString, nCount, 1) + GetSubString(sReturnValue, nPlace, GetStringLength(sReturnValue));
     }
     return sReturnValue;
@@ -178,7 +174,7 @@ string RandomiseString(string sOriginalString, int nCharCount = 0)
 // - nRed - Red amount (0-255)
 // - nGreen - Green amount (0-255)
 // - nBlue - Blue amount (0-255)
-string GetColorCode(int nRed=255, int nGreen=255, int nBlue=255)
+string GetColorCode(int nRed = 255, int nGreen = 255, int nBlue = 255)
 {
     return "<c" + GetSubString(COLOR_TOKEN, nRed, 1) + GetSubString(COLOR_TOKEN, nGreen, 1) + GetSubString(COLOR_TOKEN, nBlue, 1) + ">";
 }
@@ -187,7 +183,7 @@ string GetColorCode(int nRed=255, int nGreen=255, int nBlue=255)
 // - nRed - Red amount (0-255)
 // - nGreen - Green amount (0-255)
 // - nBlue - Blue amount (0-255)
-string GetStringColoredRGB(string sString, int nRed=255, int nGreen=255, int nBlue=255)
+string GetStringColoredRGB(string sString, int nRed = 255, int nGreen = 255, int nBlue = 255)
 {
     return GetColorCode(nRed, nGreen, nBlue) + sString + "</c>";
 }

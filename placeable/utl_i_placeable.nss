@@ -15,8 +15,6 @@
 // * oPC - PC who might have a placeable inventory open
 void CloseAnyOpenPlaceableInventory(object oPC);
 
-
-
 // Closes any open placeable inventories that oPC has open by creating a temporary
 // placeable and having them open it, then destroying it.
 // * oPC - PC who might have a placeable inventory open

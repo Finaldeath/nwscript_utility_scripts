@@ -17,8 +17,6 @@
 // * nNth - finds the nNth copy of the tagged object
 object GetObjectInAreaByTag(string sTag, object oArea, int nNth = 1);
 
-
-
 // Returns an object matching sTag in oArea
 // A replacement for GetNearestObjectByTag() when you don't have a object to be near
 // * sTag - Tag of object(s) to find
@@ -26,14 +24,14 @@ object GetObjectInAreaByTag(string sTag, object oArea, int nNth = 1);
 // * nNth - finds the nNth copy of the tagged object
 object GetObjectInAreaByTag(string sTag, object oArea, int nNth = 1)
 {
-    int j = 0;
-    int i = 0;
+    int j          = 0;
+    int i          = 0;
     object oObject = GetObjectByTag(sTag, i);
-    while(GetIsObjectValid(oObject))
+    while (GetIsObjectValid(oObject))
     {
-        if(GetArea(oObject) == oArea)
+        if (GetArea(oObject) == oArea)
         {
-            if(++j == nNth)
+            if (++j == nNth)
             {
                 return oObject;
             }

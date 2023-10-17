@@ -3,7 +3,7 @@
 //:: utl_i_debug.nss
 //:://////////////////////////////////////////////
 /*
-    Debug specific related utility functions. This is a very simple debug library and 
+    Debug specific related utility functions. This is a very simple debug library and
     does not include log levels or anything remotely complex.
 
     It contains functions to debug the amount of time a script takes to run, how many
@@ -27,7 +27,7 @@ int DEBUG_INITIAL_INSTRUCTIONS = GetScriptInstructionsRemaining();
 
 // This will print the given debug string to whatever method the function calls
 // * sDebug - Debug string to print
-// Note: By default this just uses SendMessageToPC and has uncommented options for 
+// Note: By default this just uses SendMessageToPC and has uncommented options for
 // other methods. You could uncomment them all to remove all debug printing as well.
 void DebugPrint(string sDebug);
 
@@ -48,11 +48,9 @@ string DebugRuntimeStart();
 // * sRuntimeStart - The earlier time to test against. Obtain by using DebugRuntimeStart() earlier in the script.
 void DebugRuntimeEnd(string sRuntimeStart);
 
-
-
 // This will print the given debug string to whatever method the function calls
 // * sDebug - Debug string to print
-// Note: By default this just uses SendMessageToPC and has uncommented options for 
+// Note: By default this just uses SendMessageToPC and has uncommented options for
 // other methods. You could uncomment them all to remove all debug printing as well.
 void DebugPrint(string sDebug)
 {
@@ -60,8 +58,8 @@ void DebugPrint(string sDebug)
     SendMessageToPC(GetFirstPC(), sDebug);
 
     // Other options you may want to use:
-    //WriteTimestampedLogEntry(sDebug);
-    //SpeakString(sDebug);
+    // WriteTimestampedLogEntry(sDebug);
+    // SpeakString(sDebug);
 }
 
 // This will print the a string for the amount script instructions run at this given point.
@@ -80,7 +78,7 @@ void DebugInstructionCount()
 // DebugRuntimeEnd(sStart);
 string DebugRuntimeStart()
 {
-    //WriteTimestampedLogEntry("[JAI_DebugRuntimeStart] Start of Combat Round");
+    // WriteTimestampedLogEntry("[JAI_DebugRuntimeStart] Start of Combat Round");
     sqlquery x = SqlPrepareQueryObject(GetModule(), "select strftime('%f', 'now');");
     SqlStep(x);
     return SqlGetString(x, 0);
@@ -95,25 +93,31 @@ void DebugRuntimeEnd(string sRuntimeStart)
     string sRuntimeEnd = SqlGetString(x, 0);
 
     // Sort out the integers 00:000
-    int nStartSeconds = StringToInt(GetSubString(sRuntimeStart, 0, 2));
+    int nStartSeconds      = StringToInt(GetSubString(sRuntimeStart, 0, 2));
     int nStartMilliseconds = StringToInt(GetSubString(sRuntimeStart, 3, 3));
-    int nEndSeconds = StringToInt(GetSubString(sRuntimeEnd, 0, 2));
-    int nEndMilliseconds = StringToInt(GetSubString(sRuntimeEnd, 3, 3));
+    int nEndSeconds        = StringToInt(GetSubString(sRuntimeEnd, 0, 2));
+    int nEndMilliseconds   = StringToInt(GetSubString(sRuntimeEnd, 3, 3));
 
     // Totals
-    if(nStartSeconds > nEndSeconds) nEndSeconds += 60;
-    if(nStartMilliseconds > nEndMilliseconds) nEndMilliseconds += 1000;
+    if (nStartSeconds > nEndSeconds) nEndSeconds += 60;
+    if (nStartMilliseconds > nEndMilliseconds) nEndMilliseconds += 1000;
 
     // Get final timing
-    int nFinalSeconds = nEndSeconds - nStartSeconds;
+    int nFinalSeconds      = nEndSeconds - nStartSeconds;
     int nFinalMilliseconds = nEndMilliseconds - nStartMilliseconds;
 
     // Pad string appropriately for easy comparisons
-    string sSeconds = IntToString(nFinalSeconds);
+    string sSeconds      = IntToString(nFinalSeconds);
     string sMilliseconds = IntToString(nFinalMilliseconds);
-    if(nFinalSeconds < 10) sSeconds = "0" + sSeconds;
-    if(nFinalMilliseconds < 10) { sMilliseconds = "00" + sMilliseconds; }
-    else if(nFinalMilliseconds < 100) { sMilliseconds = "0" + sMilliseconds; }
+    if (nFinalSeconds < 10) sSeconds = "0" + sSeconds;
+    if (nFinalMilliseconds < 10)
+    {
+        sMilliseconds = "00" + sMilliseconds;
+    }
+    else if (nFinalMilliseconds < 100)
+    {
+        sMilliseconds = "0" + sMilliseconds;
+    }
 
     DebugPrint("[Debug] Script Timing. Start: [" + sRuntimeStart + "] end: [" + sRuntimeEnd + "] Total: [" + sSeconds + ":" + sMilliseconds + "]");
 }

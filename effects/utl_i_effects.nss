@@ -17,10 +17,10 @@ int GetHasTaggedEffect(object oObject, string sTag);
 
 // Remove all effects with the matching tag
 // * oObject - The object to remove effects from
-// * sTag - The tag 
+// * sTag - The tag
 void RemoveTaggedEffects(object oObject, string sTag);
 
-// Applies an effect to an object with a required tag and an optional subtype 
+// Applies an effect to an object with a required tag and an optional subtype
 /// A convenient wrapper to for applying all modifications an effect at once
 // * nDurationType: A DURATION_TYPE_* constant.
 // * eEffect: The effect to apply.
@@ -30,7 +30,6 @@ void RemoveTaggedEffects(object oObject, string sTag);
 // * nSubType: Sets the effect as magical or non-magical that can or cannot be removed by certain ingame spells or events. (Default: SUBTYPE_MAGICAL)
 // If the value is an invalid subtype it will change it to SUBTYPE_MAGICAL and log an error
 void ApplyTaggedEffectToObject(int nDurationType, effect Effect, object oTarget, string sEffectTag, float fDuration = 0.0, int nSubType = SUBTYPE_MAGICAL);
-
 
 // Returns TRUE if oObject has effects tagged with sTag
 // * oObject - Object to check
@@ -50,7 +49,7 @@ int GetHasTaggedEffect(object oObject, string sTag)
 
 // Remove all effects with the matching tag
 // * oObject - The object to remove effects from
-// * sTag - The tag 
+// * sTag - The tag
 void RemoveTaggedEffects(object oObject, string sTag)
 {
     effect eEffect = GetFirstEffect(oObject);
@@ -63,7 +62,7 @@ void RemoveTaggedEffects(object oObject, string sTag)
     }
 }
 
-// Applies an effect to an object with a required tag and an optional subtype 
+// Applies an effect to an object with a required tag and an optional subtype
 /// A convenient wrapper to for applying all modifications an effect at once
 // * nDurationType: A DURATION_TYPE_* constant.
 // * eEffect: The effect to apply.
@@ -73,30 +72,30 @@ void RemoveTaggedEffects(object oObject, string sTag)
 // * nSubType: Sets the effect as magical or non-magical that can or cannot be removed by certain ingame spells or events. (Default: SUBTYPE_MAGICAL)
 // If the value is an invalid subtype it will change it to SUBTYPE_MAGICAL and log an error
 void ApplyTaggedEffectToObject(int nDurationType, effect eEffect, object oTarget, string sEffectTag, float fDuration = 0.0, int nSubType = SUBTYPE_MAGICAL)
-{    
+{
     eEffect = TagEffect(eEffect, sEffectTag);
-    
+
     // log nSubType value problem if necessary
-    if(nSubType != SUBTYPE_EXTRAORDINARY && nSubType != SUBTYPE_MAGICAL && nSubType != SUBTYPE_SUPERNATURAL)
+    if (nSubType != SUBTYPE_EXTRAORDINARY && nSubType != SUBTYPE_MAGICAL && nSubType != SUBTYPE_SUPERNATURAL)
     {
         string sInvalidSub = IntToString(nSubType);
-        string sLog = "ApplyTaggedEffectToObject was given invalid subtype " + sInvalidSub + " as a parameter";
-        WriteTimestampedLogEntry(sLog);  
+        string sLog        = "ApplyTaggedEffectToObject was given invalid subtype " + sInvalidSub + " as a parameter";
+        WriteTimestampedLogEntry(sLog);
     }
-    
+
     // Assign Subtype otherwise defaults to Subtype Magic
-    if(nSubType == SUBTYPE_EXTRAORDINARY)
+    if (nSubType == SUBTYPE_EXTRAORDINARY)
     {
-        eEffect = ExtraordinaryEffect(eEffect);        
+        eEffect = ExtraordinaryEffect(eEffect);
     }
-    else if(nSubType == SUBTYPE_SUPERNATURAL)
+    else if (nSubType == SUBTYPE_SUPERNATURAL)
     {
-        eEffect = SupernaturalEffect(eEffect);    
+        eEffect = SupernaturalEffect(eEffect);
     }
     else
     {
         eEffect = MagicalEffect(eEffect);
     }
-    
-    ApplyEffectToObject(nDurationType, eEffect, oTarget, fDuration); 
+
+    ApplyEffectToObject(nDurationType, eEffect, oTarget, fDuration);
 }

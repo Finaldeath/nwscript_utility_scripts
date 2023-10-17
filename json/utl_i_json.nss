@@ -14,24 +14,26 @@
 //:: https://github.com/Finaldeath/nwscript_utility_scripts
 //:://////////////////////////////////////////////
 
+// Retrieves the soundset.2da line used for oCreature, or -1 on error.
+int GetCreatureSoundset(object oCreature);
 
 // Retrieves the soundset.2da line used for oCreature, or -1 on error.
 int GetCreatureSoundset(object oCreature)
 {
-    if(GetObjectType(oCreature) != OBJECT_TYPE_CREATURE) return -1;
+    if (GetObjectType(oCreature) != OBJECT_TYPE_CREATURE) return -1;
 
     // Convert to JSON
     json jGet = ObjectToJson(oCreature);
 
-    // Retrieve the key 
+    // Retrieve the key
     jGet = JsonObjectGet(jGet, "SoundSetFile");
 
-    if(JsonGetType(jGet) == JSON_TYPE_NULL) return -1;
+    if (JsonGetType(jGet) == JSON_TYPE_NULL) return -1;
 
-    // Retrieve the value 
+    // Retrieve the value
     jGet = JsonObjectGet(jGet, "value");
 
-    if(JsonGetType(jGet) != JSON_TYPE_INTEGER) return -1;
+    if (JsonGetType(jGet) != JSON_TYPE_INTEGER) return -1;
 
     return JsonGetInt(jGet);
 }

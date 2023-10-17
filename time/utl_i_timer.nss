@@ -11,14 +11,13 @@
     future using the module time.
 
     It uses a global variable so to be more efficient in loops or larger
-    scripts like AI. However this means do not use them inside a DelayCommand() 
+    scripts like AI. However this means do not use them inside a DelayCommand()
     call since the elapsed seconds will be set at script execution time once only.
 */
 //:://////////////////////////////////////////////
 //:: Part of the nwscript_utility_scripts project; see for dates/creator info
 //:: https://github.com/Finaldeath/nwscript_utility_scripts
 //:://////////////////////////////////////////////
-
 
 // This is a global variable for the TimerCalculateElapsedSeconds()
 int GlobalElapsedSeconds;
@@ -38,11 +37,11 @@ int GetTimerStartYear()
 {
     // Module int if not got, get it and set it now.
     int nStartYear = GetLocalInt(GetModule(), "START_YEAR");
-    if(nStartYear == 0)
+    if (nStartYear == 0)
     {
         nStartYear = GetCalendarYear();
-        if(nStartYear == 0) nStartYear = 1;
-        SetLocalInt(GetModule(), "START_YEAR", nStartYear);        
+        if (nStartYear == 0) nStartYear = 1;
+        SetLocalInt(GetModule(), "START_YEAR", nStartYear);
     }
     return nStartYear;
 }
@@ -52,22 +51,17 @@ int GetTimerStartYear()
 // Thanks to https://forum.neverwintervault.org/t/timers-and-timings/865/8
 void TimerCalculateElapsedSeconds()
 {
-    if(GlobalElapsedSeconds) return;
+    if (GlobalElapsedSeconds) return;
 
-    int nYear   = GetCalendarYear()  - GetTimerStartYear(); // Added GetStartYear() since Year can be very high.
-    int nMonth  = GetCalendarMonth();
-    int nDay    = GetCalendarDay();
-    int nHour   = GetTimeHour();
-    int nMinute = GetTimeMinute();
-    int nSecond = GetTimeSecond();
+    int nYear           = GetCalendarYear() - GetTimerStartYear();  // Added GetStartYear() since Year can be very high.
+    int nMonth          = GetCalendarMonth();
+    int nDay            = GetCalendarDay();
+    int nHour           = GetTimeHour();
+    int nMinute         = GetTimeMinute();
+    int nSecond         = GetTimeSecond();
     int nSecondsPerHour = FloatToInt(HoursToSeconds(1));
 
-    GlobalElapsedSeconds = nYear  * 12 * 28 * 24 * nSecondsPerHour
-            + (nMonth - 1) * 28 * 24 * nSecondsPerHour
-            + (nDay - 1)        * 24 * nSecondsPerHour
-            +  nHour                 * nSecondsPerHour
-            +  nMinute                    * 60
-            +  nSecond;
+    GlobalElapsedSeconds = nYear * 12 * 28 * 24 * nSecondsPerHour + (nMonth - 1) * 28 * 24 * nSecondsPerHour + (nDay - 1) * 24 * nSecondsPerHour + nHour * nSecondsPerHour + nMinute * 60 + nSecond;
 }
 
 // Sets a timer named sTimerName on oTarget, elapsing in nSeconds
