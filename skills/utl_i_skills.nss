@@ -151,7 +151,7 @@ int GetNPCEasyMark(object oNPC, object oPC)
     effect eCheck = GetFirstEffect(oNPC);
     while (GetIsEffectValid(eCheck))
     {
-        if (GetFactionEqual(oPC, GetEffectCreator(eCheck))
+        if (GetFactionEqual(oPC, GetEffectCreator(eCheck)))
         {
             switch (GetEffectType(eCheck))
             {
