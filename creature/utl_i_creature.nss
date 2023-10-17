@@ -64,6 +64,10 @@ int GetHighestLevelClass(object oCreature);
 // Defaults to 3 if the ruleset.2da entry is not found.
 int GetMaximumCreatureClassSlot();
 
+// Returns the parent RACIAL_TYPE_* of the given race, based on the FavoredEnemyFeat column in patch 1.87.8193.35
+// It assumes the earliest row in racialtypes.2da is the parent.
+// If there is no feat set or it is already the earliest row, it returns nRacialType back as it's own "parent".
+int GetParentRacialType(int nRacialType);
 
 
 // Returns the ENCUMBRANCE_LEVEL_* value related to how many items are on the creature
@@ -294,4 +298,27 @@ int GetMaximumCreatureClassSlot()
     if(nLimit > 0) return nLimit;
     // Default to 3
     return 3;
+}
+
+// Returns the parent RACIAL_TYPE_* of the given race, based on the FavoredEnemyFeat column in patch 1.87.8193.35
+// It assumes the earliest row in racialtypes.2da is the parent.
+// If there is no feat set or it is already the earliest row, it returns nRacialType back as it's own "parent".
+int GetParentRacialType(int nRacialType)
+{
+    string sFeatId = Get2DAString("racialtypes", "FavoredEnemyFeat", nRacialType);
+
+    // If no parent race we default to itself
+    if(sFeatId == "") return nRacialType;
+
+    // We then search for the earliest row with the matching FavoredEnemyFeat. This might be itself.
+    int nRow;
+    int nTotalRows = Get2DARowCount("racialtypes");
+    for(nRow = 0; nRow < nTotalRows; nRow++)
+    {
+        if(Get2DAString("racialtypes", "FavoredEnemyFeat", nRow) == sFeatId)
+        {
+            return nRow;
+        }
+    }
+    return nRacialType;
 }
