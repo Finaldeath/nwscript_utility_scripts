@@ -83,8 +83,8 @@ int GetEncumbranceLevel(object oCreature = OBJECT_SELF)
     int nWeight = GetWeight(oCreature);
     int nStr = GetAbilityScore(oCreature, ABILITY_STRENGTH);
 
-    // 2da limit is 100
-    if(nStr > 100) return ENCUMBRANCE_LEVEL_NORMAL;
+    // If we're over the 2da line limit (default 100) we're able to carry anything, thus normal
+    if(nStr > Get2DARowCount("encumbrance")) return ENCUMBRANCE_LEVEL_NORMAL;
 
     int nEnc = StringToInt(Get2DAString("encumbrance", "Heavy", nStr));
     if(nWeight > nEnc) return ENCUMBRANCE_LEVEL_OVERLOADED;
