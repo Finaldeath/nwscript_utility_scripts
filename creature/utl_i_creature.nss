@@ -12,6 +12,8 @@
 //:: https://github.com/Finaldeath/nwscript_utility_scripts
 //:://////////////////////////////////////////////
 
+#include "utl_i_2da"
+
 const int ENCUMBRANCE_LEVEL_NORMAL     = 0;
 const int ENCUMBRANCE_LEVEL_HEAVY      = 1;
 const int ENCUMBRANCE_LEVEL_OVERLOADED = 2;
@@ -294,10 +296,7 @@ int GetHighestLevelClass(object oCreature)
 // Defaults to 3 if the ruleset.2da entry is not found.
 int GetMaximumCreatureClassSlot()
 {
-    int nLimit = StringToInt(Get2DAString("ruleset", "Value", 519));
-    if(nLimit > 0) return nLimit;
-    // Default to 3
-    return 3;
+    return GetRulesetInt("MULTICLASS_LIMIT", 3);
 }
 
 // Returns the parent RACIAL_TYPE_* of the given race, based on the FavoredEnemyFeat column in patch 1.87.8193.35

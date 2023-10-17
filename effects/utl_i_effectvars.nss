@@ -13,6 +13,7 @@
 //:: https://github.com/Finaldeath/nwscript_utility_scripts
 //:://////////////////////////////////////////////
 
+#include "utl_i_2da"
 
 // Complement ATTACK_BONUS_* constants
 const int ATTACK_BONUS_CWEAPON1 = 3;
@@ -739,7 +740,7 @@ int GetEffectSavingThrowBonuses(int nSave, object oObject, object oOpponent = OB
             if(nSkill > 0)
             {
                 // Bonus calculation using ruleset.2da value
-                nSpellcraftBonus = nSkill / StringToInt(Get2DAString("ruleset", "Value", 197));
+                nSpellcraftBonus = nSkill / GetRulesetInt("SPELLCRAFT_NUM_RANKS_PER_SAVE_BONUS", 5);
             }
         }
     }
