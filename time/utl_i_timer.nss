@@ -19,6 +19,9 @@
 //:: https://github.com/Finaldeath/nwscript_utility_scripts
 //:://////////////////////////////////////////////
 
+// Timer variable name prefix
+const string TIMER_VARIABLE_PREFIX = "TIMER";
+
 // This is a global variable for the TimerCalculateElapsedSeconds()
 int GlobalElapsedSeconds;
 
@@ -71,7 +74,7 @@ void SetTimer(string sTimerName, int nSeconds, object oTarget = OBJECT_SELF)
     TimerCalculateElapsedSeconds();
 
     // We set the timer against them as the time we must go past
-    SetLocalInt(oTarget, sTimerName, GlobalElapsedSeconds + nSeconds);
+    SetLocalInt(oTarget, TIMER_VARIABLE_PREFIX + sTimerName, GlobalElapsedSeconds + nSeconds);
 }
 
 // Returns TRUE if sTimer has expired or has never been sent
@@ -81,11 +84,11 @@ int GetTimerEnded(string sTimerName, object oTarget = OBJECT_SELF)
     TimerCalculateElapsedSeconds();
 
     // If timer isn't set it'll return 0, so elapsed seconds will always be higher
-    return (GlobalElapsedSeconds >= GetLocalInt(oTarget, sTimerName));
+    return (GlobalElapsedSeconds >= GetLocalInt(oTarget, TIMER_VARIABLE_PREFIX + sTimerName));
 }
 
 // Deletes timer sTimerName on oTarget
 void DeleteTimer(string sTimerName, object oTarget = OBJECT_SELF)
 {
-    DeleteLocalInt(oTarget, sTimerName);
+    DeleteLocalInt(oTarget, TIMER_VARIABLE_PREFIX + sTimerName);
 }
